@@ -60,7 +60,7 @@ The files you register with the `register` function are single-file custom eleme
 </style>
 ```
 
-### <template>
+### &lt;template>
 
 Your template will end up in the shadow DOM of the custom element. This means you can leverage everything that vanilla custom elements provide you - `<slot>`s, `part`s, simple classes and ids without having to worry about clashes, etcetera.
 
@@ -68,7 +68,7 @@ Your template will end up in the shadow DOM of the custom element. This means yo
 
 The shadow roots Yozo creates are closed by default, promoting encapsulation. You can, however, explicitly specify the shadow root to be open by adding the attribute `shadow="open"` on the `<template>` element.
 
-### <script>
+### &lt;script>
 
 The script tag is where the magic happens. The code you write here is a JavaScript module, which means you can `import` things. Yozo provides a few "globals" for you to use - essentially, these are variables that are always available to you in the context of a custom element definition, but they're not actually on the `window`. They are being imported the same way you could import stuff, but you don't actually have to write the import statement. Also, while you can normally use top-level `await` expressions in modules, this is not allowed in custom element definitions.
 
@@ -197,6 +197,6 @@ Lastly, you may want to do a `querySelectorAll` - you can do this by calling `th
 
 This exposes the element internals, including the shadowRoot (closed or not). It contains the object returned by `attachInternals()`. If the element has been defined to be a form control (through `define.form()`) this also exposes the features related to that.
 
-### <style>
+### &lt;style>
 
 Because you're working with custom elements, styles are scoped. This means that the styles you write here only apply to the elements in your `<template>` and don't bleed out to other elements. To make things a little nicer to look at, Yozo will not directly put the `<style>` element in the template; instead, it creates a stylesheet object and puts it onto the shadow root. That way, when inspecting elements, you won't have to look at walls of CSS.
