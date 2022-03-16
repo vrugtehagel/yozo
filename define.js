@@ -61,19 +61,14 @@ define.done = uuid => {
 }
 
 function setPropertyFromAttribute(name, type, as){
-    if(type == 'boolean'){
+    if(type == Boolean){
         define.property(as, {
             get(){ return this.hasAttribute(name) },
             set(value){ this.toggleAttribute(name, value) }
         })
-    } else if(type == 'number'){
-        define.property(as, {
-            get(){ return Number(this.getAttribute(name)) },
-            set(value){ this.setAttribute(name, value) }
-        })
     } else {
         define.property(as, {
-            get(){ return this.getAttribute(name) },
+            get(){ return type(this.getAttribute(name)) },
             set(value){ this.setAttribute(name, value) }
         })
     }

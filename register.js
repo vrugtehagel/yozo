@@ -11,6 +11,7 @@ export default async function register(url, {as} = {}){
     const script = dom.querySelector('script')
     const style = dom.querySelector('style')
     const mode = template.getAttribute('shadow') ?? 'closed'
+    const delegatesFocus = template.hasAttribute('focusable')
     const sheet = new CSSStyleSheet
     const elementCache = new Map()
     const definition = await run(script.textContent)
@@ -19,6 +20,7 @@ export default async function register(url, {as} = {}){
 
     sheet.replace(style.textContent)
     template.removeAttribute('shadow')
+    template.removeAttribute('focusable')
 
     const body = class extends HTMLElement {
         #call = null
@@ -40,7 +42,7 @@ export default async function register(url, {as} = {}){
 
         constructor(){
             super()
-            const shadow = this.attachShadow({mode})
+            const shadow = this.attachShadow({mode, delegatesFocus})
             shadow.append(template.content.cloneNode(true))
             shadow.adoptedStyleSheets = [sheet]
             this[internals] = this.attachInternals()

@@ -68,6 +68,10 @@ Your template will end up in the shadow DOM of the custom element. This means yo
 
 The shadow roots Yozo creates are closed by default, promoting encapsulation. You can, however, explicitly specify the shadow root to be open by adding the attribute `shadow="open"` on the `<template>` element.
 
+#### focusable
+
+This is a boolean attribute you can put on the `<template>` element, marking the element as focusable. Essentially, this sets the `delegatesFocus` property in the ShadowRootInit object to `true`. When an element inside the shadow DOM receives focus, it will be delegated to the shadow root's host.
+
 ### &lt;script>
 
 The script tag is where the magic happens. The code you write here is a JavaScript module, which means you can `import` things. Yozo provides a few "globals" for you to use - essentially, these are variables that are always available to you in the context of a custom element definition, but they're not actually on the `window`. They are being imported the same way you could import stuff, but you don't actually have to write the import statement. Also, while you can normally use top-level `await` expressions in modules, this is not allowed in custom element definitions.
@@ -85,16 +89,19 @@ You can call `define` as a function to provide a default custom element name. Th
 
 Defining, keeping track of, and creating properties for attributes was a bit of a hassle for vanilla custom elements. Yozo makes this easy. You can register attributes to be "observed attributes" by calling e.g. `define.attribute('serial-number')`. Then, you can use `this[attributes].serialNumber` to listen to changes in the attribute - see the section on `[attributes]` for more info on this. This is not where it ends though; `define.attribute` can take a second argument, an options object, that takes either one or both the `type` key and the `as` key.
 
-The `type` key allows you to specify the type of data the attribute will take, which should be one of `'string'` (the default), `'number'` or `'boolean'`. Specifying the `type` key creates a property on the custom element bound to the attribute. For example,
+The `type` key allows you to specify the type of data the attribute will take, which should be provided as a function. Most often you'll want to use something like `Number` or `Boolean` - the constructors are great for converting strings. The value `Boolean` is treated a bit differently - this will turn the attribute in a boolean one. That is to say, the value of the attribute depends on its presence or absence rather than its value. Its usage looks something like this:
 ```html
 <script>
     define('shop-product')
-    define.attribute('serial-number', {type: 'number'})
+    define.attribute('serial-number', {type: Number})
+    define.attribute('has-promo', {type: Boolean})
 </script>
 ```
-will allow you to get and set the attribute using the `.serialNumber` property. Note that the attribute gets converted to camelCase, similar to how existing HTML elements do attribute-property pairs.
+will allow you to get and set the attributes using the `.serialNumber` and the `.hasPromo` property respectively. Note that the attribute gets converted to camelCase, similar to how existing HTML elements do attribute-property pairs.
 
 The `as` key allows you to rename the property. If, for example, you `define.attribute('serial-number', {type: 'number'})`, but you want to get and set this attribute with the `.serialnr` property rather than the `.serialNumber` property, you can specifiy `as: 'serialnr'` and Yozo will instead use that to define the property. You may also use an array of properties, so you could have both the `.serialNumber` as well as the `.serialnr` properties at the same time for the same `serial-number` attribute.
+
+For more complex getters and setters for attributes, use `define.property` instead.
 
 #### define.method
 
