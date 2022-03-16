@@ -15,6 +15,7 @@
 
     construct(function(){
         this[internals].role = 'checkbox'
+        this[internals].ariaChecked = false
     })
 
     connect(function(){
@@ -24,7 +25,7 @@
             this.toggle()
         })
         when(this[attributes].checked).changes().then(() => {
-            this[internals].setFormValue(this.checked)
+            this[internals].setFormValue(this.checked ? 'on' : null)
             this[internals].ariaChecked = this.checked
             this.dispatchEvent(new Event('change', {bubbles: true}))
         })
