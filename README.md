@@ -50,13 +50,13 @@ A function from the library provided by `reversibles`, see [when]().
 The files you register with the `register` function are single-file custom element definitions. They contain the HTML, the logic and the styles needed for a single custom element. The file extension, while Yozo recommends `.ce`, really does not matter. A good alternative is just `.html`, since the custom element definitions are valid HTML, and so syntax highlighting will probably work out of the box. However, they're not valid HTML documents (just a part of a document), and really, they don't make a whole lot of sense on their own, without Yozo. Anyway, your file will look roughly like
 ```html
 <template>
-	<!-- your HTML -->
+    <!-- your HTML -->
 </template>
 <script>
-	// your JavaScript
+    // your JavaScript
 </script>
 <style>
-	/* your CSS */
+    /* your CSS */
 </style>
 ```
 
@@ -77,7 +77,7 @@ The script tag is where the magic happens. The code you write here is a JavaScri
 You can call `define` as a function to provide a default custom element name. These may be overwritten using the options in the `register` function, but if you're writing the components for use in your own project, you will probably want to name them this way. For example:
 ```html
 <script>
-	define('custom-dropdown')
+    define('custom-dropdown')
 </script>
 ```
 
@@ -88,8 +88,8 @@ Defining, keeping track of, and creating properties for attributes was a bit of 
 The `type` key allows you to specify the type of date the attribute will take, which should be one of `'string'` (the default), `'number'` or `'boolean'`. Specifying the `type` key creates a property on the custom element bound to the attribute. For example,
 ```html
 <script>
-	define('shop-product')
-	define.attribute('serial-number', {type: 'number'})
+    define('shop-product')
+    define.attribute('serial-number', {type: 'number'})
 </script>
 ```
 will allow you to get and set the attribute using the `.serialNumber` property. Note that the attribute gets converted to camelCase, similar to how existing HTML elements do it.
@@ -101,11 +101,11 @@ The `as` key allows you to rename the property. If, for example, you `define.att
 With both the lifecycle callbacks as well as the introduction of private methods, custom element definitions can become hard to oversee. What are the methods exposed to the outside worlds, and what are the methods intended for internal logic? Yozo makes this a bit clearer. You define your methods explicitly by calling `define.method`. It takes a string or symbol as first argument, and a function (the method itself) as second argument. Something like so:
 ```html
 <script>
-	define('rocket-ship')
-	define.method('launch', function(){
-		if(this.fuel < 23) throw Error('Not enough fuel!')
-		this.startEngines()
-	})
+    define('rocket-ship')
+    define.method('launch', function(){
+        if(this.fuel < 23) throw Error('Not enough fuel!')
+        this.startEngines()
+    })
 </script>
 ```
 Be mindful to not use arrow functions in these definitions; they're methods, and so they'll probably need the `this` value (referring to the custom element itself). When using arrow functions, you will not have access to `this`.
@@ -115,21 +115,21 @@ Be mindful to not use arrow functions in these definitions; they're methods, and
 This function is very similar to `define.method`, but instead of methods, it allows you to define properties. The first argument it takes is the property name (either a string or a symbol) and the second argument may be either a function, if it is just a getter, or a complete descriptor object a la `Object.defineProperty`. Like with `define.method`, make sure to not use arrow functions if you need access to the custom element instance:
 ```html
 <script>
-	define('todo-list')
-	define.property('length', function(){
-		return this.getItems().length
-	})
-	let allowReadSecrets
-	define.property('allowReadSecrets', {
-		enumerable: false,
-		get(){
-			return allowReadSecrets
-		},
-		set(value){
-			if(!this.isAdmin()) return
-			allowReadSecrets = value
-		}
-	})
+    define('todo-list')
+    define.property('length', function(){
+        return this.getItems().length
+    })
+    let allowReadSecrets
+    define.property('allowReadSecrets', {
+        enumerable: false,
+        get(){
+            return allowReadSecrets
+        },
+        set(value){
+            if(!this.isAdmin()) return
+            allowReadSecrets = value
+        }
+    })
 </script>
 ```
 
@@ -146,16 +146,16 @@ This is analogous to the constructor for custom elements. This time though, you 
 This is equivalent to the `connectedCallback` in custom elements. However, Yozo will automatically make the function your provide here a reversible - that means that you can just set up your component using reversible functions such as `when`, and Yozo will automatically take everything down for you, so that you don't have to define a `disconnect` callback at all. For example:
 ```html
 <script>
-	define('button-clicker')
-	define.method('triggerClick', function(){
-		this[elements].button.click()
-	})
+    define('button-clicker')
+    define.method('triggerClick', function(){
+        this[elements].button.click()
+    })
 
-	connect(() => {
-		when(this[elements].button).does('click').then(() => {
-			console.log('clicked')
-		})
-	})
+    connect(() => {
+        when(this[elements].button).does('click').then(() => {
+            console.log('clicked')
+        })
+    })
 </script>
 ```
 Yozo will automatically detach the event listener when the element disconnects from the DOM, and set it back up once the element reconnects. Calling `triggerClick` when the element is detached will therefore do nothing, but when it is connected, it will log `clicked` to the console.
@@ -171,16 +171,16 @@ Generally, you won't (shouldn't) need this. `connect` should automatically take 
 Yozo provides a few key things to you in the form of symbols, so that they are still shielded from the outside. The `[attributes]` symbol exposes event targets for the attributes you registered. They will fire the `change` event whenever that attribute changes. For example:
 ```html
 <script>
-	define('custom-checkbox')
-	define.attribute('checked', {type: 'boolean'})
+    define('custom-checkbox')
+    define.attribute('checked', {type: 'boolean'})
 
-	construct(function(){
-		when(this[attributes].checked).changes().then(event => {
-			const {oldValue, value} = event.detail
-			if(value == false) this.showRequiredMessage()
-			else this.allowNextStep()
-		})
-	})
+    construct(function(){
+        when(this[attributes].checked).changes().then(event => {
+            const {oldValue, value} = event.detail
+            if(value == false) this.showRequiredMessage()
+            else this.allowNextStep()
+        })
+    })
 </script>
 ```
 As you can see in the example above, the `detail` key in the event object will contain some data about the attribute that changed; specifically, it tells you the old value (`.oldValue`), the new, current value (`.value`) and the attribute name (`.attribute`).

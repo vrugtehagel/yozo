@@ -1,31 +1,31 @@
 <template>
-	<p>You clicked <span id=amount>0</span> times</p>
-	<button>Click me!</button>
+    <p>You clicked <span id=amount>0</span> times</p>
+    <button>Click me!</button>
 </template>
 <script>
-	define('click-counter')
-	define.attribute('count', {type: 'number'})
+    define('click-counter')
+    define.attribute('count', {type: 'number'})
 
-	define.method('reset', function(){
-		this.count = 0
-	})
+    define.method('reset', function(){
+        this.count = 0
+    })
 
-	construct(function(){
-		when(this[attributes].count).changes().then(() => {
-			this[elements].amount.textContent = this.count
-		})
-	})
+    construct(function(){
+        when(this[attributes].count).changes().then(() => {
+            this[elements].amount.textContent = this.count
+        })
+    })
 
-	connect(function(){
-		when(this[elements]('button')).does('click').then(() => {
-			this.count++
-		})
-	})
+    connect(function(){
+        when(this[elements]('button')).does('click').then(() => {
+            this.count++
+        })
+    })
 </script>
 <style>
-	button {
-		border: none;
-		color: white;
-		background-color: navy;
-	}
+    button {
+        border: none;
+        color: white;
+        background-color: navy;
+    }
 </style>
