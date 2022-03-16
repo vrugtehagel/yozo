@@ -1,0 +1,92 @@
+<template>
+    <div id=container>
+        <div id=track part=track></div>
+        <div id=thumb part=thumb></div>
+    </div>
+</template>
+
+<script>
+    define('toggle-switch')
+    define.attribute('checked', {type: 'boolean', as: ['checked', 'value']})
+    define.attribute('name', {type: 'string', as: 'name'})
+    define.form()
+
+    define.property('form', {
+        get(){ return this[internals].form }
+    })
+
+    define.method('toggle', function(value){
+        this.value = value ?? !this.value
+    })
+
+    construct(function(){
+        this.setAttribute('tabindex', 0)
+        this.setAttribute('role', 'checkbox')
+        this[internals].ariaChecked = false
+    })
+
+    connect(function(){
+        when(this).clicks().then(() => this.toggle())
+        when(this).keydowns().then(event => event.key == ' ' && this.toggle())
+        when(this[attributes].checked).changes().then(event => {
+            const {value} = event.detail
+            this[internals].setFormValue(value)
+            this[internals].ariaChecked = value
+            this.dispatchEvent(new Event('change', {bubbles: true}))
+        })
+    })
+</script>
+
+<style>
+    :host {
+        --toggle-duration: .1s;
+        display: inline-block;
+        height: 1rem;
+        width: 2rem;
+        vertical-align: middle;
+        cursor: pointer;
+    }
+    #container {
+        max-width: 100%;
+        max-height: 100%;
+        aspect-ratio: 2 / 1;
+        position: relative;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+    #track {
+        width: 87.5%;
+        height: 75%;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: rgb(130 136 144);
+        background-color: currentcolor;
+        border-radius: 50% / 100%;
+        opacity: 0.5;
+        transition: var(--toggle-duration, .1s);
+    }
+    #thumb {
+        height: 100%;
+        aspect-ratio: 1 / 1;
+        position: absolute;
+        top: 50%;
+        left: 0;
+        transform: translate(0, -50%);
+        color: white;
+        background-color: currentcolor;
+        border-radius: 50%;
+        box-shadow: 0 1px 3px 0 rgb(0 0 0 / 40%);
+        transition: var(--toggle-duration, .1s);
+    }
+    :host([checked]) #track {
+        color: rgb(26 115 232);
+    }
+    :host([checked]) #thumb {
+        color: rgb(26 115 232);
+        left: 100%;
+        transform: translate(-100%, -50%);
+    }
+</style>
