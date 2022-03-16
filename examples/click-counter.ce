@@ -2,6 +2,7 @@
     <p>You clicked <span id=amount>0</span> times</p>
     <button>Click me!</button>
 </template>
+
 <script>
     define('click-counter')
     define.attribute('count', {type: 'number'})
@@ -22,6 +23,7 @@
         })
     })
 </script>
+
 <style>
     button {
         border: none;
