@@ -85,20 +85,20 @@ You can call `define` as a function to provide a default custom element name. Th
 
 Defining, keeping track of, and creating properties for attributes was a bit of a hassle for vanilla custom elements. Yozo makes this easy. You can register attributes to be "observed attributes" by calling e.g. `define.attribute('serial-number')`. Then, you can use `this[attributes].serialNumber` to listen to changes in the attribute - see the section on `[attributes]` for more info on this. This is not where it ends though; `define.attribute` can take a second argument, an options object, that takes either one or both the `type` key and the `as` key.
 
-The `type` key allows you to specify the type of date the attribute will take, which should be one of `'string'` (the default), `'number'` or `'boolean'`. Specifying the `type` key creates a property on the custom element bound to the attribute. For example,
+The `type` key allows you to specify the type of data the attribute will take, which should be one of `'string'` (the default), `'number'` or `'boolean'`. Specifying the `type` key creates a property on the custom element bound to the attribute. For example,
 ```html
 <script>
     define('shop-product')
     define.attribute('serial-number', {type: 'number'})
 </script>
 ```
-will allow you to get and set the attribute using the `.serialNumber` property. Note that the attribute gets converted to camelCase, similar to how existing HTML elements do it.
+will allow you to get and set the attribute using the `.serialNumber` property. Note that the attribute gets converted to camelCase, similar to how existing HTML elements do attribute-property pairs.
 
-The `as` key allows you to rename the property. If, for example, you `define.attribute('serial-number', {type: 'number'})`, but you want to get and set this attribute with the `.serialnr` property rather than the `.serialNumber` property, you can specifiy `as: 'serialnr'` and Yozo will instead use that to define the property. You may also use an array of properties, so you could have both the `.serialNumber` as well as the `serialnr` properties at the same time for the same `serial-number` attribute.
+The `as` key allows you to rename the property. If, for example, you `define.attribute('serial-number', {type: 'number'})`, but you want to get and set this attribute with the `.serialnr` property rather than the `.serialNumber` property, you can specifiy `as: 'serialnr'` and Yozo will instead use that to define the property. You may also use an array of properties, so you could have both the `.serialNumber` as well as the `.serialnr` properties at the same time for the same `serial-number` attribute.
 
 #### define.method
 
-With both the lifecycle callbacks as well as the introduction of private methods, custom element definitions can become hard to oversee. What are the methods exposed to the outside worlds, and what are the methods intended for internal logic? Yozo makes this a bit clearer. You define your methods explicitly by calling `define.method`. It takes a string or symbol as first argument, and a function (the method itself) as second argument. Something like so:
+With both the lifecycle callbacks as well as the introduction of private methods, vanilla custom element definitions can become hard to oversee. What are the methods exposed to the outside worlds, and what are the methods intended for internal logic? Yozo makes this a bit clearer. You define your methods explicitly by calling `define.method`. It takes a string or symbol as first argument (the name of the method), and a function (the method itself) as second argument. Something like so:
 ```html
 <script>
     define('rocket-ship')
@@ -135,15 +135,15 @@ This function is very similar to `define.method`, but instead of methods, it all
 
 #### define.form
 
-Custom elements may be form-associated, and this function lets you use this. Simply call it once, with no arguments, to opt-in to this behavior. This will get you the `this[internals]` property that is otherwise `null`, allowing you to set the underlying value for use in `<form>` elements. See the section on `[internals]` for more info.
+Custom elements may be form-associated, and this function allows you to specify this. Simply call it once, with no arguments, to opt-in to this behavior. Then, you can use `this[internals]` to e.g. set the underlying value for use in `<form>` elements. See the section on `[internals]` for more info.
 
 #### construct
 
-This is analogous to the constructor for custom elements. This time though, you don't need to call `super()`, attach your shadow DOM and template, or your CSS; Yozo does all of that for you, so that you can focus on the logic. Here, set up everything that needs to be alive for the entire duration of the component, whether connected to the document or not. For example, reactions to attribute changes, loading some data into the component, or setting up some of the state for the component.
+This is analogous to the constructor for custom elements. With Yozo though, you don't need to call `super()`, attach your shadow DOM and template, or your CSS; Yozo does all of that for you, so that you can focus on the logic. Here, set up everything that needs to be alive for the entire duration of the component, whether connected to the document or not. For example, loading some data into the component, or setting up some of the internal state for the component.
 
 #### connect
 
-This is equivalent to the `connectedCallback` in custom elements. However, Yozo will automatically make the function your provide here a reversible - that means that you can just set up your component using reversible functions such as `when`, and Yozo will automatically take everything down for you, so that you don't have to define a `disconnect` callback at all. For example:
+This is equivalent to the `connectedCallback` in custom elements. However, Yozo will automatically make the function your provide here a reversible - that means that you can just set up your component using reversible functions such as `when`, and Yozo will automatically take everything down for you when the element disconnects, so that you don't have to define a `disconnect` callback at all. For example:
 ```html
 <script>
     define('button-clicker')
