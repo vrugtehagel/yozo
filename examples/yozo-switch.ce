@@ -5,7 +5,7 @@
     </div>
 </template>
 <script>
-	define('yozo-switch')
+    define('yozo-switch')
     define.form()
     define.attribute('checked', {type: Boolean, as: ['checked', 'value']})
     define.property('form', function(){ return this[internals].form })
@@ -31,7 +31,7 @@
     })
 </script>
 <style>
-	:host {
+    :host {
         display: inline-block;
         width: 2rem;
         height: 1rem;
