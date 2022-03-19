@@ -24,7 +24,7 @@ Now, what does Yozo actually get you? Well, the package itself only exports a ha
 
 ### register
 
-This function takes one or two arguments. The first is a URL (either a string or URL object), pointing to your custom element's definition. The second is an optional options object. It may contain an `as` key, with a custom element name as value, that the component will be registered as. This has a higher presedence than the name defined in the custom element's definition! This is mostly useful for renaming third-party components. Your registration will look more-or-less like this:
+This function takes one or two arguments. The first is a URL (either a string or URL object), pointing to your custom element's definition. The second is an optional options object. It may contain an `as` key, with a custom element name as value, that the component will be registered as. This has a higher precedence than the name defined in the custom element's definition! This is mostly useful for renaming third-party components. Your registration will look more-or-less like this:
 ```js
 import { register } from 'https://deno.land/x/yozo'
 
@@ -47,7 +47,7 @@ A function from the library provided by `reversibles`, see [when]().
 
 ## In custom element definitions
 
-The files you register with the `register` function are single-file custom element definitions. They contain the HTML, the logic and the styles needed for a single custom element. The file extension, while Yozo recommends `.ce`, really does not matter. A good alternative is just `.html`, since the custom element definitions are valid HTML, and so syntax highlighting will probably work out of the box. However, they're not valid HTML documents (just a part of a document), and really, they don't make a whole lot of sense on their own, without Yozo. Anyway, your file will look roughly like
+The files you register with the `register` function are single-file custom element definitions. They contain the HTML, the logic and the styles needed for a single custom element. The file extension, while Yozo recommends `.ce`, really does not matter. A good alternative is just `.html`, since the custom element definitions are valid HTML, and so syntax highlighting will work out of the box. However, they're not valid HTML documents (just a part of a document), and really, they don't make a whole lot of sense without Yozo, so making a distinction may be desirable. Anyway, your file will look roughly like
 ```html
 <template>
     <!-- your HTML -->
@@ -89,9 +89,9 @@ You can call `define` as a function to provide a default custom element name. Th
 
 #### define.attribute
 
-Defining, keeping track of, and creating properties for attributes was a bit of a hassle for vanilla custom elements. Yozo makes this easy. You can register attributes to be "observed attributes" by calling e.g. `define.attribute('serial-number')`. Then, you can use `this[attributes].serialNumber` to listen to changes in the attribute - see the section on `[attributes]` for more info on this. This is not where it ends though; `define.attribute` can take a second argument, an options object, that can take a `type`, an `as`, and a `default` key.
+Defining, keeping track of, and creating properties for attributes was a bit of a hassle for vanilla custom elements. Yozo makes this easy. You can register attributes to be "observed attributes" by calling e.g. `define.attribute('serial-number')`. Then, you can use `this[attributes]('serial-number)` to listen to changes in the attribute - see the section on `[attributes]` for more info on this. This is not where it ends though; `define.attribute` can take a second argument, an options object, that can take a `type`, an `as`, and a `default` key.
 
-The `type` key allows you to specify the type of data the attribute will take, which should be provided as a function. Most often you'll want to use something like `Number` or `Boolean` - the constructors are great for converting strings to their primitive equivalents. The value `Boolean` is treated a bit differently - this will turn the attribute in a boolean one. That is to say, the value of the attribute depends on its presence or absence rather than its value. Its usage looks something like this:
+The `type` key allows you to specify the type of data the attribute will take. Yozo will then automatically create an accompanying property. The `type` should be provided as a function, which will get the attribute's value as a string and will process the value to be returned by the property getter. Most often you'll want to use something like `Number` or `Boolean` - the constructors are great for converting strings to their primitive equivalents. The value `Boolean` is treated a bit differently - this will turn the attribute in a boolean one. That is to say, the value of the attribute depends on its presence or absence rather than its value. Its usage looks something like this:
 ```html
 <script>
     define('shop-product')
@@ -99,11 +99,11 @@ The `type` key allows you to specify the type of data the attribute will take, w
     define.attribute('has-promo', {type: Boolean})
 </script>
 ```
-will allow you to get and set the attributes using the `.serialNumber` and the `.hasPromo` property respectively. Note that the property for the attribute is converted to camelCase, similar to how existing HTML elements do attribute-property pairs.
+The above example will allow you to get and set the attributes using the `.serialNumber` and the `.hasPromo` property respectively. Note that the property for the attribute is converted to camelCase, since that's the most sensible default.
+
+If that default property name doesn't suit your needs though, don't worry - the `as` key allows you to rename the property. If, for example, you `define.attribute('serial-number', {type: 'number'})`, but you want to get and set this attribute with the `.serialnr` property rather than the `.serialNumber` property, you can specifiy `as: 'serialnr'` and Yozo will instead use that to define the property. You may also use an array of properties, so you could have both the `.serialNumber` as well as the `.serialnr` properties at the same time for the same `serial-number` attribute.
 
 The `default` key lets you specify a value for when the attribute is absent. If you leave this out, the default is `null` (which is what `getAttribute` returns for attributes that don't exist). Often, when you use e.g. a string or number-type attribute, you'll want to specify this so that the property always has a value according to the type you defined. For example, `define('serial-number', {type: Number, default: 0})`.
-
-The `as` key allows you to rename the property. If, for example, you `define.attribute('serial-number', {type: 'number'})`, but you want to get and set this attribute with the `.serialnr` property rather than the `.serialNumber` property, you can specifiy `as: 'serialnr'` and Yozo will instead use that to define the property. You may also use an array of properties, so you could have both the `.serialNumber` as well as the `.serialnr` properties at the same time for the same `serial-number` attribute.
 
 For more complex getters and setters for attributes, use `define.property` instead.
 
@@ -196,9 +196,9 @@ Yozo provides a few key things to you in the form of symbols, so that they are s
 ```
 As you can see in the example above, the `detail` key in the event object will contain some data about the attribute that changed; specifically, it tells you the old value (`.oldValue`), the new, current value (`.value`) and the attribute name (`.attribute`).
 
-You might also want to listen to multiple attributes at the same time. For this, you may simply pass more attributes to the `this[attributes]` function. Yozo also allows you to use a wildcard, i.e. `this[attributes]('*')`, to listen to all attribute changes.
+You might also want to listen to multiple attributes at the same time. For this, you may simply pass more attributes to the `this[attributes]` function. Yozo also allows you to use a wildcard, i.e. `this[attributes]('*')`, to listen to all attribute changes. The event handlers are guaranteed to be called in the same order you attached them.
 
-Note that you _need_ to register the attributes using `define.attributes`. If you want to listen to arbitrary event listeners, even unregistered ones, use a mutation observer. This can be easily achieved with `when` as well:
+Note that you _need_ to register the attributes using `define.attributes` in order to listen to their changes. If you want to listen to arbitrary attribute changes, even unregistered ones, use a mutation observer. This can be easily achieved with `when` as well:
 ```js
     define('custom-div')
 
@@ -211,7 +211,7 @@ Note that you _need_ to register the attributes using `define.attributes`. If yo
 
 #### [elements]
 
-You've got a template, and you probably want access to the elements in it. This symbol lets you, by exposing the `querySelector` on the shadow root to you without you having to write it all out. You pass the selector to the `this[elements]` function directly, e.g. `this[elements]('button.btn > span')`. You also get a `querySelectorAll` variant, of course: `this[elements].all('button.btn > span')`. This returns an array of elements rather than a `NodeList`, allowing you to immediately use methods like `.filter` or `.map` on the result without having to use the spread operator on the result.
+You've got a template, and you probably want access to the elements in it. This symbol lets you do so, by exposing the `querySelector` on the shadow root to you without you having to write it all out. You pass the selector to the `this[elements]` function directly, e.g. `this[elements]('button.btn > span')`. You also get a `querySelectorAll` variant, of course: `this[elements].all('button.btn > span')`. This returns an array of elements rather than a `NodeList`, allowing you to immediately use methods like `.filter` or `.map` on the result without having to use the spread operator on the result.
 
 #### [internals]
 

@@ -4,7 +4,7 @@ Here, you can find a handful of examples using Yozo to write basic UI elements. 
 
 ## `yozo-dropdown`
 
-[x] Form control
+ - [x] Form control
 
 | attribute | property | function |
 ------------|----------|----------|
@@ -23,7 +23,7 @@ Example usage:
 
 ## `yozo-switch`
 
-[x] Form control
+ - [x] Form control
 
 | attribute | property | function |
 ------------|----------|----------|
@@ -53,7 +53,7 @@ Example usage:
 
 ## `yozo-slider`
 
-[x] Form control
+ - [x] Form control
 
 | attribute | property | function |
 ------------|----------|----------|
