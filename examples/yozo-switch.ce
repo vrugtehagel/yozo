@@ -1,4 +1,4 @@
-<template focusable>
+<template mode=closed delegates-focus>
     <div id=container tabindex=0>
         <div id=track part=track></div>
         <div id=thumb part=thumb></div>
@@ -8,6 +8,7 @@
     define('yozo-switch')
     define.form()
     define.attribute('checked', {type: Boolean, as: ['checked', 'value']})
+
     define.property('form', function(){ return this[internals].form })
     define.method('toggle', function(value){
         this.checked = value ?? !this.checked
@@ -16,19 +17,15 @@
     construct(function(){
         this[internals].role = 'checkbox'
         this[internals].ariaChecked = false
-    })
-
-    connect(function(){
-        when(this).clicks().then(() => this.toggle())
-        when(this).keydowns().then(event => {
-            if(event.key != ' ') return
-            this.toggle()
-        })
-        when(this[attributes].checked).changes().then(() => {
+        when(this[attributes]('checked')).changes().then(() => {
             this[internals].setFormValue(this.checked ? 'on' : null)
             this[internals].ariaChecked = this.checked
             this.dispatchEvent(new Event('change', {bubbles: true}))
         })
+    })
+
+    connect(function(){
+        when(this).clicks().then(() => this.toggle())
     })
 </script>
 <style>
@@ -50,7 +47,7 @@
     #track {
         position: absolute;
         inset: 0;
-        color: rgb(128 128 128 / 50%);
+        color: silver;
         background-color: currentcolor;
         border-radius: 100vmax;
         transition: inherit;
@@ -67,10 +64,9 @@
         transition: inherit;
     }
     :host([checked]) #track {
-        color: rgb(26, 115, 232);
+        color: royalblue;
     }
     :host([checked]) #thumb {
-        color: rgb(26 115 232);
         left: 100%;
         transform: translateX(-116.67%);
     }

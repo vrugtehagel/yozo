@@ -36,12 +36,14 @@ define.context = uuid => {
     current = define[secret].newContext()
     return current.exposed
 }
-define.attribute = (name, {type, as} = {}) => {
+define.attribute = (name, options = {}) => {
     current.observed.push(name)
-    if(!type && !as) return
-    as ??= name.replace(/-+\w/g, match => match.slice(-1).toUpperCase())
+    if(!options.type) return
+    const as = options.as ?? name
+        .replace(/-+\w/g, match => match.slice(-1).toUpperCase())
     const aliases = Array.isArray(as) ? as : [as]
-    for(const alias of aliases) setPropertyFromAttribute(name, type, alias)
+    for(const alias of aliases)
+        setPropertyFromAttribute(name, {...options, as: alias})
 }
 define.form = () => { current.form = true }
 define.property = (name, descriptor) => {
@@ -60,7 +62,8 @@ define.done = uuid => {
     current = null
 }
 
-function setPropertyFromAttribute(name, type, as){
+function setPropertyFromAttribute(name, options){
+    const {type, as} = options
     if(type == Boolean){
         define.property(as, {
             get(){ return this.hasAttribute(name) },
@@ -68,8 +71,16 @@ function setPropertyFromAttribute(name, type, as){
         })
     } else {
         define.property(as, {
-            get(){ return type(this.getAttribute(name)) },
-            set(value){ this.setAttribute(name, value) }
+            get(){
+                const value = this.getAttribute(name)
+                return value == null
+                    ? options.default ?? null
+                    : type(value)
+            },
+            set(value){
+                if(value == null) return this.removeAttribute(name)
+                this.setAttribute(name, value)
+            }
         })
     }
 }

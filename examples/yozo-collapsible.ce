@@ -1,0 +1,55 @@
+<template mode=closed delegates-focus>
+    <div id=container>
+        <div id=header tabindex=0>
+            <slot name=header></slot>
+        </div>
+        <div id=content>
+            <slot></slot>
+        </div>
+    </div>
+</template>
+<script>
+    define('yozo-collapsible')
+    define.attribute('open', {type: Boolean})
+
+    define.method('toggle', function(value){
+        this.open = value ?? !this.open
+    })
+
+    connect(function(){
+        const container = this[elements]('#container')
+        const content = this[elements]('#content')
+        when(this[elements]('#header')).clicks().then(() => this.toggle())
+        when(this[attributes]('open')).changes().then(async () => {
+            this[internals].ariaExpanded = this.open
+            container.style.setProperty('--height', content.scrollHeight + 'px')
+            if(this.open) await when(content).transitionends({once: true})
+            else await new Promise(requestAnimationFrame)
+            container.style.setProperty('--height', this.open ? 'auto' : '0px')
+        })
+    })
+</script>
+<style>
+    :host {
+        display: block;
+    }
+    #container {
+        --height: 0px;
+        border: 1px solid silver;
+    }
+    #header {
+        padding: .5rem 1rem;
+        background-color: white;
+    }
+    #content {
+        height: var(--height);
+        overflow: hidden;
+        transition: .3s;
+        background-color: white;
+    }
+    #content slot {
+        display: block;
+        border-top: 1px solid silver;
+        padding: .5rem 1rem;
+    }
+</style>

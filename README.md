@@ -64,13 +64,15 @@ The files you register with the `register` function are single-file custom eleme
 
 Your template will end up in the shadow DOM of the custom element. This means you can leverage everything that vanilla custom elements provide you - `<slot>`s, `part`s, simple classes and ids without having to worry about clashes, etcetera.
 
-#### shadow
+The template element itself will pass its attributes as key-value pairs to the ShadowRootInit object (the thing you'd normally pass to `attachShadow()`). That means you have these two options:
 
-The shadow roots Yozo creates are closed by default, promoting encapsulation. You can, however, explicitly specify the shadow root to be open by adding the attribute `shadow="open"` on the `<template>` element.
+#### mode
 
-#### focusable
+The shadow roots Yozo creates are "open" by default. You can, however, explicitly specify the shadow root to be closed by adding the attribute `mode="closed"` on the `<template>` element.
 
-This is a boolean attribute you can put on the `<template>` element, marking the element as focusable. Essentially, this sets the `delegatesFocus` property in the ShadowRootInit object to `true`. When an element inside the shadow DOM receives focus, it will be delegated to the shadow root's host.
+#### delegates-focus
+
+This is a boolean attribute you can put on the `<template>` element, marking the element as "delegating focus". As you'd expect, this sets the `delegatesFocus` property in the ShadowRootInit object to `true`. When an element inside the shadow DOM receives focus, it will be delegated to the shadow root's host.
 
 ### &lt;script>
 
@@ -87,9 +89,9 @@ You can call `define` as a function to provide a default custom element name. Th
 
 #### define.attribute
 
-Defining, keeping track of, and creating properties for attributes was a bit of a hassle for vanilla custom elements. Yozo makes this easy. You can register attributes to be "observed attributes" by calling e.g. `define.attribute('serial-number')`. Then, you can use `this[attributes].serialNumber` to listen to changes in the attribute - see the section on `[attributes]` for more info on this. This is not where it ends though; `define.attribute` can take a second argument, an options object, that takes either one or both the `type` key and the `as` key.
+Defining, keeping track of, and creating properties for attributes was a bit of a hassle for vanilla custom elements. Yozo makes this easy. You can register attributes to be "observed attributes" by calling e.g. `define.attribute('serial-number')`. Then, you can use `this[attributes].serialNumber` to listen to changes in the attribute - see the section on `[attributes]` for more info on this. This is not where it ends though; `define.attribute` can take a second argument, an options object, that can take a `type`, an `as`, and a `default` key.
 
-The `type` key allows you to specify the type of data the attribute will take, which should be provided as a function. Most often you'll want to use something like `Number` or `Boolean` - the constructors are great for converting strings. The value `Boolean` is treated a bit differently - this will turn the attribute in a boolean one. That is to say, the value of the attribute depends on its presence or absence rather than its value. Its usage looks something like this:
+The `type` key allows you to specify the type of data the attribute will take, which should be provided as a function. Most often you'll want to use something like `Number` or `Boolean` - the constructors are great for converting strings to their primitive equivalents. The value `Boolean` is treated a bit differently - this will turn the attribute in a boolean one. That is to say, the value of the attribute depends on its presence or absence rather than its value. Its usage looks something like this:
 ```html
 <script>
     define('shop-product')
@@ -97,7 +99,9 @@ The `type` key allows you to specify the type of data the attribute will take, w
     define.attribute('has-promo', {type: Boolean})
 </script>
 ```
-will allow you to get and set the attributes using the `.serialNumber` and the `.hasPromo` property respectively. Note that the attribute gets converted to camelCase, similar to how existing HTML elements do attribute-property pairs.
+will allow you to get and set the attributes using the `.serialNumber` and the `.hasPromo` property respectively. Note that the property for the attribute is converted to camelCase, similar to how existing HTML elements do attribute-property pairs.
+
+The `default` key lets you specify a value for when the attribute is absent. If you leave this out, the default is `null` (which is what `getAttribute` returns for attributes that don't exist). Often, when you use e.g. a string or number-type attribute, you'll want to specify this so that the property always has a value according to the type you defined. For example, `define('serial-number', {type: Number, default: 0})`.
 
 The `as` key allows you to rename the property. If, for example, you `define.attribute('serial-number', {type: 'number'})`, but you want to get and set this attribute with the `.serialnr` property rather than the `.serialNumber` property, you can specifiy `as: 'serialnr'` and Yozo will instead use that to define the property. You may also use an array of properties, so you could have both the `.serialNumber` as well as the `.serialnr` properties at the same time for the same `serial-number` attribute.
 
@@ -182,7 +186,7 @@ Yozo provides a few key things to you in the form of symbols, so that they are s
     define.attribute('checked', {type: 'boolean'})
 
     construct(function(){
-        when(this[attributes].checked).changes().then(event => {
+        when(this[attributes]('checked')).changes().then(event => {
             const {oldValue, value} = event.detail
             if(value == false) this.showRequiredMessage()
             else this.allowNextStep()
@@ -192,13 +196,22 @@ Yozo provides a few key things to you in the form of symbols, so that they are s
 ```
 As you can see in the example above, the `detail` key in the event object will contain some data about the attribute that changed; specifically, it tells you the old value (`.oldValue`), the new, current value (`.value`) and the attribute name (`.attribute`).
 
-You might also want to listen to multiple attributes at the same time. For this, Yozo provides yet another symbol, allowing you to do `this[attributes][any]`. That exposes an event target that fires a `change` event every time _any_ observed attribute changes. The `event.detail` object will contain the same data as mentioned previously.
+You might also want to listen to multiple attributes at the same time. For this, you may simply pass more attributes to the `this[attributes]` function. Yozo also allows you to use a wildcard, i.e. `this[attributes]('*')`, to listen to all attribute changes.
+
+Note that you _need_ to register the attributes using `define.attributes`. If you want to listen to arbitrary event listeners, even unregistered ones, use a mutation observer. This can be easily achieved with `when` as well:
+```js
+    define('custom-div')
+
+    construct(function(){
+        when(this).observes('mutation', {attributes: true}).then(() => {
+            console.log('attribute changed!')
+        })
+    })
+```
 
 #### [elements]
 
-You've got a template, and you probably want access to the elements in it. This symbol lets you, in two different ways. If you want to reference an element by its id, you may just use a property accessor. For example, if have an element with `id="menu-button"`, you can access that element using `this[elements].menuButton`. Note that Yozo transforms the kebab-case id names to camelCase for convenience. These elements will also be cached, so you don't have to worry about that as elements with ids are not likely to change. Sometimes though, you'll want to find an element using a selector, like you would do with `querySelector`. You can do this by simply calling `this[elements]` as a function, something like `this[elements]('.list > .item[data-id=23]')`. These are not cached.
-
-Lastly, you may want to do a `querySelectorAll` - you can do this by calling `this[elements].all('.list > .item')`. Note that this means you cannot reference elements with `id="all"` using `this[elements].all`!
+You've got a template, and you probably want access to the elements in it. This symbol lets you, by exposing the `querySelector` on the shadow root to you without you having to write it all out. You pass the selector to the `this[elements]` function directly, e.g. `this[elements]('button.btn > span')`. You also get a `querySelectorAll` variant, of course: `this[elements].all('button.btn > span')`. This returns an array of elements rather than a `NodeList`, allowing you to immediately use methods like `.filter` or `.map` on the result without having to use the spread operator on the result.
 
 #### [internals]
 
