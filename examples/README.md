@@ -2,6 +2,12 @@
 
 Here, you can find a handful of examples using Yozo to write basic UI elements. In order to make these useful as the first components one may look at, they're all fairly small (<100 lines) Note that while these work as-is, they may lack certain accessability features. While they are a solid baseline for a component, you should probably write your components based on your own specific needs.
 
+- [`yozo-dropdown`](#dropdown)
+- [`yozo-switch`](#switch)
+- [`yozo-collapsible`](#collapsible)
+- [`yozo-slider`](#slide)
+
+<a name="dropdown"></a>
 ## `yozo-dropdown`
 
  - [x] Form control
@@ -21,6 +27,7 @@ Example usage:
 </yozo-dropdown>
 ```
 
+<a name="switch"></a>
 ## `yozo-switch`
 
  - [x] Form control
@@ -34,6 +41,7 @@ Example usage:
 <yozo-switch checked></yozo-switch>
 ```
 
+<a name="collapsible"></a>
 ## `yozo-collapsible`
 
 | attribute | property | function |
@@ -51,6 +59,7 @@ Example usage:
 </yozo-collapsible>
 ```
 
+<a name="slider"></a>
 ## `yozo-slider`
 
  - [x] Form control
