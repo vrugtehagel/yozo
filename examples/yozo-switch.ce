@@ -63,9 +63,7 @@
         border-radius: 50%;
         transition: inherit;
     }
-    :host([checked]) #track {
-        color: royalblue;
-    }
+    :host([checked]) #track { color: royalblue; }
     :host([checked]) #thumb {
         left: 100%;
         transform: translateX(-116.67%);

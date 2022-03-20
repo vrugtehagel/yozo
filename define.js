@@ -28,7 +28,7 @@ define[secret].newContext = () => ({
 })
 
 define.context = uuid => {
-    if(current) return
+    if(current) return console.log({uuid})
     inProgress.add(uuid)
     queueMicrotask(() => {
         if(inProgress.has(uuid)) throw Error('Yozo: top level await not allowed in custom element definitions')
@@ -55,11 +55,12 @@ define.construct = fn => { current.construct = fn }
 define.connect = fn => { current.connect = reversible(fn) }
 define.disconnect = fn => { current.disconnect = fn }
 
-define.done = uuid => {
+define.done = (uuid, error) => {
     if(!current) return
     inProgress.delete(uuid)
     map.set(uuid, current)
     current = null
+    if(error) throw error
 }
 
 function setPropertyFromAttribute(name, options){

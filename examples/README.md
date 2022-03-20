@@ -2,13 +2,30 @@
 
 Here, you can find a handful of examples using Yozo to write basic UI elements. In order to make these useful as the first components one may look at, they're all fairly small (<100 lines) Note that while these work as-is, they may lack certain accessability features. While they are a solid baseline for a component, you should probably write your components based on your own specific needs.
 
+- [`yozo-counter`](#counter)
 - [`yozo-dropdown`](#dropdown)
 - [`yozo-switch`](#switch)
 - [`yozo-collapsible`](#collapsible)
 - [`yozo-slider`](#slide)
 
+<a name="counter"></a>
+## `yozo-counter`
+
+The most basic component example you see everywhere. Click a button and see the number go up.
+
+| attribute | property | function |
+------------|----------|----------|
+| `count` | `count` | The current number of times the user's clicked. |
+
+Example usage:
+```html
+<yozo-counter></yozo-counter>
+```
+
 <a name="dropdown"></a>
 ## `yozo-dropdown`
+
+A custom implementation for a `<select>` element.
 
  - [x] Form control
 
@@ -30,6 +47,8 @@ Example usage:
 <a name="switch"></a>
 ## `yozo-switch`
 
+Like a checkbox, but it looks like a switch.
+
  - [x] Form control
 
 | attribute | property | function |
@@ -43,6 +62,8 @@ Example usage:
 
 <a name="collapsible"></a>
 ## `yozo-collapsible`
+
+A simple collapsible element, similar to the `<detail>` element in HTML.
 
 | attribute | property | function |
 ------------|----------|----------|
@@ -61,6 +82,8 @@ Example usage:
 
 <a name="slider"></a>
 ## `yozo-slider`
+
+A custom implementation for a slider, like `<input type="range">`
 
  - [x] Form control
 

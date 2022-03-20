@@ -6,7 +6,6 @@ Yozo leverages custom elements and shadow DOM to achieve simple, encapsulated co
 
 Not familiar with custom elements and/or shadow DOM? MDN has some great articles on the subjects; I recommend you read up on these two topics before using Yozo. [This article](https://developer.mozilla.org/en-US/docs/Web/Web_Components) covers most of it.
 
-<!-- Just want to see some code in action? Here's an [example](). -->
 - [Installation](#installation)
 - [What do you get?](#what-do-you-get)
   * [`register`](#register)

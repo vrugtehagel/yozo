@@ -82,20 +82,25 @@ export default async function register(url, {as} = {}){
 
 }
 
-
 async function run(code){
     const uuid = crypto.randomUUID()
-    const getURL = file => new URL(file, import.meta.url)
-    const blob = new Blob([
-        `import { define } from "${getURL('./define.js')}";\n` + 
-        `import { when } from "${getURL('./index.js')}";\n` + 
-        `const { internals, attributes, any, elements } = define.context("${uuid}");\n` +
-        `const { construct, connect, disconnect } = define;\n` +
-        code +
-        `\ndefine.done("${uuid}");\n`
-    ], {type: 'application/javascript'})
+    const type = 'application/javascript'
+    const blob = new Blob([getWrapper(code, uuid)], {type})
     const objectURL = URL.createObjectURL(blob)
     await import(objectURL)
     URL.revokeObjectURL(objectURL)
     return define[secret].getByUUID(uuid)
 }
+
+const getWrapper = (code, uuid) => `
+import { define } from "${new URL('./define.js', import.meta.url)}";
+import { when } from "${new URL('./index.js', import.meta.url)}";
+const { internals, attributes, any, elements } = define.context('${uuid}');
+const { construct, connect, disconnect } = define;
+try {
+
+${code}
+
+} catch (error) { define.done('${uuid}', error); }
+define.done('${uuid}');
+`.slice(1)
