@@ -1,5 +1,6 @@
 import { reversible } from './index.js'
 
+export { when } from './index.js'
 export const secret = Symbol('secret')
 export const define = name => current.name = name
 

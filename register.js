@@ -93,8 +93,7 @@ async function run(code){
 }
 
 const getWrapper = (code, uuid) => `
-import { define } from "${new URL('./define.js', import.meta.url)}";
-import { when } from "${new URL('./index.js', import.meta.url)}";
+import { define, when } from "${define[secret].url}";
 const { internals, attributes, any, elements } = define.context('${uuid}');
 const { construct, connect, disconnect } = define;
 try {

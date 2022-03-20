@@ -12,6 +12,7 @@ Not familiar with custom elements and/or shadow DOM? MDN has some great articles
   * [`stateify`](#stateify)
   * [`reversible`, `until`](#reversibles)
   * [`when`](#when)
+  * [`define` (!)](#exports-define)
 - [In custom element definitions](#in-custom-element-definitions)
   * [`<template>`](#template)
     * [`mode`](#template-mode)
@@ -73,6 +74,11 @@ Available as a standalone package as well, see [reversibles](https://github.com/
 ### `when`
 
 A function from the library provided by `reversibles`, see [when](https://github.com/vrugtehagel/reversibles/tree/main/library/when).
+
+<a name="exports-define"></a>
+### `define` (!)
+
+**NOT INTENDED FOR DIRECT USE.** This is a function intended to be imported in the custom element definitions. Yozo already imports this into your definitions automatically, so you should never have to use this. Using it may result in errors.
 
 <a name="in-custom-element-definitions"></a>
 ## In custom element definitions
@@ -269,4 +275,4 @@ Because you're working with custom elements, styles are scoped. This means that 
 
 ## Notes
 
- - (Mostly so I don't forget this,) to minify, install `esbuild` and run `deno bundle ./index.js | esbuild --minify > ./index.min.js` in the project's root.
+ - (Mostly so I don't forget this,) to minify, install `esbuild` and run `deno bundle ./index.js | esbuild --minify > ./index.min.js` in the project's root. Then, find the bit where it hardcoded a `file://` url and replace that bit so it reads from `import.meta`.
