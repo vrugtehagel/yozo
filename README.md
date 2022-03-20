@@ -14,10 +14,10 @@ Not familiar with custom elements and/or shadow DOM? MDN has some great articles
   * [`reversible`, `until`](#reversibles)
   * [`when`](#when)
 - [In custom element definitions](#in-custom-element-definitions)
-  * [`&lt;template>`](#template)
+  * [`<template>`](#template)
     * [`mode`](#template-mode)
     * [`delegates-focus`](#template-delegates-focus)
-  * [`&lt;script>`](#script)
+  * [`<script>`](#script)
     * [`define`](#define)
     * [`define.attribute`](#define-attribute)
     * [`define.method`](#define-method)
@@ -29,7 +29,7 @@ Not familiar with custom elements and/or shadow DOM? MDN has some great articles
     * [`[attributes]`](#symbol-attributes)
     * [`[elements]`](#symbol-elements)
     * [`[internals]`](#symbol-internals)
-  * [`&lt;style>`](#style)
+  * [`<style>`](#style)
 
 
 <a name="installation"></a>
@@ -49,7 +49,7 @@ Note: you don't have to use deno for this to work!
 Now, what does Yozo actually get you? Well, the package itself only exports a handful of things. The big one is `register`; that allows you to define your custom elements.
 
 <a name="register"></a>
-### register
+### `register`
 
 This function takes one or two arguments. The first is a URL (either a string or URL object), pointing to your custom element's definition. The second is an optional options object. It may contain an `as` key, with a custom element name as value, that the component will be registered as. This has a higher precedence than the name defined in the custom element's definition! This is mostly useful for renaming third-party components. Your registration will look more-or-less like this:
 ```js
@@ -61,17 +61,17 @@ register('https://example.com/custom-elements/toggle-switch.ce', {as: 'custom-sw
 Note that importing the same URL multiple times, even with different options objects, doesn't register an element multiple times. A custom element will be registered only once. If you really need to define multiple custom elements with identical definitions, simply append some query parameters to the file URL.
 
 <a name="stateify"></a>
-### stateify
+### `stateify`
 
 Available as a standalone package as well, see [stateify](https://github.com/vrugtehagel/stateify).
 
 <a name="reversibles"></a>
-### reversible, until
+### `reversible`, `until`
 
 Available as a standalone package as well, see [reversibles](https://github.com/vrugtehagel/reversibles).
 
 <a name="when"></a>
-### when
+### `when`
 
 A function from the library provided by `reversibles`, see [when](https://github.com/vrugtehagel/reversibles/tree/main/library/when).
 
@@ -92,29 +92,29 @@ The files you register with the `register` function are single-file custom eleme
 ```
 
 <a name="template"></a>
-### &lt;template>
+### `<template>`
 
 Your template will end up in the shadow DOM of the custom element. This means you can leverage everything that vanilla custom elements provide you - `<slot>`s, `part`s, simple classes and ids without having to worry about clashes, etcetera.
 
 The template element itself will pass its attributes as key-value pairs to the shadow root's initialization object (the thing you'd normally pass to [`attachShadow()`](https://developer.mozilla.org/en-US/docs/Web/API/Element/attachShadow)). That means you have these two options:
 
 <a name="template-mode"></a>
-#### mode
+#### `mode`
 
 The shadow roots Yozo creates are "open" by default. You can, however, explicitly specify the shadow root to be closed by adding the attribute `mode="closed"` on the `<template>` element.
 
 <a name="template-delegates-focus"></a>
-#### delegates-focus
+#### `delegates-focus`
 
 This is a boolean attribute you can put on the `<template>` element, marking the element as "delegating focus". As you'd expect, this sets the [`delegatesFocus`](https://developer.mozilla.org/en-US/docs/Web/API/ShadowRoot/delegatesFocus) property in the initialization object to `true`. When an element inside the shadow DOM receives focus, it will be delegated to the shadow root's host.
 
 <a name="script"></a>
-### &lt;script>
+### `<script>`
 
 The script tag is where the magic happens. The code you write here is a JavaScript module, which means you can `import` things. Yozo provides a few "globals" for you to use - essentially, these are variables that are always available to you in the context of a custom element definition, but they're not actually on the `window`. They are being imported the same way you could import stuff, but you don't actually have to write the import statement. Also, while you can normally use top-level `await` expressions in modules, this is not allowed in custom element definitions.
 
 <a name="define"></a>
-#### define
+#### `define`
 
 You can call `define` as a function to provide a default custom element name. These may be overwritten using the options in the `register` function, but if you're writing the components for use in your own project, you will probably want to name them this way. For example:
 ```html
@@ -124,7 +124,7 @@ You can call `define` as a function to provide a default custom element name. Th
 ```
 
 <a name="define-attribute"></a>
-#### define.attribute
+#### `define.attribute`
 
 Defining, keeping track of, and creating properties for attributes was a bit of a hassle for vanilla custom elements. Yozo makes this easy. You can register attributes to be "observed attributes" by calling e.g. `define.attribute('serial-number')`. Then, you can use `this[attributes]('serial-number)` to listen to changes in the attribute - see the section on `[attributes]` for more info on this. This is not where it ends though; `define.attribute` can take a second argument, an options object, that can take a `type`, an `as`, and a `default` key.
 
@@ -145,7 +145,7 @@ The `default` key lets you specify a value for when the attribute is absent. If 
 For more complex getters and setters for attributes, use `define.property` instead.
 
 <a name="define-method"></a>
-#### define.method
+#### `define.method`
 
 With both the lifecycle callbacks as well as the introduction of private methods, vanilla custom element definitions can become hard to oversee. What are the methods exposed to the outside worlds, and what are the methods intended for internal logic? Yozo makes this a bit clearer. You define your methods explicitly by calling `define.method`. It takes a string or symbol as first argument (the name of the method), and a function (the method itself) as second argument. Something like so:
 ```html
@@ -160,7 +160,7 @@ With both the lifecycle callbacks as well as the introduction of private methods
 Be mindful to not use arrow functions in these definitions; they're methods, and so they'll probably need the `this` value (referring to the custom element itself). When using arrow functions, you will not have access to `this`.
 
 <a name="define-property"></a>
-#### define.property
+#### `define.property`
 
 This function is very similar to `define.method`, but instead of methods, it allows you to define properties. The first argument it takes is the property name (either a string or a symbol) and the second argument may be either a function, if it is just a getter, or a complete descriptor object a la [`Object.defineProperty`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty). Like with `define.method`, make sure to not use arrow functions if you need access to the custom element instance:
 ```html
@@ -184,17 +184,17 @@ This function is very similar to `define.method`, but instead of methods, it all
 ```
 
 <a name="define-form"></a>
-#### define.form
+#### `define.form`
 
 Custom elements may be form-associated, and this function allows you to specify this. Simply call it once, with no arguments, to opt-in to this behavior. Then, you can use `this[internals]` to e.g. set the underlying value for use in `<form>` elements. See the section on `[internals]` for more info.
 
 <a name="construct"></a>
-#### construct
+#### `construct`
 
 This is analogous to the constructor for custom elements. With Yozo though, you don't need to call `super()`, attach your shadow DOM and template, or your CSS; Yozo does all of that for you, so that you can focus on the logic. Here, set up everything that needs to be alive for the entire duration of the component, whether connected to the document or not. For example, loading some data into the component, or setting up some of the internal state for the component.
 
 <a name="connect"></a>
-#### connect
+#### `connect`
 
 This is equivalent to the `connectedCallback` in custom elements. However, Yozo will automatically make the function your provide here a reversible - that means that you can just set up your component using reversible functions such as `when`, and Yozo will automatically take everything down for you when the element disconnects, so that you don't have to define a `disconnect` callback at all. For example:
 ```html
@@ -216,12 +216,12 @@ Yozo will automatically detach the event listener when the element disconnects f
 Note that you should use `function(){}` over arrow functions if you want the `this` keyword to be available (and you probably want that) - though, you _can_ use array functions if you want to, as Yozo provides the `this` value as first argument. This means you can use `connect(instance => { console.log(instance) })` as well as `connect(function(){ console.log(this) })`.
 
 <a name="disconnect"></a>
-#### disconnect
+#### `disconnect`
 
 Generally, you won't (shouldn't) need this. `connect` should automatically take everything down. Howver, if you want to, you may use this callback to take some things down manually. Note that you may be better off by writing a generic reversible helper so you can use it in other components as well without the mental overhead of a `disconnect` callback.
 
 <a name="symbol-attributes"></a>
-#### [attributes]
+#### `[attributes]`
 
 Yozo provides a few key things to you in the form of symbols, so that they are still shielded from the outside. The `[attributes]` symbol exposes event targets for the attributes you registered. They will fire the `change` event whenever that attribute changes. For example:
 ```html
@@ -254,16 +254,16 @@ Note that you _need_ to register the attributes using `define.attributes` in ord
 ```
 
 <a name="symbol-elements"></a>
-#### [elements]
+#### `[elements]`
 
 You've got a template, and you probably want access to the elements in it. This symbol lets you do so, by exposing the `querySelector` on the shadow root to you without you having to write it all out. You pass the selector to the `this[elements]` function directly, e.g. `this[elements]('button.btn > span')`. You also get a `querySelectorAll` variant, of course: `this[elements].all('button.btn > span')`. This returns an array of elements rather than a `NodeList`, allowing you to immediately use methods like `.filter` or `.map` on the result without having to use the spread operator on the result.
 
 <a name="symbol-internals"></a>
-#### [internals]
+#### `[internals]`
 
 This exposes the element [internals](https://developer.mozilla.org/en-US/docs/Web/API/ElementInternals), including the shadowRoot (closed or not). It contains the object returned by [`attachInternals()`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/attachInternals). If the element has been defined to be a form control (through `define.form()`) this also exposes the features related to that such as `setFormValue()`.
 
 <a name="style"></a>
-### &lt;style>
+### `<style>`
 
 Because you're working with custom elements, styles are scoped. This means that the styles you write here only apply to the elements in your `<template>` and don't bleed out to other elements. To make things a little nicer to look at, Yozo will not directly put the `<style>` element in the template; instead, it creates a stylesheet object and puts it onto the shadow root. That way, when inspecting elements, you won't have to look at walls of CSS.
