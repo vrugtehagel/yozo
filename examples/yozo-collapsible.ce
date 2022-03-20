@@ -26,7 +26,6 @@
             if(this.open)
                 await when(content).transitionends({once: true}).timeout(5000)
             else await new Promise(requestAnimationFrame)
-            console.log('awaited')
             container.style.setProperty('--height', this.open ? 'auto' : '0px')
         })
     })
