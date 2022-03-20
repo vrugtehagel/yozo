@@ -266,3 +266,7 @@ This exposes the element [internals](https://developer.mozilla.org/en-US/docs/We
 ### `<style>`
 
 Because you're working with custom elements, styles are scoped. This means that the styles you write here only apply to the elements in your `<template>` and don't bleed out to other elements. To make things a little nicer to look at, Yozo will not directly put the `<style>` element in the template; instead, it creates a stylesheet object and puts it onto the shadow root. That way, when inspecting elements, you won't have to look at walls of CSS.
+
+## Notes
+
+ - (Mostly so I don't forget this,) to minify, install `esbuild` and run `deno bundle ./index.js | esbuild --minify > ./index.min.js` in the project's root.

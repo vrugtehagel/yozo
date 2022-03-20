@@ -23,8 +23,10 @@
         when(this[attributes]('open')).changes().then(async () => {
             this[internals].ariaExpanded = this.open
             container.style.setProperty('--height', content.scrollHeight + 'px')
-            if(this.open) await when(content).transitionends({once: true})
+            if(this.open)
+                await when(content).transitionends({once: true}).timeout(5000)
             else await new Promise(requestAnimationFrame)
+            console.log('awaited')
             container.style.setProperty('--height', this.open ? 'auto' : '0px')
         })
     })
