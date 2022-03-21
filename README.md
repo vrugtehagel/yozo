@@ -55,15 +55,10 @@ This function takes one or two arguments. The first is a URL (either a string or
 ```js
 import { register } from 'https://deno.land/x/yozo'
 
-register('./path/to/custom-dropdown.ce')
-register('https://example.com/custom-elements/toggle-switch.ce', {as: 'custom-switch'})
+register('./path/to/custom-dropdown.yz')
+register('https://example.com/custom-elements/toggle-switch.yz', {as: 'custom-switch'})
 ```
 Note that importing the same URL multiple times, even with different options objects, doesn't register an element multiple times. A custom element will be registered only once. If you really need to define multiple custom elements with identical definitions, simply append some query parameters to the file URL.
-
-<a name="stateify"></a>
-### `stateify`
-
-Available as a standalone package as well, see [stateify](https://github.com/vrugtehagel/stateify).
 
 <a name="reversibles"></a>
 ### `reversible`, `until`
@@ -83,7 +78,7 @@ A function from the library provided by `reversibles`, see [when](https://github
 <a name="in-custom-element-definitions"></a>
 ## In custom element definitions
 
-The files you register with the `register` function are single-file custom element definitions. They contain the HTML, the logic and the styles needed for a single custom element. The file extension, while Yozo recommends `.ce`, really does not matter. A good alternative is just `.html`, since the custom element definitions are valid HTML, and so syntax highlighting will work out of the box. However, they're not valid HTML documents (just a part of a document), and really, they don't make a whole lot of sense without Yozo, so making a distinction may be desirable. Anyway, your file will look roughly like
+The files you register with the `register` function are single-file custom element definitions. They contain the HTML, the logic and the styles needed for a single custom element. The file extension, while Yozo recommends `.yz`, really does not matter. A good alternative is just `.html`, since the custom element definitions are valid HTML, and so syntax highlighting will work out of the box. However, they're not valid HTML documents (just a part of a document), and really, they don't make a whole lot of sense without Yozo, so making a distinction may be desirable. Anyway, your file will look roughly like
 ```html
 <template>
     <!-- your HTML -->
