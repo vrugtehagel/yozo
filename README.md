@@ -2,14 +2,15 @@
 
 A small library enabling you to write high-quality, robust custom elements quickly and easily.
 
-Yozo leverages custom elements and shadow DOM to achieve simple, encapsulated component-based front-end architectures. On top of allowing you to write single-file components with friendly API's, it provides a few functions to make your life easier. Some of them being used by Yozo itself, some specifically designed to have nice synergy with Yozo.
+Yozo leverages custom elements and shadow DOM to achieve simple, encapsulated component-based front-end architectures. On top of allowing you to write single-file components with friendly API's, it provides access to a [`reversibles`](https://github.com/vrugtehagel/reversibles) as well, which it uses internally, so you can get the most bang from your buck.
+
+Consider using [`stateify`](https://github.com/vrugtehagel/stateify) as well! It's specifically designed to have great synergy with Yozo, and provides you with a powerful yet simple to understand way to do state management.
 
 Not familiar with custom elements and/or shadow DOM? MDN has some great articles on the subjects; I recommend you read up on these two topics before using Yozo. [This article](https://developer.mozilla.org/en-US/docs/Web/Web_Components) covers most of it.
 
 - [Installation](#installation)
 - [What do you get?](#what-do-you-get)
   * [`register`](#register)
-  * [`stateify`](#stateify)
   * [`reversible`, `until`](#reversibles)
   * [`when`](#when)
   * [`define` (!)](#exports-define)
