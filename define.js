@@ -12,6 +12,7 @@ define[secret] = {}
 define[secret].getByUUID = uuid => {
     const definition = map.get(uuid)
     map.delete(uuid)
+    current = null
     return definition
 }
 define[secret].newContext = () => ({
@@ -29,11 +30,8 @@ define[secret].newContext = () => ({
 })
 
 define.context = uuid => {
-    if(current) return console.log({uuid})
+    if(current) throw Error(`Yozo: cannot use top-level await in custom element definition. ${current.name ? `Check "${current.name}", it's probably in there.` : ''}`)
     inProgress.add(uuid)
-    queueMicrotask(() => {
-        if(inProgress.has(uuid)) throw Error('Yozo: top level await not allowed in custom element definitions')
-    })
     current = define[secret].newContext()
     return current.exposed
 }

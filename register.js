@@ -16,6 +16,7 @@ export default async function register(url, {as} = {}){
     const elementCache = new Map()
     const attributeTargets = new Map()
     const definition = await run(script.textContent)
+    if(!definition) return
     const {exposed, observed, form} = definition
     const {internals, attributes, any, elements} = exposed
 
@@ -87,19 +88,21 @@ async function run(code){
     const type = 'application/javascript'
     const blob = new Blob([getWrapper(code, uuid)], {type})
     const objectURL = URL.createObjectURL(blob)
+    let error
     await import(objectURL)
+        .catch(message => error = message)
     URL.revokeObjectURL(objectURL)
-    return define[secret].getByUUID(uuid)
+    const definition = define[secret].getByUUID(uuid)
+    if(error) throw error
+    return definition
 }
 
 const getWrapper = (code, uuid) => `
 import { define, when } from "${define[secret].url}";
 const { internals, attributes, any, elements } = define.context('${uuid}');
 const { construct, connect, disconnect } = define;
-try {
 
 ${code}
 
-} catch (error) { define.done('${uuid}', error); }
 define.done('${uuid}');
 `.slice(1)
