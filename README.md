@@ -38,7 +38,7 @@ Not familiar with custom elements and/or shadow DOM? MDN has some great articles
 
 No installation is required! No configuration nonsense, just a simple
 ```js
-import * as yozo from 'https://deno.land/x/yozo'
+import { /* ... */ } from 'https://deno.land/x/yozo'
 ```
 and you're good to go! You can also specify Yozo in your importmap, so you can simply import from `'yozo'` directly.
 
