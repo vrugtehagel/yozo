@@ -270,4 +270,4 @@ Because you're working with custom elements, styles are scoped. This means that 
 
 ## Notes
 
- - (Mostly so I don't forget this,) to minify, install `esbuild` and run `deno bundle ./index.js | esbuild --minify > ./index.min.js` in the project's root. Then, find the bit where it hardcoded a `file://` url and replace that bit so it reads from `import.meta`. Also, shorten the error messages (`Yozo: No top-level await`).
+ - (Mostly so I don't forget this,) to minify, install `esbuild` and run `deno bundle ./index.js | esbuild --minify > ./index.min.js` in the project's root. Then, find the bit where it hardcoded a `file://` url and replace that bit so it reads from `import.meta`.
