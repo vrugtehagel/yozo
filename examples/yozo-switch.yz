@@ -1,4 +1,4 @@
-<template mode=closed delegates-focus>
+<template>
     <div id=container tabindex=0>
         <div id=track part=track></div>
         <div id=thumb part=thumb></div>
@@ -6,8 +6,9 @@
 </template>
 <script>
     define('yozo-switch')
-    define.form()
+    define.shadow({mode: 'closed', delegatesFocus: true})
     define.attribute('checked', {type: Boolean, as: ['checked', 'value']})
+    define.form()
 
     define.property('form', function(){ return this[internals].form })
     define.method('toggle', function(value){

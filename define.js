@@ -2,7 +2,8 @@ import { reversible } from './index.js'
 
 export { when } from './index.js'
 export const secret = Symbol('secret')
-export const define = name => current.name = name
+export const define = (name, options = {}) =>
+    Object.assign(current, {name, options})
 
 const inProgress = new Set()
 const map = new Map()
@@ -20,7 +21,6 @@ define[secret].newContext = () => ({
     observed: [],
     properties: [],
     methods: [],
-    form: false,
     exposed: {
         internals: Symbol('internals'),
         attributes: Symbol('attributes'),
@@ -30,7 +30,7 @@ define[secret].newContext = () => ({
 })
 
 define.context = uuid => {
-    if(current) throw Error(`Yozo: cannot use top-level await in custom element definition. ${current.name ? `Check "${current.name}", it's probably in there.` : ''}`)
+    if(current) throw Error(`Yozo: no top-level await (${current.name ?? '?'})`)
     inProgress.add(uuid)
     current = define[secret].newContext()
     return current.exposed
@@ -44,6 +44,7 @@ define.attribute = (name, options = {}) => {
     for(const alias of aliases)
         setPropertyFromAttribute(name, {...options, as: alias})
 }
+define.shadow = options => { current.shadow = options }
 define.form = () => { current.form = true }
 define.property = (name, descriptor) => {
     if(typeof descriptor == 'function') descriptor = {get: descriptor}

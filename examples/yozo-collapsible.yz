@@ -1,4 +1,4 @@
-<template mode=closed delegates-focus>
+<template>
     <div id=container>
         <div id=header tabindex=0>
             <slot name=header></slot>
@@ -10,6 +10,7 @@
 </template>
 <script>
     define('yozo-collapsible')
+    define.shadow({mode: 'closed'})
     define.attribute('open', {type: Boolean})
 
     define.method('toggle', function(value){

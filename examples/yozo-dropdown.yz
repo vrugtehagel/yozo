@@ -1,4 +1,4 @@
-<template mode=closed delegates-focus>
+<template>
     <div id=container tabindex=0>
         <div id=selected part=selected></div>
         <div id=options part=dropdown>
@@ -8,6 +8,7 @@
 </template>
 <script>
     define('yozo-dropdown')
+    define.shadow({mode: 'closed', delegatesFocus: true})
     define.attribute('value', {type: String, default: ''})
     define.attribute('open', {type: Boolean})
     define.attribute('placeholder', {type: String, default: ''})

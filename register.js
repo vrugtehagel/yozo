@@ -1,6 +1,20 @@
 import { define, secret } from './define.js'
 
 const registered = new Set()
+let done
+const pending = new Set()
+const setDefined = root => {
+    if(!root) return
+    for(const {localName} of root.querySelectorAll(':not(:defined)')){
+        const promise = customElements.whenDefined(localName).then(() => {
+            pending.delete(promise)
+            if(pending.size == 0) done()
+        })
+        pending.add(promise)
+    }
+}
+setDefined(document)
+register.done = new Promise(resolve => done = resolve)
 export default async function register(url, {as} = {}){
     if(registered.has(url.toString())) return
     const response = await fetch(url)
@@ -10,21 +24,24 @@ export default async function register(url, {as} = {}){
     const template = dom.querySelector('template')
     const script = dom.querySelector('script')
     const style = dom.querySelector('style')
-    const mode = template.getAttribute('mode') ?? 'open'
-    const delegatesFocus = template.hasAttribute('delegates-focus')
     const sheet = style ? new CSSStyleSheet : null
     const elementCache = new Map()
     const attributeTargets = new Map()
     const definition = await run(script.textContent)
     if(!definition) return
-    const {exposed, observed, form} = definition
+    const {exposed, observed, form, options} = definition
     const {internals, attributes, any, elements} = exposed
+    as ??= definition.name
 
+    const is = options.extends
+    const parent = is
+        ? document.createElement(is).constructor
+        : HTMLElement
+    if(!(is || 'shadow' in definition))
+        definition.shadow = {mode: 'open'}
     sheet?.replace(style.textContent)
-    template.removeAttribute('mode')
-    template.removeAttribute('delegates-focus')
 
-    const body = class extends HTMLElement {
+    const body = class extends parent {
         #call = null
         ;[attributes] = (...names) => {
             const target = new EventTarget
@@ -38,10 +55,19 @@ export default async function register(url, {as} = {}){
 
         constructor(){
             super()
-            const shadow = this.attachShadow({mode, delegatesFocus})
-            shadow.append(template.content.cloneNode(true))
-            if(sheet) shadow.adoptedStyleSheets = [sheet]
-            this[internals] = this.attachInternals()
+            let templateRoot, styleRoot
+            if(definition.shadow){
+                const shadow = this.attachShadow(definition.shadow)
+                templateRoot = shadow
+                styleRoot = shadow
+            } else {
+                templateRoot = this
+                styleRoot = document
+            }
+
+            if(sheet) styleRoot.adoptedStyleSheets = [...styleRoot.adoptedStyleSheets, sheet]
+            if(template) templateRoot.append(template.content.cloneNode(true))
+            if(!is) this[internals] = this.attachInternals()
             definition.construct?.call(this, this)
         }
 
@@ -79,8 +105,8 @@ export default async function register(url, {as} = {}){
     Object.defineProperty(body, 'formAssociated', {get: () => form})
     Object.defineProperty(body, 'observedAttributes', {get: () => observed})
 
-    customElements.define(as ?? definition.name, body)
-
+    customElements.define(as, body, options)
+    setDefined(template?.content)
 }
 
 async function run(code){
@@ -97,12 +123,12 @@ async function run(code){
     return definition
 }
 
-const getWrapper = (code, uuid) => `
-import { define, when } from "${define[secret].url}";
+const getWrapper = (code, uuid) =>
+`import { define, when } from "${define[secret].url}";
 const { internals, attributes, any, elements } = define.context('${uuid}');
 const { construct, connect, disconnect } = define;
 
 ${code}
 
 define.done('${uuid}');
-`.slice(1)
+`

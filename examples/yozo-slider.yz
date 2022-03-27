@@ -1,4 +1,4 @@
-<template mode=closed delegates-focus>
+<template>
     <div id=container tabindex=0>
         <div id=track part=track></div>
         <div id=thumb part=thumb></div>
@@ -6,6 +6,7 @@
 </template>
 <script>
     define('yozo-slider')
+    define.shadow({mode: 'closed', delegatesFocus: true})
     define.attribute('value')
     define.attribute('start', {type: Number, default: 0})
     define.attribute('end', {type: Number, default: 100})

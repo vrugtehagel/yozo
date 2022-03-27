@@ -16,8 +16,6 @@ Not familiar with custom elements and/or shadow DOM? MDN has some great articles
   * [`define` (!)](#exports-define)
 - [In custom element definitions](#in-custom-element-definitions)
   * [`<template>`](#template)
-    * [`mode`](#template-mode)
-    * [`delegates-focus`](#template-delegates-focus)
   * [`<script>`](#script)
     * [`define`](#define)
     * [`define.attribute`](#define-attribute)
@@ -95,19 +93,7 @@ The files you register with the `register` function are single-file custom eleme
 <a name="template"></a>
 ### `<template>`
 
-Your template will end up in the shadow DOM of the custom element. This means you can leverage everything that vanilla custom elements provide you - `<slot>`s, `part`s, simple classes and ids without having to worry about clashes, etcetera.
-
-The template element itself will pass its attributes as key-value pairs to the shadow root's initialization object (the thing you'd normally pass to [`attachShadow()`](https://developer.mozilla.org/en-US/docs/Web/API/Element/attachShadow)). That means you have these two options:
-
-<a name="template-mode"></a>
-#### `mode`
-
-The shadow roots Yozo creates are "open" by default. You can, however, explicitly specify the shadow root to be closed by adding the attribute `mode="closed"` on the `<template>` element.
-
-<a name="template-delegates-focus"></a>
-#### `delegates-focus`
-
-This is a boolean attribute you can put on the `<template>` element, marking the element as "delegating focus". As you'd expect, this sets the [`delegatesFocus`](https://developer.mozilla.org/en-US/docs/Web/API/ShadowRoot/delegatesFocus) property in the initialization object to `true`. When an element inside the shadow DOM receives focus, it will be delegated to the shadow root's host.
+The contents of your template will end up in the shadow DOM of the custom element. This means you can leverage everything that vanilla custom elements provide you - `<slot>`s, `part`s, simple classes and ids without having to worry about clashes, etcetera. A template is not required; if not provided, a shadow root will still be created, but it will be empty.
 
 <a name="script"></a>
 ### `<script>`
@@ -123,6 +109,19 @@ You can call `define` as a function to provide a default custom element name. Th
     define('custom-dropdown')
 </script>
 ```
+You can also define customized built-in elements this way, with the second, optional argument to `define`. You may pass an object with an `extends` key, which will be passed as third argument to `customElements.define`. There are a few key differences in how Yozo behaves when defining customized built-in elements. In particular, it will not attach a shadow root by default anymore, since most built-in elements don't allow it. The lack of a shadow root has a few implications, see [`define.shadow`](#define-shadow) for more details.
+
+<a name="define-shadow"></a>
+#### `define.shadow`
+
+This allows you to customize what type of shadow root you'd like. By default, Yozo will call `attachShadow({mode: 'open'})` (unless defining a customized built-in element), but you may overwrite this by calling `define.shadow` with the same options argument as you'd be passing to `attachShadow`. For example,
+```html
+<script>
+    define('my-form-element')
+    define.shadow({mode: 'closed', delegatesFocus: true})
+</script>
+```
+If you don't want a shadow, you may call `define.shadow(null)` (or anything falsey). If you specify that you don't want a shadow root, or you're defining a customized built-in element without a shadow root, then the template's content will be appended to the element itself. The styles, if defined, will go into the global scope.
 
 <a name="define-attribute"></a>
 #### `define.attribute`
@@ -271,4 +270,4 @@ Because you're working with custom elements, styles are scoped. This means that 
 
 ## Notes
 
- - (Mostly so I don't forget this,) to minify, install `esbuild` and run `deno bundle ./index.js | esbuild --minify > ./index.min.js` in the project's root. Then, find the bit where it hardcoded a `file://` url and replace that bit so it reads from `import.meta`.
+ - (Mostly so I don't forget this,) to minify, install `esbuild` and run `deno bundle ./index.js | esbuild --minify > ./index.min.js` in the project's root. Then, find the bit where it hardcoded a `file://` url and replace that bit so it reads from `import.meta`. Also, shorten the error messages (`Yozo: No top-level await`).
