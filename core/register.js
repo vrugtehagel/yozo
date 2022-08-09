@@ -1,53 +1,33 @@
 import define from './define.js'
 import camelCase from './functions/camel-case.js'
+import transform from './functions/transform.js'
+import evalModule from './functions/eval-module.js'
+import error from '../development/error.js'//
 
-export const meta = {}
-
-export default async function register(url){
+export default async function register(url, {type} = {}){
+    const isJS = /\.m?js$/.test(url)
+    if(isJS) return await import(url)
     const response = await fetch(url)
-    let text = await response.text()
-    const parser = new DOMParser
-    const dom = parser.parseFromString(text, 'text/html')
-    const template = dom.querySelector('template')?.innerHTML
-    const style = dom.querySelector('style')?.textContent
-    const regex = /(import[\s{][^.(]+?from\s*)(['"])([./](?:\\.|[^\2\\])*?)\2/g
-    const script = dom.querySelector('script').textContent
-    if(!script) //
-        throw TypeError('Your Yozo templates must include a <script> tag') //
-    const escape = string => string.replace(/([`\\])/g, '\\$1')
-    const uuid = crypto.randomUUID()
-    const promise = new Promise(resolve => window[uuid] = resolve)
-    const element = document.createElement('script')
-    element.type = 'module'
-    element.textContent = `import{define,when}from"${meta.url}";
-const{construct,connect,disconnect,update}=define;
-${script};
-${template && `define.template(\`${escape(template)}\`);`}
-${style && `define.style(\`${escape(style)}\`);`}
-window["${uuid}"]()
-`
-    document.head.append(element)
-    await promise
-    delete window[uuid]
-    element.remove()
+    const text = await response.text()
+    const script = transform(text)
+    if(type == 'module') return await evalModule(script, url)
+    else (0, eval)(`{${script}}`)
 }
 
-
+let autoCalled = false
 register.auto = find => {
+    if(autoCalled) return
+    autoCalled = true
     const initiated = new Set
-    function autoDefineFrom(root){
-        root.querySelectorAll(':not(:defined)')
-            .forEach(({localName}) => autoDefine(localName))
-    }
+    const registerFrom = root => root.querySelectorAll(':not(:defined)')
+        .forEach(({localName}) => autoDefine(localName.toLowerCase()))
 
-    function autoDefine(name){
-        const url = find(name.toLowerCase())
-        if(initiated.has(name)) return
-        initiated.add(name)
+    const autoDefine = name => {
+        const url = find(name)
         if(!url) return
-        const isJS = /\.m?js$/.test(url)
-        if(isJS) import(url)
-        else register(url)
+        if(initiated.has(url)) return
+        initiated.add(url)
+        register(url)
     }
 
     define.register(null, function(){
@@ -55,16 +35,15 @@ register.auto = find => {
         context.requires.forEach(autoDefine)
         const constructor = function(secret){
             if(!context.shadow) return
-            autoDefineFrom(secret.root)
+            registerFrom(secret.root)
         }
         const connectedCallback = function(secret){
             if(context.shadow) return
             if(secret.didConnect) return
-            autoDefineFrom(this)
+            registerFrom(this)
         }
         return {constructor, connectedCallback}
     }, 45)
 
-    autoDefineFrom(document)
+    registerFrom(document)
 }
-

@@ -29,10 +29,8 @@ export default class Reference {
         this.cache = this.forceGetValue()
     }
 
-    get object(){ return this.parent.value }
     get value(){ return this.cache }
     get isObject(){ return this.value && typeof this.value == 'object' }
-    get isFree(){ return !this.isRoot && !this.parent.isObject }
 
     change(callback){
         callback()

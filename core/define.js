@@ -1,3 +1,5 @@
+import error from '../development/error.js'//
+
 const registry = []
 const priorities = new Map
 let locked = false
@@ -6,6 +8,7 @@ let current, memory
 export default function define(name){
     if(!locked) lock()
     if(memory) useDefinition()
+    if(!name.includes('-')) throw error('element-name-needs-dash', name)//
     current = name
     memory = new Map(registry.map(([callback]) => [callback, []]))
     queueMicrotask(() => {
@@ -15,6 +18,7 @@ export default function define(name){
 }
 
 define.register = (name, definition, priority) => {
+    if(locked) throw error('register-locked', name)//
     if(locked) return
     registry.push([definition, priority])
     if(!name) return

@@ -9,8 +9,7 @@ export default class Variable extends EventTarget {
     }
 
     is(thing){
-        addToWatch(this.reference.proxy)
-        return this.reference.value == watch.get(thing)
+        return this.get() == watch.get(thing)
     }
     
     get(){
@@ -19,16 +18,16 @@ export default class Variable extends EventTarget {
     }
     
     set(value){
-        return this.reference.change(() => this.reference.object[this.reference.key] = watch.get(value))
+        return this.reference.change(() => this.reference.parent.value[this.reference.key] = watch.get(value))
     }
     
     delete(){
-        return this.reference.change(() => delete this.reference.object[this.reference.key])
+        return this.reference.change(() => delete this.reference.parent.value[this.reference.key])
     }
     
     free(){
         addToWatch(this.reference.proxy)
-        return this.reference.isFree
+        return !this.reference.isRoot && !this.reference.parent.isObject
     }
     
     typeof(){
@@ -37,15 +36,15 @@ export default class Variable extends EventTarget {
     }
 
     #bind({get, set, triggers}){
-        const value = this.reference.proxy
+        const variable = this.reference.proxy
         let changing = false
-        value.set(get())
-        when(value).change().then(() => {
-            if(!changing) set(value)
+        variable.set(get())
+        when(variable).change().then(() => {
+            if(!changing) set(variable)
         })
         triggers.now().then(() => {
             changing = true
-            value.set(get())
+            variable.set(get())
             changing = false
         })
     }

@@ -1,8 +1,5 @@
 let current = {}
 
-const entries = object =>
-    Reflect.ownKeys(object).map(key => [key, object[key]])
-
 export default function trackable(definition){
     const fn = function(...args){ return fn.do.apply(this, args).result }
     fn.do = trackable.do(definition)

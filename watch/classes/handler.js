@@ -30,12 +30,12 @@ export default class Handler {
         const {object, key, parent} = this.reference
         if(key in Variable.prototype)
             return parent.variable[key](...args)
-        addToWatch(this.reference.parent.proxy)
+        addToWatch(parent.proxy)
         if(!parent.isRoot && !parent.isObject)
-            return object[key](...args)
+            return parent.value[key](...args)
         const oldObject = {...object}
-        const result = object[key](...args)
-        const newObject = this.reference.object
+        const result = parent.value[key](...args)
+        const newObject = parent.value
         const keys = new Set(Object.keys(newObject))
         for(const key of Object.keys(oldObject)) keys.add(key)
         for(const key of keys){

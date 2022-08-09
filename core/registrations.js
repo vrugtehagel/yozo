@@ -3,7 +3,9 @@ import define from './define.js'
 import watch from '../watch/index.js'
 import camelCase from './functions/camel-case.js'
 import kebabCase from './functions/kebab-case.js'
+import html from './functions/html.js'
 import setAttribute from './functions/set-attribute.js'
+import error from '../development/error.js'//
 
 define.register(null, function(){
     const constructor = function(secret){
@@ -41,7 +43,6 @@ define.register('shadow', function([args]){
     if(!shadow) return
     context.shadow = shadow
     const constructor = function(secret){
-        secret.exposed.internals = this.attachInternals()
         secret.root = this.attachShadow(shadow)
     }
     return {constructor}
@@ -53,9 +54,7 @@ define.register('template', function([args]){
     context.template = args[0]
     const constructor = function(secret){
         if(secret.root) return secret.root.innerHTML = context.template
-        const template = document.createElement('template')
-        template.innerHTML = context.template
-        secret.root = template.content
+        secret.root = html(context.template)
     }
     const connectedCallback = function(secret){
         if(context.shadow) return
@@ -85,13 +84,6 @@ define.register('style', function([args]){
     }
     return {constructor, connectedCallback}
 }, 25)
-
-define.register('form', function([args]){
-    if(!args) return
-    const context = this
-    const descriptor = {get: () => true}
-    Object.defineProperty(context.body, 'formAssociated', descriptor)
-}, 30)
 
 define.register('attribute', function(argslist){
     const context = this
@@ -146,8 +138,10 @@ define.register('require', async function(argslist){
 
 
 define.register('state', function([args]){
+    if(args && typeof args[0] != 'function')//
+        throw error('define-state-should-be-function')//
     const state = trackable(args?.[0] ?? (() => ({})))
-    const constructor = secret => secret.exposed.state = state()
+    const constructor = secret => secret.exposed.state = watch(state())
     return {constructor}
 }, 50)
 
@@ -156,13 +150,12 @@ define.register('shape', function([args]){
     const context = this
     const {prototype} = context.body
     const shape = args[0]
-    if(!shape.prototype) //
-        throw TypeError('Please provide a class to define.shape') //
+    if(!shape.prototype) throw error('define-shape-needs-class')//
     const descriptors = Object.getOwnPropertyDescriptors(shape.prototype)
     const map = new WeakMap
     for(const [name, descriptor] of Object.entries(descriptors)){
         const additions = descriptor.get || descriptor.set
-            ? {get: () => map.get(this)[name], set: value => map.get(this)[name] = value}
+            ? {get(){ return map.get(this)[name] }, set(value){ return map.get(this)[name] = value }}
             : {value: function(...args){ return map.get(this)[name](...args) }}
         Object.defineProperty(prototype, name, {...descriptor, ...additions})
     }
@@ -176,6 +169,8 @@ define.register('shape', function([args]){
 
 define.register('construct', function([args]){
     if(!args) return
+    if(typeof args[0] != 'function')//
+        throw error('define-expect-function', 'construct')//
     const context = this
     const callback = trackable(args[0])
     const constructor = function(secret){
@@ -186,6 +181,8 @@ define.register('construct', function([args]){
 
 define.register('connect', function([args]){
     if(!args) return
+    if(typeof args[0] != 'function')//
+        throw error('define-expect-function', 'connect')//
     const context = this
     const callback = trackable(args[0])
     const connectedCallback = function(secret){
@@ -198,6 +195,8 @@ define.register('connect', function([args]){
 
 define.register('disconnect', function([args]){
     if(!args) return
+    if(typeof args[0] != 'function')//
+        throw error('define-expect-function', 'disconnect')//
     const context = this
     const callback = trackable(args[0])
     const disconnectedCallback = function(secret){
@@ -207,6 +206,8 @@ define.register('disconnect', function([args]){
 
 define.register('update', function(argslist){
     const updaters = argslist.map(args => trackable(args[0]))
+    if(updaters.some(updater => typeof updater != 'function'))//
+        throw error('define-expect-function', 'update')//
     const constructor = function(secret){
         secret.updateQueue = new Set
         for(const updater of updaters){
