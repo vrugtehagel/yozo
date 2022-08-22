@@ -1,17 +1,19 @@
 import define from './define.js'
 import camelCase from './functions/camel-case.js'
-import transform from './functions/transform.js'
+import isJS from './functions/is-js.js'
 import evalModule from './functions/eval-module.js'
+import fetchCode from './functions/fetch-code.js'
 import error from '../development/error.js'//
 
-export default async function register(url, {type} = {}){
-    const isJS = /\.m?js$/.test(url)
-    if(isJS) return await import(url)
-    const response = await fetch(url)
-    const text = await response.text()
-    const script = transform(text)
-    if(type == 'module') return await evalModule(script, url)
-    else (0, eval)(`{${script}}`)
+export default async function register(url){
+    if(isJS(url)) return void await import(url)
+    const code = await fetchCode(url)
+    await evalModule(code, url)
+}
+
+register.sync = async url => {
+    const code = await fetchCode(url)
+    ;(0, eval)(code)
 }
 
 let autoCalled = false

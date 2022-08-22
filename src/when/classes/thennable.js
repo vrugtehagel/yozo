@@ -45,7 +45,7 @@ export default class Thennable {
 
     until(thing){
         if(typeof thing == 'function')
-            handlers.push((...args) => handler(...args) && !this.#die())
+            this.#callbacks.push((...args) => thing(...args) && !this.#die())
         else Promise.resolve(thing).then(() => this.#die())
         return this
     }

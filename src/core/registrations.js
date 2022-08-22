@@ -43,7 +43,7 @@ define.register('shadow', function([args]){
     if(!shadow) return
     context.shadow = shadow
     const constructor = function(secret){
-        secret.root = this.attachShadow(shadow)
+        secret.exposed.shadow = secret.root = this.attachShadow(shadow)
     }
     return {constructor}
 }, 15)

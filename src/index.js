@@ -14,13 +14,13 @@ import interval from './when/functions/interval.js'
 import frame from './when/functions/frame.js'
 import paint from './when/functions/paint.js'
 
-window.yozo = {
+self.yozo = {
+    define,
+    register,
+    html,
     trackable,
     watch,
-    register,
-    define,
     when,
-    html,
     timeout,
     interval,
     frame,

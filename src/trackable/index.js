@@ -11,17 +11,15 @@ trackable.do = definition => function(...args){
     current = {}
     const result = definition.apply(this, args)
     const call = {result}
-    for(const key of Reflect.ownKeys(registry)){
-        const {transform, bucket} = registry[key]
+    for(const [key, {transform, bucket}] of Object.entries(registry))
         call[key] = transform(key in current ? current[key] : bucket())
-    }
     current = before
     return call
 }
 
 trackable.define = definition => (...args) => {
     const {result, ...things} = definition(...args)
-    if(current) for(const key of Reflect.ownKeys(things)){
+    if(current) for(const key of Object.keys(things)){
         if(!registry[key]) continue
         const {bucket, add} = registry[key]
         if(!(key in current)) current[key] = bucket()
