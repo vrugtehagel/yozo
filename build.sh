@@ -4,11 +4,12 @@
 # and the cloned version in /temp/ compiles to the minified production version
 
 # First, remove /dist/ and /temp/
-rm -rf dist
-rm -rf temp
+[ -d ./dist ] || mkdir ./dist
+rm -rf ./dist/*
+rm -rf ./temp/*
 
 # Clone the entire codebase into /temp/
-rsync -aq ./src ./temp
+rsync -aq ./src/ ./temp/
 
 # Then, find all JavaScript files and empty the lines that include //
 find ./temp -type f -name '*.js' -exec sed -i '' 's/^.*\/\/$//g' {} \;
@@ -19,17 +20,26 @@ esbuild \
     index.dev=./src/index.js \
     --outdir=dist --bundle --minify --log-level=warning
 
+# Save exit status of the build
+success=$?
+
 # Now we can get rid of the copied codebase, we no longer need it
-rm -rf temp
+rm -rf ./temp/
+
+# If the build failed, stop here
+if [[ $success -ne 0 ]]; then
+    echo "$(tput setaf 1)Build failed.$(tput sgr0)"
+    exit
+fi
 
 # Find out what size the production bundle is, gzipped
 size=$(gzip < ./dist/index.min.js | wc -c | xargs)
 
 # We'll print the bundle size and assign it some color
-# <4750kb is green, <5000kb is yellow and >=5000kb is red
-[[ $size -lt 4750 ]] && color=2 || \
-[[ $size -lt 5000 ]] && color=3 || \
-                        color=1
+# <4750 is green, <5000 is yellow and >=5000 is red
+color=1
+[[ $size -lt 5000 ]] && color=3
+[[ $size -lt 4750 ]] && color=2
 
 # And echo some output
 echo "  Build complete."

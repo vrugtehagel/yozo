@@ -1,28 +1,35 @@
-import './core/registrations.js'
-
-import define from './core/define.js'
-import register from './core/register.js'
-import html from './core/functions/html.js'
-
-import trackable from './trackable/index.js'
-
+import define from './define/index.js'
+import frame from './frame.js'
+import html from './html.js'
+import interval from './interval.js'
+import register from './register/index.js'
+import Thennable from './thennable.js'
+import timeout from './timeout.js'
+import track from './track.js'
 import watch from './watch/index.js'
+import when from './when.js'
 
-import when from './when/index.js'
-import timeout from './when/functions/timeout.js'
-import interval from './when/functions/interval.js'
-import frame from './when/functions/frame.js'
-import paint from './when/functions/paint.js'
+import './define/mods.js'
 
 self.yozo = {
-    define,
-    register,
-    html,
-    trackable,
-    watch,
-    when,
-    timeout,
-    interval,
-    frame,
-    paint
+	define,
+	register,
+	html,
+	track,
+	watch,
+	when,
+	Thennable,
+	timeout,
+	interval,
+	frame,
+	pollute: () => Object.assign(self, {
+		html,
+		track,
+		watch,
+		when,
+		Thennable,
+		timeout,
+		interval,
+		frame
+	})
 }
