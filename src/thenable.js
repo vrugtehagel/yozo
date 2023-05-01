@@ -1,7 +1,7 @@
 import { errors } from './development/index.js' //
-import track from './track.js'
+import { track } from './track.js'
 
-export default class Thennable {
+export class Thenable {
 	#pipeline = []
 	#ors = []
 	#cleanup = []
@@ -11,15 +11,12 @@ export default class Thennable {
 
 	constructor(callback = () => {}){
 		track.define(() => {
-			const call = track(() => callback((...args) => {
-				// If this triggers, and the thennable is dead, something's wrong
-				if(this.#dead) errors.warn('triggered-dead-thennable') //
+			const call = callback((...args) => {
+				// If this triggers, and the thenable is dead, something's wrong
+				if(this.#dead) errors.warn('triggered-dead-thenable') //
 				this.now(...args)
-			}))
-			const undo = () => {
-				call.undo()
-				this.die()
-			}
+			})
+			const undo = () => this.die()
 			return {undo}
 		})()
 	}
@@ -67,9 +64,9 @@ export default class Thennable {
 		})
 	}
 
-	or(thennable){
-		this.#ors.push(thennable)
-		thennable.then((...args) => this.now(...args))
+	or(thenable){
+		this.#ors.push(thenable)
+		thenable.then((...args) => this.now(...args))
 		return this
 	}
 
@@ -88,7 +85,7 @@ export default class Thennable {
 		this.#dead = true
 		this.#pipeline.splice(0)
 		this.#cleanup.splice(0).forEach(callback => callback())
-		this.#ors.splice(0).forEach(thennable => thennable.die?.())
+		this.#ors.splice(0).forEach(thenable => thenable.die?.())
 		return this
 	}
 
@@ -101,6 +98,7 @@ export default class Thennable {
 	}
 
 	once(){
+		if(this.#stopping) return this
 		return this.then(() => this.#stopping = true)
 	}
 

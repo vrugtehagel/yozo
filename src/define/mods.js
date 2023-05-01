@@ -1,12 +1,11 @@
-import html from '../html.js'
-import camelCase from '../camel-case.js'
-import kebabCase from '../kebab-case.js'
-import Thennable from '../thennable.js'
-import track from '../track.js'
-import watch from '../watch/index.js'
-import when from '../when.js'
+import { html } from '../html.js'
+import { camelCase, kebabCase } from '../convert-case.js'
+import { Thenable } from '../thenable.js'
+import { track } from '../track.js'
+import { watch } from '../watch/index.js'
+import { when } from '../when.js'
 
-import define from './index.js'
+import { define } from './index.js'
 
 define.register(0, 'title', (context, [args]) => {
 	context.title = args[1]
@@ -88,7 +87,7 @@ define.register(6, null, context => {
 		meta.hooks.connect = callback => { meta[callbacks].push(callback) }
 	}
 	const connectedCallback = function(meta){
-		meta[calls] = meta[callbacks].map(callback => track(callback))
+		meta[calls] = meta[callbacks].map(callback => track.undo(callback))
 	}
 	const disconnectedCallback = function(meta){
 		meta[calls].forEach(call => call.undo())
@@ -101,23 +100,23 @@ define.register(7, null, context => {
 	const queue = Symbol()
 	const constructor = function(meta){
 		meta[queue] = new Set
-		meta.hooks.update = callback => {
+		meta.hooks.effect = callback => {
 			let watcher
 			let call
-			const thennable = new Thennable().cleanup(() => watcher.die())
-			const run = async () => {
+			const thenable = new Thenable().cleanup(() => watcher.die())
+			const run = async (event) => {
 				await 1
 				if(meta.connected) update()
 				else meta[queue].add(update)
 			}
 			const update = () => {
 				call?.undo()
-				call = track(callback)
-				watcher = track.ignore(() => when(...call.watched).change()).once().then(run)
-				thennable.now()
+				call = track(['undo', 'watched'], callback)
+				watcher = track.ignore(() => when(call.watched).change()).once().then(run)
+				thenable.now()
 			}
 			run()
-			return thennable
+			return thenable
 		}
 	}
 	const connectedCallback = function(meta){
@@ -125,7 +124,7 @@ define.register(7, null, context => {
 		meta[queue].clear()
 	}
 	return {constructor, connectedCallback}
-}, {hooks: ['update']})
+}, {hooks: ['effect']})
 
 define.register(8, 'style', (context, [args]) => {
 	if(!args) return {}
@@ -217,7 +216,7 @@ define.register(10, null, context => {
 						const chain = attribute.name.split('.').slice(1).map(camelCase)
 						node.removeAttribute(attribute.name)
 						const getter = new Function(`{${context.exposed}}`, `return (${attribute.value})`)
-						meta.hooks.update(() => {
+						meta.hooks.effect(() => {
 							let current = node
 							const properties = [...chain]
 							const last = properties.pop()
@@ -242,7 +241,7 @@ define.register(10, null, context => {
 					iterator.nextNode()
 					node = iterator.nextNode()
 					const getter = new Function(`{${context.exposed}}`, `return (${match[1]})`)
-					meta.hooks.update(() => dynamic.textContent = getter(meta.exposed))
+					meta.hooks.effect(() => dynamic.textContent = getter(meta.exposed))
 				}
 			}
 		}

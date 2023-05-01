@@ -1,14 +1,14 @@
 import { errors } from '../development/index.js' //
-import Thennable from '../thennable.js'
-import when from '../when.js'
-import track from '../track.js'
+import { Thenable } from '../thenable.js'
+import { when } from '../when.js'
+import { track } from '../track.js'
 
-import addToWatch from './add-to-watch.js'
-import symbol from './symbol.js'
-import watch from './index.js'
+import { addToWatch } from './add-to-watch.js'
+import { symbol } from './symbol.js'
+import { watch } from './index.js'
 
 const references = new WeakMap
-export default class WatchedValue extends EventTarget {
+export class WatchedValue extends EventTarget {
 	constructor(reference){
 		super()
 		references.set(this, reference)
@@ -24,7 +24,7 @@ watch.get = $watched => {
 watch.set = ($watched, value) => {
 	if(!$watched?.[symbol]) return false
 	const {key} = $watched[symbol] //
-	if(watch[key]) //
+	if(Object.keys(watch).includes(key)) //
 		errors.warn('unsafe-watched-value', {key}) //
 	return $watched[symbol].do(() => 
 		$watched[symbol].parent.value[
@@ -57,15 +57,15 @@ watch.bind = ($watched, options) => {
 	let changing = false
 	let triggerManually
 	const allowManualTriggers = options.changes
-	const changes = new Thennable(trigger => {
+	const changes = new Thenable(trigger => {
 		if(options.changes) return watcher = options.changes
 			.then(() => trigger(track.ignore(() => options.get())))
 		const update = () => {
-			const call = track(options.get)
+			const call = track.watched(options.get)
 			trigger(call.result)
-			watcher = track.ignore(() => when(...call.watched).change()).once().then(update)
+			watcher = track.ignore(() => when(call.watched).change()).once().then(update)
 		}
-		watcher = new Thennable(() => {}).then(update)
+		watcher = new Thenable(() => {}).then(update)
 	}).then(value => {
 		triggerManually = false
 		changing = true

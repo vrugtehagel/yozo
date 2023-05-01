@@ -1,18 +1,14 @@
-import define from '../define/index.js'
-import evalModule from './eval-module.js'
-import transpile from './transpile.js'
+import { define } from '../define/index.js'
+import { transpile } from './transpile.js'
 
-import when from '../when.js'
+import { when } from '../when.js'
 
-export default function register(url){
-	fetch(url).then(response => {
-		if(!response.ok) return
-		response.text().then(text => {
-			const [code, isModule] = transpile(text)
-			if(isModule) evalModule(code, new URL(url, document.baseURI))
-			else (0, eval)(code)
-		})
-	})
+export const register = async url => {
+	const response = await fetch(url)
+	if(!response.ok) return
+	const AsyncFunction = (async function(){}).constructor
+	const text = await response.text()
+	return await (new AsyncFunction(transpile(text)))()
 }
 
 let initiated

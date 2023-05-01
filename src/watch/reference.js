@@ -1,8 +1,8 @@
-import WatchedValue from './watched-value.js'
-import addToWatch from './add-to-watch.js'
-import symbol from './symbol.js'
+import { WatchedValue } from './watched-value.js'
+import { addToWatch } from './add-to-watch.js'
+import { symbol } from './symbol.js'
 
-export default class Reference {
+export class Reference {
 	constructor(parent, key, root){
 		const cache = {}
 		this.parent = parent

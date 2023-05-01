@@ -1,9 +1,9 @@
 import { errors } from '../development/index.js' //
-import goodies from './goodies.js'
+import { goodies } from './goodies.js'
 
 const registry = []
 
-export default async function define(definer){
+export const define = async definer => {
 	const meta = new WeakMap
 	const context = {
 		...goodies,
@@ -29,6 +29,7 @@ export default async function define(definer){
 		context.body.prototype[key] ??= function(...args){ compose(key, this, ...args) }
 	if(!context.title) errors.throw('no-title') //
 	customElements.define(context.title, context.body)
+	return customElements.whenDefined(context.title)
 }
 
 define.register = (priority, name, mod, newGoodies) => {

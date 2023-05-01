@@ -1,48 +1,64 @@
+import { when } from './when.js'
+
 let current
 
-export default function track(callback){
+export const track = (names, fn) => {
 	const before = current
-	current = Object.fromEntries(
-		Object.keys(registry).map(name => [name, registry[name].bucket()])
-	)
-	const result = callback()
-	const call = Object.fromEntries(
-		Object.keys(registry).map(name => [name, registry[name].transform(current[name])])
-	)
+	current = {}
+	for(const name of names) current[name] = new registry[name]
+	const call = {}
+	for(const name of names) call[name] = current[name].result
+	call.result = fn()
 	current = before
-	call.result = result
 	return call
 }
 
-track.ignore = callback => {
+export const until = thing => {
 	const before = current
 	current = null
-	const result = callback()
+	return {then: resolve => Promise.resolve(thing).then(result => {
+		if(Object.keys(before).some(name => before[name].until?.())) return
+		queueMicrotask(() => current = before)
+		return resolve(result)
+	})}
+}
+
+track.ignore = fn => {
+	const before = current
+	current = null
+	const result = fn()
 	current = before
 	return result
 }
 
-track.define = definition => function(...args){
-	const {result, ...things} = definition.apply(this, args)
-	if(current) for(const key of Object.keys(things))
-		registry[key]?.add(current[key], things[key])
+track.define = definition => (...args) => {
+	const {result, ...call} = definition(...args)
+	for(const [key, value] of Object.entries(call)) current?.[key]?.add(value)
 	return result
 }
 
-track.register = (name, registration) => {
+const registry = {}
+track.register = (name, definition) => {
 	if(name == 'result') return
-	registry[name] ??= registration
+	registry[name] ??= definition
+	track[name] ??= fn => track([name], fn)
 }
 
-const registry = {
-	undo: {
-		bucket: () => [],
-		add: (bucket, undo) => bucket.unshift(undo),
-		transform: bucket => () => bucket.splice(0).forEach(track.ignore)
-	},
-	watched: {
-		bucket: () => new Set,
-		add: (bucket, variable) => bucket.add(variable),
-		transform: bucket => bucket
+track.register('undo', class {
+	#undone
+	#undos = []
+	result = () => {
+		this.#undone = true
+		this.#undos.splice(0).forEach(track.ignore)
 	}
-}
+	until(){ return this.#undone }
+	add(undo){ this.#undone ? undo() : this.#undos.unshift(undo) }
+})
+
+track.register('watched', class {
+	result = new EventTarget
+	add($thing){
+		track.ignore(() => when($thing).change())
+			.then(() => this.result.dispatchEvent(new CustomEvent('change')))
+	}
+})

@@ -1,1 +1,1 @@
-export default Symbol()
+export const symbol = Symbol()

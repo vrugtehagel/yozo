@@ -18,9 +18,9 @@ export default {
 		message: 'Could not attach event listener(s) with when(...).',
 		help: 'One of its arguments was not an EventTarget.'
 	},
-	'triggered-dead-thennable': {
+	'triggered-dead-thenable': {
 		type: Error,
-		message: 'Potential memory leak; a dead thennable was triggered.',
+		message: 'Potential memory leak; a dead thenable was triggered.',
 		help: 'Make sure you use .cleanup() to detach handlers to avoid leaks.'
 	},
 	'unsafe-watched-value': {
@@ -31,5 +31,10 @@ export default {
 	'no-title': {
 		type: TypeError,
 		message: 'Your components need a <title>. This determines their name.'
+	},
+	'shorthand-used-erroneously': {
+		type: TypeError,
+		message: 'Doing when().{property}() may be a mistake, as it listens to the "{type}" event.',
+		help: 'Use ".does(\'{property}\') if you want to bind to the "{property}" event.'
 	}
 }

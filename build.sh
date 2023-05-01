@@ -1,46 +1,74 @@
-# We use /temp/ to duplicate the entire codebase, then remove lines with a // in it
-# Lines with a // in it are lines we only want in the development bundle
-# Anyway, this means the original codebase compiles to the dev bundle
-# and the cloned version in /temp/ compiles to the minified production version
+#!/bin/bash
 
-# First, remove /dist/ and /temp/
-[ -d ./dist ] || mkdir ./dist
-rm -rf ./dist/*
-rm -rf ./temp/*
+# This build script builds Yozo itself as well as the site.
 
-# Clone the entire codebase into /temp/
-rsync -aq ./src/ ./temp/
+# First, we build the site, since that sets up the general file structure.
+# In big lines, we just clone the whole site into dist/, and
+# then we run the CSML scripts, after which delete the .csml files.
 
-# Then, find all JavaScript files and empty the lines that include //
-find ./temp -type f -name '*.js' -exec sed -i '' 's/^.*\/\/$//g' {} \;
+	# First, we clean up dist/
+	[ -d dist ] || mkdir dist
+	rm -rf dist/*
 
-# Everything is ready, bundle and minify both the original and copied codebase
-esbuild \
-    index.min=./temp/index.js \
-    index.dev=./src/index.js \
-    --outdir=dist --bundle --minify --log-level=warning
+	# We clone the whole site into dist/
+	rsync -aq src/ dist/
 
-# Save exit status of the build
-success=$?
+	# We run the CSML build script
+	deno run --allow-read --allow-write csml.config.js
 
-# Now we can get rid of the copied codebase, we no longer need it
-rm -rf ./temp/
+	# Now, delete all the csml files, and the empty directories
+	find dist -name "*.csml" -type f -delete
+	find dist -type d -empty -delete
 
-# If the build failed, stop here
-if [[ $success -ne 0 ]]; then
-    echo "$(tput setaf 1)Build failed.$(tput sgr0)"
-    exit
-fi
+	# Show a sign of life
+	echo "  Site build complete."
 
-# Find out what size the production bundle is, gzipped
-size=$(gzip < ./dist/index.min.js | wc -c | xargs)
+# Now, we build yozo itself. We provide a dev build as well as a production
+# build, and they go under dist/lib.js and dist/dev,js.
+# For the production file, we remove all lines in the source that have a
+# comment in them. This makes it super easy to keep the dev and production
+# scripts aligned while adding additional checks to the dev bundle.
+# This means the original codebase (with comments) compiles to the dev bundle.
 
-# We'll print the bundle size and assign it some color
-# <4750 is green, <5000 is yellow and >=5000 is red
-color=1
-[[ $size -lt 5000 ]] && color=3
-[[ $size -lt 4750 ]] && color=2
+	# First, we clean up temp/
+	[ -d temp ] || mkdir temp
+	rm -rf temp/*
 
-# And echo some output
-echo "  Build complete."
-echo "  Gzipped size: $(tput setaf $color)$size"
+	# We clone the whole source into temp/
+	rsync -aq src/ temp/
+
+	# Now, we find all JS files and remove lines with //-style comments
+	find temp -type f -name "*.js" -exec sed -i "" 's/^.*\/\/$//g' {} \;
+
+	# Now bundle the thingies
+	deno run -A https://deno.land/x/esbuild@v0.17.18/mod.js \
+		lib=./temp/index.js \
+		dev=./src/index.js \
+		--outdir=dist --bundle --minify --log-level=warning
+
+	# Save the exit status
+	success=$?
+
+	# Clean up temp/
+	rm -rf temp
+
+	# If the build failed, stop here
+	if [[ $success -ne 0 ]]; then
+	    echo "$(tput setaf 1)  Yozo build failed.$(tput sgr0)"
+	    exit
+	fi
+
+	# Find out what size the build turned out to be
+	size=$(gzip < ./dist/lib.js | wc -c | xargs)
+
+	# We'll print the bundle size and assign it some color
+	# <4750 is green, <5000 is yellow and >=5000 is red
+	color=1
+	[[ $size -lt 5000 ]] && color=3
+	[[ $size -lt 4750 ]] && color=2
+
+	# And echo some output
+	echo "  Yozo build complete" \
+		"($(tput setaf $color)$size$(tput init)b gzipped)."
+
+# That's all!

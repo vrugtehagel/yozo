@@ -1,13 +1,13 @@
 import { errors } from './development/index.js' //
-import Thennable from './thennable.js'
-import track from './track.js'
-import camelCase from './camel-case.js'
+import { Thenable } from './thenable.js'
+import { track } from './track.js'
+import { camelCase } from './convert-case.js'
 
 
-export default function when(...targets){
+export const when = (...targets) => {
 	const does = (type, options) => {
 		let handler
-		return new Thennable(trigger => {
+		return new Thenable(trigger => {
 			handler = trigger
 			if(!targets.every(target => target instanceof EventTarget)) //
 				errors.throw('target-not-event-target') //
@@ -18,7 +18,7 @@ export default function when(...targets){
 
 	const observes = (type, options) => {
 		let observer
-		return new Thennable(trigger => {
+		return new Thenable(trigger => {
 			// Check if there is an observer with given name
 			const name = camelCase(`-${type}-observer`) //
 			if(typeof self[name] != 'function') //
@@ -28,8 +28,13 @@ export default function when(...targets){
 		}).cleanup(() => observer.disconnect())
 	}
 
-	const get = (source, property) => source[property]
-		?? does.bind(null, property.replace(/s$/, ''))
+	const get = (source, property) => {
+		// check if the user didn't accidentally do e.g. when(...).focus()
+		const type = property.replace(/s$/, '') //
+		if(!source[property] && type != property && 'on' + property in self) //
+			errors.warn('shorthand-used-erroneously', {property, type}) //
+		return source[property] ?? does.bind(null, property.replace(/s$/, ''))
+	}
 
 	return new Proxy({does, observes}, {get})
 }
