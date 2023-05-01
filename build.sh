@@ -11,7 +11,7 @@
 	rm -rf dist/*
 
 	# We clone the whole site into dist/
-	rsync -aq src/ dist/
+	rsync -aq site/ dist/
 
 	# We run the CSML build script
 	deno run --allow-read --allow-write csml.config.js
