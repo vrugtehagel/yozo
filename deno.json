@@ -1,0 +1,6 @@
+{
+	"imports": {
+		"csml": "https://deno.land/x/csml@0.1.8/mod.ts"
+	},
+	"lock": false
+}
