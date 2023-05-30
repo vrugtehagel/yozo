@@ -1,0 +1,86 @@
+<title>navigation-menu</title>
+
+<template mode=closed>
+	<nav>
+		<a id=home href=/ aria-label="Home">
+			<svg-icon type=logo width=12 height=12></svg-icon>
+			<svg-icon type=wordmark width=36 height=12></svg-icon>
+		</a>
+		<a href=/tour/ >Tour</a>
+		<a href=/play/ >Play</a>
+		<a href=/docs/ >Docs</a>
+		<input id=search hidden type=search placeholder="Search">
+		<icon-button type=search @click="elements.search.hidden = false"></icon-button>
+	</nav>
+</template>
+<script>
+// timeout(1000).then(() => {
+// 	elements.input.hidden = true
+// })
+</script>
+<style>
+nav {
+	display: flex; max-width: 1200px; height: 100%; padding: 0 1rem; margin: 0 auto;
+	align-items: center; gap: clamp(0rem, 4vw - 1.2rem, 2rem);
+	position: relative;
+}
+
+a {
+	display: inline-block; padding: .25em 1em;
+	color: var(--text-color);
+	border-radius: .5rem;
+	font: 1.25rem / 2rem var(--font-sans-serif);
+	text-decoration: none;
+	transition: .2s;
+}
+
+a:not(#home):hover {
+	background-color: var(--background-color);
+}
+
+icon-button {
+	margin-left: auto;
+	transition: .4s;
+}
+
+#search {
+	display: block; min-width: 0; width: min(30rem, 100%);
+	height: 3rem; padding: .5rem 1rem;
+	position: absolute; right: 1rem;
+	font: 1rem / 2rem var(--font-monospace);
+	color: inherit; background-color: var(--background-color);
+	border: none; border-radius: .5rem;
+	outline: none;
+	transition: .4s, visibility 0s 0s, opacity 0s 0s;
+}
+
+#search::placeholder {
+	color: rgb(255 255 255 / 50%);
+	font-family: var(--font-sans-serif);
+	opacity: 1;
+}
+
+#search[hidden]{
+	width: 3rem;
+	visibility: hidden; opacity: 0;
+	transition: .4s, visibility 0s .4s, opacity .2s .2s;
+}
+
+#search:not([hidden]) + icon-button {
+	opacity: .4;
+	pointer-events: none;
+}
+
+svg-icon {
+	display: block; width: auto; height: 1.5rem;
+	color: var(--name-color);
+}
+svg-icon[type=logo]{ display: none; }
+svg-icon[type=wordmark]{ aspect-ratio: 36 / 12; }
+@media (width < 500px){
+	nav { padding: 0 clamp(0.25rem, 15vw - 3.5rem, 1rem); }
+	a { font-size: 1rem; }
+	svg-icon[type=logo]{ display: block; }
+	svg-icon[type=wordmark]{ display: none; }
+}
+</style>

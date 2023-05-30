@@ -1,6 +1,7 @@
 {
 	"imports": {
-		"csml": "https://deno.land/x/csml@0.1.8/mod.ts"
+		"csml/": "https://deno.land/x/csml@0.1.11/",
+		"std/": "https://deno.land/std@0.185.0/"
 	},
 	"lock": false
 }

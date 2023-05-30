@@ -14,7 +14,7 @@ define.register(0, 'title', (context, [args]) => {
 
 define.register(1, null, context => {
 	const constructor = function(meta){
-		meta.exposed = {$: watch({}), host: this}
+		meta.exposed = {$: watch({})}
 		meta.hooks = {}
 	}
 	const connectedCallback = function(meta){
@@ -24,7 +24,7 @@ define.register(1, null, context => {
 		meta.connected = false
 	}
 	return {constructor, connectedCallback, disconnectedCallback}
-}, {exposed: ['$', 'host']})
+}, {exposed: ['$']})
 
 define.register(2, 'template', async (context, [args]) => {
 	if(!args){
@@ -34,8 +34,6 @@ define.register(2, 'template', async (context, [args]) => {
 		return {constructor}
 	}
 	context.template = html`${args[1]}`
-	await Promise.all([...context.template.querySelectorAll(':not(:defined)')]
-		.map(element => customElements.whenDefined(element.localName)))
 	if(args[0].mode){
 		const constructor = function(meta){
 			meta.root = this.attachShadow(args[0])
@@ -164,10 +162,10 @@ define.register(9, 'meta', (context, argslist) => {
 	]
 	for(const [options] of properties){
 		const get = function(){
-			return track.ignore(() => context.meta.get(this).exposed.$[`$${options.property}`].get())
+			return track.ignore(() => watch.get(context.meta.get(this).exposed.$[`$${options.property}`]))
 		}
 		const set = function(value){
-			track.ignore(() => context.meta.get(this).exposed.$[`$${options.property}`].set(value))			
+			track.ignore(() => watch.set(context.meta.get(this).exposed.$[`$${options.property}`], value))
 		}
 		if('readonly' in options) Object.defineProperty(context.body.prototype, options.property, {get})
 		else Object.defineProperty(context.body.prototype, options.property, {get, set})
@@ -177,27 +175,27 @@ define.register(9, 'meta', (context, argslist) => {
 		meta.exposed.$.$attributes = {}
 		for(const [options] of attributes){
 			const name = camelCase(options.attribute)
-			meta.exposed.$.$attributes[`$${name}`].set(null)
+			watch.set(meta.exposed.$.$attributes[`$${name}`], null)
 			when(meta.exposed.$.$attributes[`$${name}`]).change().then(() => {
-				const value = meta.exposed.$.$attributes[`$${name}`].get()
+				const value = watch.get(meta.exposed.$.$attributes[`$${name}`])
 				if(value == null) this.removeAttribute(options.attribute)
 				else this.setAttribute(options.attribute, value)
 			})
 			if(options.type == Boolean){
-				meta.exposed.$[`$${options.as ?? name}`].bind({
-					get: () => meta.exposed.$.$attributes[`$${name}`].get() != null,
-					set: value => meta.exposed.$.$attributes[`$${name}`].set(value ? '' : null)
+				watch.bind(meta.exposed.$[`$${options.as ?? name}`], {
+					get: () => watch.get(meta.exposed.$.$attributes[`$${name}`]) != null,
+					set: value => watch.set(meta.exposed.$.$attributes[`$${name}`], value ? '' : null)
 				})
 			} else if(options.type){
-				meta.exposed.$[`$${options.as ?? name}`].bind({
-					get: () => options.type(meta.exposed.$.$attributes[`$${name}`].get() ?? options.default ?? ''),
-					set: value => meta.exposed.$.$attributes[`$${name}`].set(`${value}`)
+				watch.bind(meta.exposed.$[`$${options.as ?? name}`], {
+					get: () => options.type(watch.get(meta.exposed.$.$attributes[`$${name}`]) ?? options.default ?? ''),
+					set: value => watch.set(meta.exposed.$.$attributes[`$${name}`], `${value}`)
 				})				
 			}
 		}
 	}
 	const attributeChangedCallback = function(meta, name, oldValue, value){
-		meta.exposed.$.$attributes[`$${camelCase(name)}`].set(value)
+		watch.set(meta.exposed.$.$attributes[`$${camelCase(name)}`], value)
 	}
 	return {constructor, attributeChangedCallback}
 }, {})
@@ -216,15 +214,28 @@ define.register(10, null, context => {
 						const chain = attribute.name.split('.').slice(1).map(camelCase)
 						node.removeAttribute(attribute.name)
 						const getter = new Function(`{${context.exposed}}`, `return (${attribute.value})`)
-						meta.hooks.effect(() => {
-							let current = node
-							const properties = [...chain]
-							const last = properties.pop()
-							for(const property of properties) current = current[property]
-							current[last] = getter(meta.exposed)
-						})
-					} else if(attribute.name[0] == '@') {
-						const type = camelCase(attribute.name.slice(1))
+						customElements.whenDefined(node.localName).catch(() => null).then(() => {
+							meta.hooks.effect(() => {
+								let current = node
+								const properties = [...chain]
+								const last = properties.pop()
+								for(const property of properties) current = current[property]
+								current[last] = getter(meta.exposed)
+							}
+						)})
+					} else if(attribute.name[0] == ':'){
+						const name = attribute.name.slice(1)
+						node.removeAttribute(attribute.name)
+						const getter = new Function(`{${context.exposed}}`, `return (${attribute.value})`)
+						customElements.whenDefined(node.localName).catch(() => null).then(() => {
+							meta.hooks.effect(() => {
+								const value = getter(meta.exposed)
+								if(value == null) node.removeAttribute(name)
+								else node.setAttribute(name, value)
+							}
+						)})
+					} else if(attribute.name[0] == '@'){
+						const type = attribute.name.slice(1)
 						node.removeAttribute(attribute.name)
 						const handler = new Function('event', `{${context.exposed}}`, attribute.value)
 						meta.hooks.connect(() => {
@@ -250,6 +261,7 @@ define.register(10, null, context => {
 }, {})
 
 define.register(11, 'script', (context, [args]) => {
+	if(!args) return {}
 	const constructor = function(meta){
 		args[1].call(this, meta.exposed, meta.hooks)
 	}

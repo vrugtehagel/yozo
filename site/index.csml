@@ -1,0 +1,5 @@
+@script
+	export const title = 'home'
+
+main
+

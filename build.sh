@@ -14,7 +14,7 @@
 	rsync -aq site/ dist/
 
 	# We run the CSML build script
-	deno run --allow-read --allow-write csml.config.js
+	deno run --allow-read --allow-write csml.js
 
 	# Now, delete all the csml files, and the empty directories
 	find dist -name "*.csml" -type f -delete
@@ -31,18 +31,18 @@
 # This means the original codebase (with comments) compiles to the dev bundle.
 
 	# First, we clean up temp/
-	[ -d temp ] || mkdir temp
-	rm -rf temp/*
+	[ -d dist/temp ] || mkdir dist/temp
+	rm -rf dist/temp/*
 
 	# We clone the whole source into temp/
-	rsync -aq src/ temp/
+	cp -R src/ dist/temp/
 
 	# Now, we find all JS files and remove lines with //-style comments
-	find temp -type f -name "*.js" -exec sed -i "" 's/^.*\/\/$//g' {} \;
+	find dist/temp -type f -name "*.js" -exec sed -i "" 's/^.*\/\/$//g' {} \;
 
 	# Now bundle the thingies
 	deno run -A https://deno.land/x/esbuild@v0.17.18/mod.js \
-		lib=./temp/index.js \
+		lib=./dist/temp/index.js \
 		dev=./src/index.js \
 		--outdir=dist --bundle --minify --log-level=warning
 
@@ -50,7 +50,7 @@
 	success=$?
 
 	# Clean up temp/
-	rm -rf temp
+	rm -rf dist/temp
 
 	# If the build failed, stop here
 	if [[ $success -ne 0 ]]; then

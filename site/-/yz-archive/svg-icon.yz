@@ -1,0 +1,30 @@
+<title>svg-icon</title>
+<meta attribute=type type=String>
+
+<template mode=closed></template>
+<script>
+
+import('/-/js/svg-manager/index.js')
+	.then(({svgManager}) => $.svgManager = svgManager)
+
+const {shadow} = elements
+
+effect(() => {
+	if(!$.type) return shadow.replaceChildren()
+	$.svgManager?.get(`icons/${$.type}.svg`)
+		.catch(() => console.log('foo'))
+		.then(svg => shadow.replaceChildren(...(svg ? [svg] : [])))
+})
+
+</script>
+<style>
+
+:host {
+	display: inline-block; width: 1.5em; height: 1.5em;
+}
+
+svg {
+	display: inline-block; width: 100%; height: 100%;
+}
+
+</style>

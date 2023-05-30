@@ -1,11 +1,11 @@
 import { camelCase } from '../convert-case.js'
+import { html } from '../html.js'
 import { goodies } from '../define/goodies.js'
-
 
 export const transpile = input => {
 	const add = `n${crypto.randomUUID().slice(-10)}`
 	let result = `\nawait self.yozo.define(${add}=>{const {${Object.keys(self.yozo)}}=self.yozo;`
-	for(const element of html(`<template>${input}</template>`).content.children){
+	for(const element of html`<template>${input}</template>`.children[0].content.children){
 		const attributes = [...element.attributes].map(attribute => {
 			if(element.localName == 'meta' && element.attributes.attribute && attribute.name == 'type')
 				return `type:${attribute.value}`

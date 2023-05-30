@@ -1,0 +1,189 @@
+<title>site-search</title>
+<meta attribute=value type=String>
+
+<template mode=closed delegates-focus=true>
+	<form
+		role=search
+		method=GET
+		action=/api/search
+		@submit="$.onsubmit(event)"
+	>
+		<label id=label for=input>Search the site</label>
+		<input
+			id=input
+			type=search
+			name=q
+			placeholder="E.g. 'defining an attribute'"
+			autocomplete=off
+			autocapitalize=none
+			autocorrect=off
+			spellcheck=false
+			enterkeyhint=go
+			role=combobox
+			aria-labelledby=label
+			aria-autocomplete=list
+			aria-controls=results
+			:aria-expanded="$.ariaExpanded"
+			:aria-activedescendant="$.ariaActiveDescendant"
+			@keydown="$.onkeydown(event)"
+			@focus="$.focused = true"
+			@blur="$.focused = false"
+		>
+		<ul
+			id=results
+			role=listbox
+			aria-labelledby=label
+			.hidden="!$.focused || $.value == ''"
+		></ul>
+		<svg-icon type=search></svg-icon>
+	</form>
+</template>
+<script>
+const {form, input, ul} = elements
+
+$.focused = false
+$.options = []
+$.selected = 0
+watch.bind($.$value, input)
+watch.bind($.$amount, () => $.options.length)
+watch.bind($.$ariaExpanded, () => $.focused && $.value != '' && $.amount > 0)
+watch.bind($.$ariaActiveDescendant, () => $.amount ? `option-${$.selected}` : null)
+
+// Make sure the <li> elements have the right "aria-selected" attribute
+effect(() => {
+	elements('[aria-selected=true]')?.setAttribute('aria-selected', 'false')
+	ul.children[$.selected]?.setAttribute('aria-selected', 'true')
+})
+
+// Re-create the options whenever they update
+effect(() => {
+	ul.replaceChildren(...$.options.map((option, index) => {
+		const li = document.createElement('li')
+		li.setAttribute('role', 'option')
+		li.setAttribute('aria-selected', index == 0)
+		li.id = `option-${index}`
+		const a = document.createElement('a')
+		a.href = option.url
+		a.textContent = option.title
+		a.dataset.url = option.url.split('/').slice(1, -1).join(' › ')
+		li.append(a)
+		when(li).mouseenters().then(() => $.selected = index)
+		return li
+	}))
+	$.selected = 0
+})
+
+// Fetch the options whenever the input value changes
+effect(async () => {
+	if($.value == '') return []
+	const url = new URL(form.action)
+	url.searchParams.set('q', $.value)
+	// const response = await until(fetch(url))
+	// $.options = await until(response.json())
+	await timeout(100);
+	if($.value.length > 6) return $.options = []
+	$.options = [{title: 'Found page for ' + $.value,url: '/docs/found/'}, {title: 'when().observes()',url: '/docs/when/observes/'}, ...(Math.random() < .5 ? [] : [{title: 'track.define()',url: '/docs/track/define/'}])]
+
+})
+
+// Keyboard shortcuts to navigate the dropdown
+$.shortcuts = {
+	ArrowDown: () => $.selected = ($.selected + 1) % $.amount,
+	ArrowUp: () => $.selected = ($.selected + $.amount - 1) % $.amount,
+	Home: () => $.selected = 0,
+	End: () => $.selected = $.amount - 1,
+}
+$.onkeydown = event => {
+	if(!$.shortcuts[event.key]) return
+	event.preventDefault()
+	$.shortcuts[event.key]()
+}
+
+// When the user confirms their search, navigate to selected option
+$.onsubmit = event => {
+	event.preventDefault()
+	const li = ul.children[$.selected]
+	li?.querySelector('a').click()
+}
+
+</script>
+<style>
+:host {
+	display: inline-block;
+	color: var(--text-color);
+}
+form {
+	display: grid; width: 100%; height: 100%;
+	grid-template: auto / 1fr 3rem; place-items: center start;
+	position: relative;
+}
+label {
+	grid-area: 1 / 1 / -1 / -1;
+	padding: 0 1.25rem;
+	opacity: 0;
+	white-space: nowrap;
+}
+svg-icon {
+	grid-area: 1 / 2 / -1 / -1;
+	opacity: .5;
+}
+label:has(+ input:placeholder-shown){ opacity: .5; }
+::placeholder { opacity: 0; }
+input {
+	grid-area: 1 / 1 / -1 / -1;
+	width: 100%; min-width: 0; height: 3rem;
+	color: inherit; background-color: var(--highlight-color);
+	border: none; border-radius: .75rem;
+	font-size: inherit; font-family: var(--font-monospace);
+	padding: 1rem 1.25rem;
+	outline: none;
+	transition: border-radius .08s;
+}
+/* input:focus-visible { box-shadow: 0 0 0 .25rem var(--keyword-color); } */
+input:has(+ ul:not([hidden])){ border-radius: .75rem .75rem 0 0; }
+ul {
+	display: flex; max-height: calc(60vh); padding: .25rem .5rem .5rem; margin: 0;
+	flex-direction: column; gap: .5rem;
+	list-style: none;
+	position: absolute; inset: 100% 0 auto 0;
+	background-color: var(--highlight-color);
+	border-radius: 0 0 .75rem .75rem;
+	overflow: auto;
+	transition: opacity .2s, translate .2s, visibility 0s 0s;
+	z-index: -1;
+}
+ul[hidden]{
+	translate: 0 -1rem;
+	opacity: 0; visibility: hidden;
+	transition: opacity .2s, translate .2s, visibility .2s 0s;
+}
+li {
+	background-color: var(--background-color);
+	border-radius: .5rem;
+	box-shadow: 2rem 0 0 -2rem inset var(--name-color);
+	transition: .2s;
+}
+li[aria-selected=true]{
+	background-color: var(--sub-background-color);
+	border-radius: 3px .5rem .5rem 3px;
+	box-shadow: calc(2rem + 3px) 0 0 -2rem inset var(--name-color);
+}
+li a {
+	display: flex; padding: .5rem 1rem;
+	flex-direction: column;
+	color: var(--text-color);
+	text-decoration: none;
+}
+li a::after {
+	content: attr(data-url);
+	font-size: .8rem;
+	color: var(--comment-color);
+}
+ul:empty::after {
+	content: "No results found.";
+	display: block; padding: .5rem 1rem;
+	color: var(--comment-color);
+	background-color: var(--background-color);
+	border-radius: .5rem;
+}
+</style>

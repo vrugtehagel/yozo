@@ -1,0 +1,11 @@
+body {
+	display: grid; height: 100vh; padding: 5.5rem 1rem 1rem; box-sizing: border-box;
+	grid-template: auto 1fr / 1fr;
+	transition: padding-top .3s;
+	overflow: hidden;
+}
+
+body:has(navigation-menu[hidden]){ padding-top: 1rem; }
+
+navigation-menu { transition: top .3s; }
+navigation-menu[hidden]{ top: -4.5rem; }

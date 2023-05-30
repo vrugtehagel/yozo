@@ -17,6 +17,9 @@ update(){
 # We run the updater immediately so we start fresh
 update
 
+# Touch a file to make sure serving doesn't immediately end
+touch README.md
+
 # Check for file changes every second. If there are any, run the updater
 while sleep 1; do 
 

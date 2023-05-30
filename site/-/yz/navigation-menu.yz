@@ -1,0 +1,94 @@
+<title>navigation-menu</title>
+
+<template mode=closed>
+	<nav>
+		<a href=/ aria-label="Home">
+			<svg-icon type=logo width=12 height=12></svg-icon>
+			<svg-icon type=wordmark width=36 height=12></svg-icon>
+		</a>
+		<a href=/tour/ >Tour</a>
+		<a href=/play/ >Play</a>
+		<a href=/docs/ >Docs</a>
+		<site-search
+			.hidden="!$.showSearch"
+			@blur="$.showSearch = false"
+		></site-search>
+		<icon-button
+			type="search"
+			.hidden="$.showSearch"
+			@activate="$.onactivate()"
+			aria-label="Toggle search"
+		></icon-button>
+	</nav>
+</template>
+<script>
+$.showSearch = false
+$.onactivate = async () => {
+	$.showSearch = true
+	await frame().once()
+	elements.siteSearch.focus()
+}
+</script>
+<style>
+nav {
+	display: flex; max-width: 1200px; height: 100%; padding: 0 min(4vw, 1rem); margin: 0 auto;
+	align-items: center; gap: clamp(0rem, 4vw - 1.2rem, 2rem);
+	position: relative;
+}
+svg-icon {
+	display: block; width: auto; padding: 0;
+	color: var(--name-color);
+}
+svg-icon[type=logo]{ display: none; }
+svg-icon[type=wordmark]{ aspect-ratio: 36 / 12; }
+a {
+	display: inline-flex; min-width: 3rem; min-height: 3rem;
+	padding: .5rem clamp(.5em, 10vw - 1.5em, 1em); box-sizing: border-box;
+	align-items: center; justify-content: center;
+	color: var(--text-color);
+	border-radius: .5rem; outline: none;
+	font: clamp(1rem, 4vw + .25rem, 1.25rem) / 1.2 var(--font-sans-serif);
+	text-decoration: none;
+	transition: background-color .2s;
+}
+a:focus-visible { box-shadow: 0 0 0 .25rem var(--keyword-color); }
+a:has(svg-icon){ padding-inline: .25em; }
+a:not(:has(svg-icon)):hover,
+icon-button:hover { background-color: var(--sub-background-color); }
+a:last-of-type { margin-right: min(8vw, 2rem); }
+icon-button {
+	display: none; margin-left: auto;
+}
+site-search {
+	flex: 1;
+	max-width: 20rem; margin: 0 0 0 auto;
+}
+@media (max-width: 670px){
+	svg-icon[type=logo]{ display: block; }
+	svg-icon[type=wordmark]{ display: none; }
+}
+@media (max-width: 600px){
+	icon-button {
+		display: block;
+		transition: opacity .2s, visibility 0s 0s, background .2s;
+	}
+	icon-button[hidden]{
+		background-color: transparent;
+		visibility: hidden;
+		opacity: 0;
+		transition: opacity .2s .1s, visibility 0s .2s, background-color .08s;
+	}
+	site-search {
+		max-width: none;
+		width: max(92vw - 8vw, 100vw - 2rem);
+		position: absolute; right: min(4vw, 1rem);
+		transition: opacity .2s .08s, visibility 0s 0s, width .3s;
+	}
+	site-search[hidden]{
+		width: 0;
+		visibility: hidden;
+		opacity: 0;
+		transition: opacity .2s, visibility 0s .3s, width .3s;
+	}
+}
+</style>

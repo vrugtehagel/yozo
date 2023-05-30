@@ -25,6 +25,7 @@ register.auto = find => {
 
 	define.register(3, null, context => {
 		if(cancelled) return {}
+		if(!context.template) return {}
 		for(const element of context.template.querySelectorAll(':not(:defined)'))
 			autoDefine(element.localName)
 		return {}

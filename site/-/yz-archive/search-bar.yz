@@ -1,0 +1,67 @@
+<title>search-bar</title>
+<meta property=value>
+
+<template mode=closed delegates-focus=true>
+	<div id=container>
+		<input type=search placeholder="Search" autocomplete=off autocorrect=off autocapitalize=none enterkeyhint=search spellcheck=false maxlength=64>
+		<svg-icon type=search></svg-icon>
+		<menu id=results></menu>
+	</div>
+</template>
+<script>
+const {input, ul} = elements
+watch.bind($.$value, input)
+
+function createSearchResult(result){
+	const li = document.createElement('li')
+	const title = document.createElement('span')
+	const description = document.createElement('span')
+	title.classList.add('title')
+	description.classList.add('description')
+	title.textContent	
+	li.append(, )
+}
+
+effect(async () => {
+	const url = new URL('/search.php', location.href)
+	url.searchParams.set('q', $.value)
+	ul.classList.add('loading')
+	await until(timeout(1000))
+	// const response = await yozo.fetch(url)
+	// const results = await response.json()
+	const results = [{title: 'Result 1 title', description: 'This is the description for title 1', url: '/#foo'}, {title: '2: title', description: 'This is the description for title 2', url: '/#bar'}]
+	for(const result of results){
+
+	}
+
+
+	ul.classList.remove('loading')
+})
+</script>
+<style>
+:host {
+	display: inline-block; height: 3rem;
+}
+#container {
+	display: grid; width: 100%; height: 100%;
+	grid-template: 100% / minmax(0, 1fr) auto; place-items: center;
+	background-color: var(--background-color);
+	border-radius: .5rem;
+}
+input {
+	min-width: 0; width: 100%; height: 100%; padding: .5rem 1rem;
+	color: inherit; background: none;
+	font: 1rem / 2rem var(--font-monospace);
+	border: none; outline: none;
+}
+input::placeholder {
+	color: rgb(255 255 255 / 50%);
+	font-family: var(--font-sans-serif);
+	opacity: 1;
+}
+svg-icon {
+	width: 1.5rem; height: 1.5rem; padding: 0 .75rem;
+	color: rgb(255 255 255 / 50%);
+	pointer-events: none;
+}
+</style>

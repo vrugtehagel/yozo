@@ -1,4 +1,3 @@
-import { WatchedValue } from './watched-value.js'
 import { addToWatch } from './add-to-watch.js'
 import { symbol } from './symbol.js'
 
@@ -12,7 +11,7 @@ export class Reference {
 		if(root) this.root.bucket.add(new WeakRef(this))
 		else this.bucket = new Set
 		this.value = this.#forceGetValue()
-		this.out = new Proxy(new WatchedValue(this), {
+		this.out = new Proxy(new EventTarget, {
 			get: (target, key) => {
 				if(key == symbol) return this
 				if(key[0] == '$') return cache[key] ??= new Reference(this, key.slice(1), this.root).out
@@ -29,14 +28,14 @@ export class Reference {
 				return this.value?.[key]
 			},
 			set: (target, key, value) => {
-				this.out[key[0] == '$' ? key : `$${key}`].set(value)
+				watch.set(this.out[key[0] == '$' ? key : `$${key}`], value)
 				return true
 			},
 			deleteProperty: (target, key) => {
-				this.out[key[0] == '$' ? key : `$${key}`].delete()
+				watch.delete(this.out[key[0] == '$' ? key : `$${key}`])
 				return true
 			},
-			ownKeys: target => {
+			ownKeys: () => {
 				addToWatch(this.out)
 				return this.isObject ? Object.keys(this.value) : []
 			},
@@ -44,8 +43,8 @@ export class Reference {
 				addToWatch(this.out)
 				return this.isObject && key in this.value
 			},
-			getPrototypeOf: target => WatchedValue.prototype,
-			getOwnPropertyDescriptor: (target, key) => {
+			getPrototypeOf: () => EventTarget.prototype,
+			getOwnPropertyDescriptor: () => {
 				addToWatch(this.out)
 				if(!this.isObject) return
 				return {configurable: true, enumerable: true}

@@ -1,31 +1,54 @@
 @script
-	import { exists } from 'https://deno.land/std/fs/mod.ts'
-	const page = await csml.import(csml.args.file)
-	const config = page.config ?? {}
+	const {url} = csml.args
+	const page = await csml.import(url)
+	const exclude = new Set(page.exclude ?? [])
+	const content = page.default
+	const isResolved = promise => promise.then(() => true, () => false)
+	const hasCSS = await isResolved(Deno.lstat(new URL('./index.css', url)))
+	const hasJS = await isResolved(Deno.lstat(new URL('./index.js', url)))
+	const components = []
+	try {
+		for await(const entry of Deno.readDir(new URL('./-/yz/', url)))
+			if(entry.isFile && entry.name.endsWith('.yz'))
+				components.push(entry.name.slice(0, -3))
+	} catch {}
 
 !DOCTYPE html
 html[lang=en]
-meta[charset=utf-8]
-meta[name=viewport][content="width=device-width,initial-scale=1"]
+	meta[charset=utf-8]
+	meta[name=viewport][content="width=device-width,initial-scale=1"]
 
-title {{ csml.args.title }} | YOZO
+	title {{ page.title }} | YOZO
 
-@if(!config.noYozo)
-	script[src=/dev.js]
-@if(!config.noGlobalAssets)
-	link[rel=stylesheet][href=/-/css/base.css]
-	script[type=module][src=/-/js/index.js]
+	@if(!exclude.has('yozo'))
+		script[src=/dev.js]
+	@if(!exclude.has('yozo-register'))
+		script
+			const local = {{ components }}
+			window.yozo.register.auto(name => {
+				if(local.includes(name)) return `./-/yz/${name}.yz`
+				return `/-/yz/${name}.yz`
+			})
+			Object.assign(window, window.yozo)
+	@if(!exclude.has('fonts'))
+		link[rel=stylesheet][href=/-/css/fonts.css]
+	@if(!exclude.has('global-assets'))
+		link[rel=stylesheet][href=/-/css/base.css]
+		script[type=module][src=/-/js/index.js]
+	@if(hasCSS)
+		link[rel=stylesheet][href=./index.css]
+	@if(hasJS)
+		script[type=module][src=./index.js]
+
+	@if(!exclude.has('nav'))
+		navigation-menu
 
 
+	@if(page.layout)
+		:html {{ csml.render(`./${page.layout}.csml`, {url, content}) }}
+	@else
+		:html {{ content }}
 
-@if(!config.noNavigationMenu)
-	navigation-menu
 
-@if(!config.noMain)
-	main
-		:html {{ page.default }}
-@else
-	:html {{ page.default }}
-
-@if(!config.noFooter)
-	footer-menu
+	@if(!exclude.has('footer'))
+		footer-menu

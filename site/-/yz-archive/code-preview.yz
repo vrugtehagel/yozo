@@ -1,0 +1,116 @@
+<title>code-preview</title>
+<meta attribute=language type=String default="js">
+<meta attribute=notrim type=Boolean>
+<meta attribute=errorrow as=errorRow type=Number default="-1">
+<meta attribute=errorcolumn as=errorColumn type=Number default="-1">
+<meta attribute=errormessage as=errorMessage type=String>
+
+<template mode=closed delegates-focus=true>
+	<pre><code></code></pre>
+</template>
+<script>
+
+import('/-/js/libraries/prism.js').then(() => $.prismLoaded = true)
+
+const {code} = elements
+
+$.text = ''
+
+connect(() => {
+	when(this).observes('mutation', {childList: true, characterData: true}).then(() => {
+		$.text = $.notrim ? this.textContent : this.textContent.trim()
+	}).now()
+})
+
+effect(async () => {
+	if(!$.prismLoaded) return code.textContent = $.text
+	code.className = `language-${$.language}`
+	const grammar = window.Prism.languages[$.language]
+	code.innerHTML = window.Prism.highlight($.text, grammar, $.language)
+	const row = $.errorRow
+	const column = $.errorColumn
+	if(!(row >= 0 && column >= 0)) return
+	let index = $.text.split('\n').slice(0, row - 1).join('\n').length + column
+	const iterator = document.createNodeIterator(code, NodeFilter.SHOW_TEXT)
+	let node
+	while(index >= 0 && (node = iterator.nextNode()))
+		index -= node.textContent.length
+	const mark = document.createElement('mark')
+	if(!node) node = iterator.referenceNode
+	mark.classList.add('error')
+	mark.dataset.errorMessage = $.errorMessage
+	node.after(mark)
+	mark.append(node)
+})
+
+</script>
+<style>
+
+:host {
+	display: block; padding: 1rem 2rem;
+	background: var(--background-color);
+	font-family: var(--font-monospace);
+	overflow: auto;
+	border-radius: 1rem;
+}
+
+pre {
+	width: max-content; margin: 0;
+}
+
+pre, code { font-family: inherit; }
+
+mark.error {
+	position: relative;
+	color: var(--error-color); background: none;
+	box-shadow: 0 4px 0 var(--error-color);
+}
+
+mark.error::before, mark.error::after {
+	content: attr(data-error-message);
+	display: block; padding: .25rem .5rem;
+	position: absolute; inset: calc(100% + 4px) auto auto -4px;
+	color: var(--background-color); background-color: var(--error-color);
+	border-radius: 4px;
+	white-space: pre;
+	user-select: none;
+	-webkit-user-select: none;
+}
+
+mark.error::before {
+	opacity: 0;
+	border-right: 2rem solid transparent;
+}
+
+/* html */
+code { color: var(--text-color); }
+.doctype .name, .entity { color: var(--meta-color); }
+.doctype .doctype-tag,
+.tag .tag { color: var(--keyword-color); }
+.punctuation { color: var(--text-color); }
+.attr-name { color: var(--primary-color); }
+.attr-value, .attr-value .punctuation:not(.attr-equals) { color: var(--string-color); }
+.comment { color: var(--comment-color); }
+
+/* css */
+.language-css { color: var(--name-color); }
+.rule { color: var(--keyword-color); }
+.property, .variable { color: var(--name-color); }
+.selector, .unit { color: var(--keyword-color); }
+.pseudo-class { color: var(--text-color); }
+.id, .class { color: var(--primary-color); }
+.hexcode { color: var(--meta-color); }
+
+/* js */
+.keyword, .operator { color: var(--keyword-color); }
+.string { color: var(--string-color); }
+.function { color: var(--primary-color); }
+.number, .meta, .boolean { color: var(--meta-color); }
+.parameter { color: var(--parameter-color); }
+.class-name, .window { color: var(--name-color); }
+
+/* regex  */
+.regex-delimiter, .regex-source { color: var(--string-color); }
+.regex-flags { color: var(--keyword-color); }
+
+</style>

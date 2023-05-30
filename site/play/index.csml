@@ -1,0 +1,37 @@
+@script
+	export const title = 'Play'
+	export const exclude = ['footer']
+
+h1.sr-only Play around with Yozo 
+
+play-menubar
+
+a[href=#][tabindex=0] I am a link
+
+section
+	p toolbar
+	ul
+		li [ ] save -> dropdown (under x, y, z, or create new)
+		li [ ] preset name & dropdown (change editor contents)
+		li [x] ~ space ~
+		li [ ] layout switch (singular, side-by-side, triple split, quartiles, stack)
+		li [x] hide navbar (toggle ^ / v)
+
+section[hidden]
+	p each "window" (layout space), when closed;
+	ul
+		li [ ] let user open an existing file > also let them rename/delete files here
+		li [ ] create a new file
+		li [ ] open from computer
+		li [ ] open the preview
+
+	p each window, when opened;
+	ul
+		li [ ] allow closing (duh)
+		li [ ] name & input to edit in title bar
+
+	p the preview, when opened;
+	ul
+		li [ ] show close button
+		li [ ] show <title> in title bar, but not editable
+

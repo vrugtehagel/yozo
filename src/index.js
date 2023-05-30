@@ -1,5 +1,4 @@
 import { define } from './define/index.js'
-import { html } from './html.js'
 import { register } from './register/index.js'
 import { fetch } from './fetch.js'
 import { purify } from './purify.js'
@@ -12,7 +11,6 @@ import { when } from './when.js'
 import './define/mods.js'
 
 self.yozo = {
-	html,
 	track,
 	until,
 	watch,

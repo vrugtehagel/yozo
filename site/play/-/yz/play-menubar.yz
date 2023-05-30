@@ -1,0 +1,80 @@
+<title>play-menubar</title>
+
+<template mode=closed>
+	<menu
+		role=menubar
+	>
+		<li role=presentation>
+			<play-menubar-save></play-menubar-save>
+		</li>
+		<li role=presentation>
+			<icon-button type=save aria-label="Open save dropdown">
+				<svg-icon type=pointer-small></svg-icon>
+			</icon-button>
+			<menu role=menu>
+				
+			</menu>
+		</li>
+		<li role=separator></li>
+		<li>
+			<icon-button
+				id=navigation-menu-toggle-button
+				type=pointer
+				:state="$.navigationMenuHidden ? 'down' : 'up'"
+				aria-label="Toggle navigation menu"
+				@click="$.toggleNavigationMenu()"
+			></icon-button>
+		</li>
+	</menu>
+</template>
+<script>
+
+$.navigationMenuHidden = false
+$.toggleNavigationMenu = () => $.navigationMenuHidden = !$.navigationMenuHidden
+const navigationMenu = document.querySelector('navigation-menu')
+effect(() => navigationMenu.hidden = $.navigationMenuHidden)
+
+</script>
+<style>
+menu {
+	list-style: none; margin: 0;
+}
+menu[role=menubar]{
+	display: flex; padding: .5rem 0 .5rem .5rem;
+	flex-wrap: wrap; gap: .5em 1em;
+	background-color: var(--background-color);
+	border-radius: .75rem;
+	box-shadow: -2rem 0 0 inset var(--sub-background-color);
+	transition: border-bottom-left-radius .1s;
+}
+menu[role=menu]{
+	display: block; padding: .5rem;
+	position: absolute; top: calc(100% + .5rem);
+	background-color: var(--background-color);
+	border-radius: 0 0 1rem 1rem;
+	transition: opacity .2s, translate .2s, visibility 0s 0s;
+}
+menu[role=menu][hidden]{
+	translate: 0 -1rem;
+	opacity: 0; visibility: hidden;
+	transition: opacity .2s, translate .2s, visibility .2s 0s;
+}
+li[role=separator]{ flex: 1 0 0; }
+li {
+	position: relative;
+}
+svg-icon[type=pointer-small]{
+	width: 1em; padding: 0; margin: 0 -.25em 0 -.5em;
+	position: relative;
+}
+icon-button:is([aria-expanded=true], :hover) {
+	background-color: var(--sub-background-color);
+}
+#navigation-menu-toggle-button {
+	display: inline-block; padding: 1.5rem 0 0 0; margin: -1.5rem 0 0;
+	color: inherit; background: var(--background-color);
+	border: none; border-top: none; border-radius: 0 0 10rem 10rem;
+	box-shadow: 0 0 0 .5rem var(--sub-background-color);
+	cursor: pointer;
+}
+</style>

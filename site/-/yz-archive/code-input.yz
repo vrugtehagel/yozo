@@ -1,0 +1,49 @@
+<title>code-input</title>
+<meta attribute=value>
+<meta property=value>
+
+<template mode=closed delegates-focus=true>
+	<textarea
+		spellcheck=false
+		.value="$.$attributes.value"
+		@beforeinput="$.processor?.saveState(this)"
+		@input="$.processor?.process(event)"
+		@keydown="$.onkeydown(event)"
+	></textarea>
+</template>
+<script>
+
+import('/-/js/input-event-processor/index.js')
+	.then(({InputEventProcessor}) => $.processor = InputEventProcessor.presets.code)
+
+const {textarea} = elements
+
+connect(() => $.$value.bind(textarea))
+
+$.onkeydown = event => {
+	$.processor?.saveState(textarea);
+	$.processor?.process(event)
+	if(event.key != 'Tab') return
+	textarea.dispatchEvent(new CustomEvent('input', {bubbles: true, composed: true}))
+}
+
+</script>
+<style>
+:host {
+	display: inline-block;
+	font-family: var(--font-monospace);
+}
+
+::selection {
+	background-color: var(--highlight-color);
+}
+
+textarea {
+	display: inline-block; width: 100%; height: 100%; padding: 0;
+	color: inherit; background: none;
+	border: none; outline: none;
+	font-size: inherit; line-height: inherit; font-family: inherit;
+	letter-spacing: inherit;
+	resize: none;
+}
+</style>
