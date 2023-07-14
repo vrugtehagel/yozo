@@ -1,0 +1,35 @@
+<title>play-navigation-menu-toggle</title>
+
+<template mode=closed>
+	<ui-button
+		role=menuitemcheckbox
+		icon=pointer
+		:iconstate="$.navigationMenuHidden ? 'down' : 'up'"
+		@click="$.toggleNavigationMenu()"
+	></ui-button>
+</template>
+
+<script>
+$.navigationMenuHidden = false
+$.toggleNavigationMenu = () => $.navigationMenuHidden = !$.navigationMenuHidden
+const navigationMenu = document.querySelector('navigation-menu')
+effect(() => navigationMenu.hidden = $.navigationMenuHidden)
+</script>
+
+<style>
+:host {
+	display: inline-block; padding: 1rem 0 0 0; margin: -1rem 0 0;
+	color: inherit; background: var(--background-color);
+	border: none; border-top: none; border-radius: 0 0 10rem 10rem;
+	box-shadow:
+		0 -.5rem 0 var(--background-color),
+		0 0 0 .5rem var(--sub-background-color);
+	cursor: pointer;
+}
+ui-button {
+	border-radius: 50%;
+}
+ui-button:hover {
+	background-color: var(--highlight-color);
+}
+</style>

@@ -1,0 +1,19 @@
+<svg viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg">
+	<defs>
+		<style>
+			path { transition: .2s; }
+			:is(.side-by-side, .triple-split, .stack, .quartiles) .layout-single { opacity: 0; }
+			.side-by-side .layout-side-by-side { opacity: 1; }
+			.triple-split .layout-triple-split { opacity: 1; }
+			.stack .layout-stack { opacity: 1; }
+			.quartiles .layout-quartiles { opacity: 1; }
+		</style>
+	</defs>
+	<g stroke="currentColor" fill="none">
+		<path class="layout-single" d="M1 2Q1 1 2 1H10Q11 1 11 2V10Q11 11 10 11H2Q1 11 1 10Z" />
+		<path class="layout-side-by-side" d="M1 2Q1 1 2 1H4Q5 1 5 2V10Q5 11 4 11H2Q1 11 1 10ZM7 2Q7 1 8 1H10Q11 1 11 2V10Q11 11 10 11H8Q7 11 7 10Z" opacity="0"/>
+		<path class="layout-triple-split" d="M1 2Q1 1 2 1H2.4Q3.4 1 3.4 2V10Q3.4 11 2.5 11H2Q1 11 1 10ZM4.8 2Q4.8 1 5.8 1H6.2Q7.2 1 7.2 2V10Q7.2 11 6.3 11H5.8Q4.8 11 4.8 10ZM8.6 2Q8.6 1 9.6 1H10Q11 1 11 2V10Q11 11 10.1 11H9.6Q8.6 11 8.6 10Z" opacity="0" />
+		<path class="layout-stack" d="M1 2Q1 1 2 1H10Q11 1 11 2V4Q11 5 10 5H2Q1 5 1 4ZM1 8Q1 7 2 7H10Q11 7 11 8V10Q11 11 10 11H2Q1 11 1 10Z" opacity="0" />
+		<path class="layout-quartiles" d="M1 2Q1 1 2 1H4Q5 1 5 2V4Q5 5 4 5H2Q1 5 1 4ZM7 2Q7 1 8 1H10Q11 1 11 2V4Q11 5 10 5H8Q7 5 7 4ZM1 8Q1 7 2 7H4Q5 7 5 8V10Q5 11 4 11H2Q1 11 1 10ZM7 8Q7 7 8 7H10Q11 7 11 8V10Q11 11 10 11H8Q7 11 7 10Z" opacity="0" />
+	</g>
+</svg>

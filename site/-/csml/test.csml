@@ -1,0 +1,9 @@
+@script
+	const {url, content, page} = csml.args
+
+link[rel=stylesheet][href=/-/css/test.css]
+
+main
+	h1 Tests for {{ page.title }}
+
+	test-suite[src=./index.js]

@@ -2,33 +2,51 @@
 	export const title = 'Play'
 	export const exclude = ['footer']
 
+link[rel=stylesheet][href=/-/css/play.css]
+
 h1.sr-only Play around with Yozo 
 
-play-menubar
+menu#main-menu
+	li > play-save
+	li > play-presets
+	li.separator
+	li > play-layout
+	li > site-settings
+	li > play-navigation-menu-toggle
 
-a[href=#][tabindex=0] I am a link
 
-section
+play-window
+play-window
+play-window
+play-window
+
+
+
+
+
+section[hidden]
+	a[href=#][tabindex=0] I am a link
 	p toolbar
 	ul
 		li [ ] save -> dropdown (under x, y, z, or create new)
 		li [ ] preset name & dropdown (change editor contents)
-		li [x] ~ space ~
+		li [ ] ~ space ~
 		li [ ] layout switch (singular, side-by-side, triple split, quartiles, stack)
-		li [x] hide navbar (toggle ^ / v)
+		li [ ] hide navbar (toggle ^ / v)
 
 section[hidden]
 	p each "window" (layout space), when closed;
 	ul
 		li [ ] let user open an existing file > also let them rename/delete files here
 		li [ ] create a new file
-		li [ ] open from computer
+		li [ ] (?) open from computer
 		li [ ] open the preview
 
 	p each window, when opened;
 	ul
 		li [ ] allow closing (duh)
 		li [ ] name & input to edit in title bar
+		li [ ] (?) allow dragging to swap
 
 	p the preview, when opened;
 	ul

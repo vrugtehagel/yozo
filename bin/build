@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# This script just builds everything.
+
+# Move to where the build scripts are located
+cd "$(dirname "$0")"
+
+# And run them
+./build-site
+./build-yozo

@@ -1,0 +1,18 @@
+<svg viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg">
+	<style>
+		@keyframes rotate {
+			to { rotate: 360deg; }
+		}
+		@keyframes stretch {
+			from { stroke-dasharray: 3 19; }
+			to { stroke-dasharray: 10 6; }
+		}
+		path {
+			transform-origin: 6px 6px;
+			stroke-dasharray: 5 25;
+			animation: rotate linear .8s infinite,
+				stretch ease-in-out 1.2s infinite alternate;
+		}
+	</style>
+	<path d="M10 6A1 1 0 0 0 2 6A1 1 0 0 0 10 6" stroke="currentColor" fill="none" stroke-linecap="round"/>
+</svg>

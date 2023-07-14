@@ -1,0 +1,33 @@
+#!/bin/bash
+
+# This build script builds the site.
+# In short, we just clone the whole site into dist/, and
+# then we run the CSML scripts, after which delete the .csml files.
+
+# First of all, move to project root
+cd "$(dirname "$0")/.."
+
+# We clone the whole site into dist/
+cp -R site/ dist/
+
+# We run the CSML build script
+deno run --allow-read --allow-write csml.js
+
+# If the build script failed, output error message and leave
+if [[ $? -ne 0 ]]
+then
+    echo "$(tput setaf 1)✘$(tput init)" \
+    	"Site build failed."
+    exit 1
+fi
+
+# Now, delete all the csml files in dist/
+find dist -name "*.csml" -type f -delete
+# Also the tests
+find dist -name "*.test.js" -type f -delete
+# Lastly, the empty directories
+find dist -type d -empty -delete
+
+# All good!
+echo "$(tput setaf 2)✓$(tput init)" \
+	"Site build complete."

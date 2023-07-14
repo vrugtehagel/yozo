@@ -1,0 +1,66 @@
+<title>footer-menu</title>
+
+<template mode=closed>
+	<footer>
+		<nav>
+			<a href=https://github.com/vrugtehagel/yozo>
+				<ui-icon type=github></ui-icon>
+				Source code
+			</a>
+			<a href=https://github.com/vrugtehagel/yozo/issues/new>
+				<ui-icon type=github-issue></ui-icon>
+				File an issue
+			</a>
+			<a href=https://vrugtehagel.nl/>
+				<ui-icon type=vrugtehagel></ui-icon>
+				vrugtehagel
+			</a>
+			<ui-button
+				#if="document.documentElement.scrollHeight > 3000"
+				@click="window.scroll({top: 0, behavior: 'smooth'})"
+			>
+				Back to top
+				<ui-icon type=pointer state=up></ui-icon>
+			</ui-button>
+		</nav>
+		<small>
+			&copy; {{ (new Date).getFullYear() }} vrugtehagel,
+			released under the MIT license
+		</small>
+	</footer>
+</template>
+
+<style>
+footer {
+	padding: 1rem min(4vw, 1rem);
+}
+nav {
+	display: flex; max-width: 1200px; margin: 1rem auto;
+	flex-flow: row wrap; gap: 1rem; justify-content: center;
+}
+a {
+	display: flex; padding: 0 1rem 0 0;
+	align-items: center;
+	color: var(--text-color);
+	border-radius: .5rem;
+	text-decoration: none;
+	transition: .2s;
+}
+
+:is(ui-button, a):hover {
+	background-color: var(--background-color);
+}
+ui-button {
+	margin-left: auto;
+}
+ui-button ui-icon {
+	margin: 0 -1rem;
+}
+small {
+	display: block; margin-top: 1.5rem;
+	color: var(--comment-color);
+	font-size: 1rem;
+	text-align: center;
+}
+
+</style>

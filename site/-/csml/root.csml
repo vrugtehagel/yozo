@@ -6,12 +6,6 @@
 	const isResolved = promise => promise.then(() => true, () => false)
 	const hasCSS = await isResolved(Deno.lstat(new URL('./index.css', url)))
 	const hasJS = await isResolved(Deno.lstat(new URL('./index.js', url)))
-	const components = []
-	try {
-		for await(const entry of Deno.readDir(new URL('./-/yz/', url)))
-			if(entry.isFile && entry.name.endsWith('.yz'))
-				components.push(entry.name.slice(0, -3))
-	} catch {}
 
 !DOCTYPE html
 html[lang=en]
@@ -24,16 +18,25 @@ html[lang=en]
 		script[src=/dev.js]
 	@if(!exclude.has('yozo-register'))
 		script
-			const local = {{ components }}
+			const namespaces = ['ui', 'play', 'docs', 'tour']
 			window.yozo.register.auto(name => {
-				if(local.includes(name)) return `./-/yz/${name}.yz`
+				const namespace = namespaces
+					.find(namespace => name.startsWith(`${namespace}-`))
+				if(namespace) return `/-/yz/${namespace}/${name}.yz`
 				return `/-/yz/${name}.yz`
 			})
-			Object.assign(window, window.yozo)
+			// Only for production
+			// Object.assign(window, window.yozo)
+	script
+		$settings = yozo.live({})
+		import('/-/js/site-settings/index.js')
+	style
+		@layer base, custom-elements, layout;
 	@if(!exclude.has('fonts'))
 		link[rel=stylesheet][href=/-/css/fonts.css]
 	@if(!exclude.has('global-assets'))
 		link[rel=stylesheet][href=/-/css/base.css]
+		link[rel=stylesheet][href=/-/css/custom-elements.css]
 		script[type=module][src=/-/js/index.js]
 	@if(hasCSS)
 		link[rel=stylesheet][href=./index.css]
@@ -45,7 +48,7 @@ html[lang=en]
 
 
 	@if(page.layout)
-		:html {{ csml.render(`./${page.layout}.csml`, {url, content}) }}
+		:html {{ csml.render(`./${page.layout}.csml`, {url, content, page}) }}
 	@else
 		:html {{ content }}
 

@@ -1,0 +1,97 @@
+@script
+	export const layout = 'docs'
+	export const title = 'live.link()'
+	export const description = 'The ``live.link()`` utility function links a live variable to any dynamic source of data, such as other live variables or an input element.'
+
+h2 Syntax
+ui-code
+	live.link($live, get);
+	live.link($live, { get });
+	live.link($live, { get, set });
+	live.link($live, { get, changes });
+	live.link($live, { get, set, changes });
+	live.link($live, input);
+
+h3 Parameters
+dl
+	dt ``$live``
+	dd > p A live variable, to link something to.
+	dt ``get``
+	dd > p A function retrieving the value of the linked variable.
+	dt ``set`` [[optional]]
+	dd > p A function to run whenever the variable is set. Note that after setting, the getter will run to make sure the value is in-sync.
+	dt ``changes`` [[optional]]
+	dd > p A [``Flow``](/docs/flow/) that triggers whenever the value of the linked variable should change. If omitted, it will create a flow that triggers whenever the live dependencies of the ``get`` function changes.
+	dt ``input``
+	dd
+		p An input or textarea element. This is a shorthand for
+		ui-code
+			live.link($live, {
+				get: () => input.value,
+				set: value => input.value = value,
+				changes: when(input).inputs()
+			});
+
+h3 Return value
+p A [``Flow``](/docs/flow/) object in charge of the link. It never triggers, but calling [``.stop()``](/docs/flow/stop/) on it breaks up the link and cleans up any listeners (including the flow passed to the ``changes`` argument, if any). Triggering the flow manually through calling [``.now()``](/docs/flow/now/) will run the getter and refresh the value of the live variable.
+
+h2 Examples
+
+h3 Simple getters
+p Sometimes, it is useful to bind a live variable to a computation involving other live variables. As an example, this site has some settings related to indentation. The base two settings are ``useTabs`` and ``tabSize``. Then, to create a live variable representing on indent, we do
+
+ui-code
+	const $settings = live({ useTabs: true, tabSize: 4 });
+
+	live.link($settings.$indent, () => {
+		if($settings.useTabs) return '\t';
+		return ' '.repeat($settings.tabSize);
+	});
+
+	console.log($settings.indent); // "\t"
+
+	$settings.useTabs = false;
+	$settings.tabSize = 2;
+
+	console.log($settings.indent); // "  "
+
+p This way, we can use the two settings as "source of truth", and we never have to worry about things getting out of sync. Additionally, ``$settings.$indent`` is live and therefore reactive; making it easy to use in component templates and effects.
+
+h3 Linking to dynamic data
+p When using objects or libraries as a source of some dynamic data, such as a library for a custom select element, sometimes it is useful to link a live variable to said data. In this example, we will bind a live variable to ``localStorage``, in particular, the "foo" key:
+
+ui-code
+	const $storage = live({ foo: null });
+
+	live.link($storage.$foo, {
+		get: () => localStorage.getItem('foo'),
+		set: value => localStorage.setItem('foo', value),
+		changes: when(window).does('storage')
+	});
+
+p This example could even be made a bit more efficient by filtering out the "storage" events for other keys; we might do so using [``.if()``](/docs/flow/if/) through ``.if(({key}) => key == 'foo')``. Now, setting ``$storage.foo = 23`` will update ``localStorage``, which triggers the "storage" event on the other open pages and update the live variable there.
+
+h3 Two-way computations
+p Very occasionally, it is useful to have two sources of truth. Being able to set even derived values, and accordingly updating the state of their dependencies. As a simple example, let's say we are linking a number to another that is twice its value. We want to be able to set both, and setting one should update the other. We can do
+
+ui-code
+	const $state = live({ number: 23 });
+	live.link($state.$double, {
+		get: () => $state.number * 2,
+		set: value => $state.number = value / 2
+	});
+
+	console.log($state); // Live<{ number: 23, double: 46 }>
+
+	$state.double = 88;
+
+	console.log($state); // Live<{ number: 44, double: 88 }>
+
+p Then, we can rely on both to be up-to-date and in-sync at all times, and we can use both to set new state. Note that since we omitted the ``changes`` option, it defaults to "whenever the getter's dependencies changed". Since the getter references ``$state.number``, our linked variable will update whenever ``$state.number`` does - exactly what we want.
+
+
+
+
+h2 Usage notes
+p When omitting the ``set`` option, the linked variable becomes read-only. It will not throw when attempting to set it, but instead revert back to its previous value.
+

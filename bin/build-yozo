@@ -1,0 +1,63 @@
+#!/bin/bash
+
+# This build script builds Yozo itself.
+# We provide a dev build as well as a production build, and they go under
+# dist/lib.js and dist/dev,js.
+# For the production file, we remove all lines in the source that have a
+# comment in them. This makes it super easy to keep the dev and production
+# scripts aligned while adding additional code to the dev bundle.
+# This means the original codebase (with comments) compiles to the dev bundle.
+
+# First we move to project root for safety
+cd "$(dirname "$0")/.."
+
+# We clean up temp/
+rm -rf dist/temp/*
+
+# We clone the whole source into temp/
+cp -R src/ dist/temp/
+
+# Now, we find all JS files and remove lines with //-style comments
+find dist/temp -type f -name "*.js" -exec sed -i "" 's/^.*\/\/$//g' {} \;
+
+# Now bundle both the production and development versions
+deno run -A https://deno.land/x/esbuild@v0.17.18/mod.js \
+	lib=./dist/temp/index.js \
+	dev=./src/index.js \
+	--outdir=dist --bundle --minify --log-level=warning --mangle-props=^__
+
+# Save the exit status of the build
+SUCCESS=$?
+
+# Clean up temp/
+rm -rf dist/temp
+
+# If the build failed, stop here
+if [[ $SUCCESS -ne 0 ]]
+then
+    echo "$(tput setaf 1)✘$(tput init)" \
+    	"Yozo build failed."
+    exit 1
+fi
+
+# Find out what size the build turned out to be
+SIZE=$(gzip < ./dist/lib.js | wc -c | xargs)
+
+# The threshold is 5000 bytes; above that, we're failing the build
+if [[ $SIZE -ge 5000 ]]
+then
+    echo "$(tput setaf 1)✘$(tput init)" \
+    	"Yozo build failed" \
+		"($(tput setaf 1)$SIZE$(tput init)b gzipped)."
+    exit 1
+fi
+
+# We'll print the bundle size in a helpful color;
+# below 4750 is green, above is yellow.
+SIZE_COLOR=3
+[[ $SIZE -lt 4750 ]] && SIZE_COLOR=2
+
+# And echo some output
+echo "$(tput setaf 2)✓$(tput init)" \
+	"Yozo build complete" \
+	"($(tput setaf $SIZE_COLOR)$SIZE$(tput init)b gzipped)."

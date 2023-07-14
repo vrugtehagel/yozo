@@ -3,8 +3,8 @@
 <template mode=closed>
 	<nav>
 		<a href=/ aria-label="Home">
-			<svg-icon type=logo width=12 height=12></svg-icon>
-			<svg-icon type=wordmark width=36 height=12></svg-icon>
+			<ui-icon type=logo width=12 height=12></ui-icon>
+			<ui-icon type=wordmark width=36 height=12></ui-icon>
 		</a>
 		<a href=/tour/ >Tour</a>
 		<a href=/play/ >Play</a>
@@ -13,12 +13,12 @@
 			.hidden="!$.showSearch"
 			@blur="$.showSearch = false"
 		></site-search>
-		<icon-button
-			type="search"
+		<ui-button
+			icon="search"
 			.hidden="$.showSearch"
-			@activate="$.onactivate()"
 			aria-label="Toggle search"
-		></icon-button>
+			@activate="$.onactivate()"
+		></ui-button>
 	</nav>
 </template>
 <script>
@@ -35,12 +35,12 @@ nav {
 	align-items: center; gap: clamp(0rem, 4vw - 1.2rem, 2rem);
 	position: relative;
 }
-svg-icon {
-	display: block; width: auto; padding: 0;
+ui-icon {
+	display: block; width: auto; height: 1.5rem; padding: 0;
 	color: var(--name-color);
 }
-svg-icon[type=logo]{ display: none; }
-svg-icon[type=wordmark]{ aspect-ratio: 36 / 12; }
+ui-icon[type=logo]{ display: none; }
+ui-icon[type=wordmark]{ aspect-ratio: 36 / 12; }
 a {
 	display: inline-flex; min-width: 3rem; min-height: 3rem;
 	padding: .5rem clamp(.5em, 10vw - 1.5em, 1em); box-sizing: border-box;
@@ -51,12 +51,22 @@ a {
 	text-decoration: none;
 	transition: background-color .2s;
 }
-a:focus-visible { box-shadow: 0 0 0 .25rem var(--keyword-color); }
-a:has(svg-icon){ padding-inline: .25em; }
-a:not(:has(svg-icon)):hover,
-icon-button:hover { background-color: var(--sub-background-color); }
-a:last-of-type { margin-right: min(8vw, 2rem); }
-icon-button {
+a:focus-visible {
+	box-shadow: 0 0 0 .25rem var(--keyword-color);
+}
+a:hover {
+	background-color: var(--highlight-color);
+}
+a:has(ui-icon){
+	padding-inline: .25em;
+}
+a:has(ui-icon):hover {
+	background-color: transparent;
+}
+a:last-of-type {
+	margin-right: min(8vw, 2rem);
+}
+ui-button {
 	display: none; margin-left: auto;
 }
 site-search {
@@ -64,15 +74,15 @@ site-search {
 	max-width: 20rem; margin: 0 0 0 auto;
 }
 @media (max-width: 670px){
-	svg-icon[type=logo]{ display: block; }
-	svg-icon[type=wordmark]{ display: none; }
+	ui-icon[type=logo]{ display: block; }
+	ui-icon[type=wordmark]{ display: none; }
 }
 @media (max-width: 600px){
-	icon-button {
+	ui-button {
 		display: block;
 		transition: opacity .2s, visibility 0s 0s, background .2s;
 	}
-	icon-button[hidden]{
+	ui-button[hidden]{
 		background-color: transparent;
 		visibility: hidden;
 		opacity: 0;

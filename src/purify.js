@@ -1,10 +1,10 @@
 import { track } from './track.js'
 
-export const purify = fn => {
+export const purify = callback => {
 	let call
 	return (...args) => {
-		call?.undo()
-		call = track.undo(() => fn(...args))
+		call?.flows.stop()
+		call = track.flows(() => callback(...args))
 		return call.result
 	}
 }

@@ -1,8 +1,10 @@
 import { ContextMessenger } from '/-/js/context-messenger/index.js'
 import { SessionManager } from '/-/js/session-manager/service-worker.js'
 
+const {when} = self.yozo
+
 export const fileSystem = new class FileSystem {
-	scopes = ['/file/', '/exam/']
+	scopes = ['/file/', '/exam/', '/test/']
 
 	get storage(){ return SessionManager.active?.storage }
 
@@ -20,7 +22,7 @@ export const fileSystem = new class FileSystem {
 		return 'text/plain'
 	}
 
-	update({uuid, entry}){
+	update(uuid, entry){
 		if(entry) this.storage?.set(uuid, entry)
 		else this.storage?.delete(uuid)
 	}
@@ -47,15 +49,14 @@ when(self).does('fetch').then(event => {
 })
 
 const contextMessenger = ContextMessenger.get('*')
-when(contextMessenger).fileupdates().then(event => {
-	const {payload} = event.detail
-	const {uuid, entry, sessionId} = payload
+when(contextMessenger).does('filepush').then(event => {
+	const {sessionId, data} = event.detail.payload
 	SessionManager.activate(sessionId)
-	fileSystem.update({uuid, entry})
+	for(const [uuid, entry] of data) fileSystem.update(uuid, entry)
 	event.detail.respond()
 })
 
-when(contextMessenger).filelists().then(event => {
+when(contextMessenger).does('filepull').then(event => {
 	const {sessionId} = event.detail.payload
 	SessionManager.activate(sessionId)
 	const entries = fileSystem.list()

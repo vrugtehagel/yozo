@@ -1,0 +1,11 @@
+@script
+	const {url, content, page} = csml.args
+
+link[rel=stylesheet][href=/-/css/docs.css]
+
+main
+	article
+		h1 {{ page.title }}
+		p {{ page.description }}
+
+		:html {{ content }}

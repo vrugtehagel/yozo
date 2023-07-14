@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 12">
+	<defs>
+		<style>
+			.thumb, .track { transition: .3s; }
+			.off .thumb { transform: translateX(-2.5px); }
+			.on .thumb { transform: translateX(2.5px); }
+			.track { opacity: 0; transform: scale(0, 1); transform-origin: 2.5px 6px; }
+			.on .track { opacity: 1; transform: scale(1, 1); }
+		</style>
+	</defs>
+	<path d="M3.5 3A1 1 0 0 0 3.5 9H8.5A1 1 0 0 0 8.5 3Z" stroke="currentColor" fill="none"/>
+	<circle class="thumb" cx="6" cy="6" r="1.5" fill="currentColor"/>
+	<path class="track" d="M6.5 4.5A2 2 0 0 0 6.5 7.5H3.5A1 1 0 0 1 3.5 4.5Z" fill="currentColor"/>
+</svg>

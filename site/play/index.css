@@ -4,8 +4,24 @@ body {
 	transition: padding-top .3s;
 	overflow: hidden;
 }
-
-body:has(navigation-menu[hidden]){ padding-top: 1rem; }
-
-navigation-menu { transition: top .3s; }
+body:has(navigation-menu[hidden]){
+	padding-top: 1rem;
+}
+navigation-menu {
+	transition: top .3s;
+	box-shadow: none;
+}
 navigation-menu[hidden]{ top: -4.5rem; }
+#main-menu {
+	list-style: none;
+	display: flex; padding: .5rem 0 .5rem .5rem; margin: 0;
+	flex-wrap: wrap; gap: .5em 1em;
+	background-color: var(--background-color);
+	border-radius: .75rem;
+	box-shadow: -2rem 0 0 inset var(--sub-background-color);
+	transition: border-bottom-left-radius .1s;
+}
+
+#main-menu li.separator {
+	flex: 1;
+}

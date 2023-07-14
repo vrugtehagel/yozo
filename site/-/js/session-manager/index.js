@@ -1,10 +1,8 @@
 import { requestServiceWorker } from '/-/js/service-worker/index.js'
 
-let sessionId = sessionStorage.getItem('sessionId')
+export const sessionId = sessionStorage.getItem('sessionId')
+	?? crypto.randomUUID()
 
-if(!sessionId){
-	sessionId = crypto.randomUUID()
-	sessionStorage.setItem('sessionId', sessionId)
-}
+sessionStorage.setItem('sessionId', sessionId)
 
 requestServiceWorker('notifysession', {sessionId})

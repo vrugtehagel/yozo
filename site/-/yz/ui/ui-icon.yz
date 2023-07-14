@@ -1,0 +1,29 @@
+<title>ui-icon</title>
+<meta attribute=type type=string>
+<meta attribute=state type=string>
+
+<template mode=closed>
+	<div id=container :class="$.state || null"></div>
+</template>
+
+<script>
+import('/-/js/svg-manager/index.js')
+	.then(({svgManager}) => $.svgManager = svgManager)
+
+const {container} = elements
+
+connect(() => effect(() => {
+	if(!$.type) return container.replaceChildren()
+	$.svgManager?.get(`${$.type}.svg`)
+		.then(svg => container.replaceChildren(...(svg ? [svg] : [])))
+}))
+</script>
+
+<style>
+:host {
+	display: inline-block; width: 1.5rem; height: 1.5rem; padding: .75rem;
+}
+#container, svg {
+	display: block; width: 100%; height: 100%;
+}
+</style>

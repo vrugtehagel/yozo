@@ -1,0 +1,29 @@
+<title>ui-switch</title>
+<meta attribute=on type=boolean>
+
+<template mode=closed>
+	<ui-icon
+		type=switch
+		:state="$.on ? 'on' : 'off'"
+	></ui-icon>
+</template>
+
+<script>
+connect(() => {
+	when(this).clicks().then(() => $.on = !$.on)
+})
+
+when($.$on).changes().then(() => {
+	this.dispatchEvent(new CustomEvent('input'))
+})
+</script>
+
+<style>
+:host {
+	display: inline-block;
+	cursor: pointer;
+}
+ui-icon {
+	width: 2rem; height: 2rem; padding: 0;
+}
+</style>

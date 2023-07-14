@@ -1,0 +1,53 @@
+<title>ui-dropdown</title>
+<meta attribute=open type=boolean>
+<meta attribute=icon type=string>
+<meta attribute=iconstate type=string>
+<meta attribute=label type=string>
+
+<template mode=closed>
+	<ui-button
+		:icon="$.icon"
+		:iconstate="$.iconstate"
+		aria-label="Site settings"
+		@click="$.open = !$.open"
+	>{{ $.label }}</ui-button>
+	<div id=menu .hidden="!$.open" part=dropdown>
+		<slot></slot>
+	</div>
+</template>
+
+<script>
+connect(() => {
+	when(document).clicks()
+		.if(() => $.open)
+		.if(event => !event.composedPath().includes(this))
+		.then(event => $.open = false)
+})
+
+when($.$open).changes().then(() => {
+	if($.open) this.dispatchEvent(new CustomEvent('open'))
+	else this.dispatchEvent(new CustomEvent('close'))
+})
+</script>
+
+<style>
+:host {
+	display: inline-block;
+	position: relative;
+}
+ui-button:hover {
+	background-color: var(--highlight-color);
+}
+#menu {
+	display: flex; padding: .5rem; margin: 0;
+	position: absolute; inset: 4rem auto auto auto;
+	background-color: var(--background-color);
+	border-radius: 1rem;
+	transition: opacity .2s, translate .2s, visibility 0s 0s;
+}
+#menu[hidden]{
+	translate: 0 -.5rem;
+	opacity: 0; visibility: hidden;
+	transition: opacity .2s, translate .2s, visibility 0s .3s;
+}
+</style>

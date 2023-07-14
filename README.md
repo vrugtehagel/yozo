@@ -2,6 +2,49 @@
 
 Yozo itself is written in the `src/` directory. The documentation (and rest of the site) resides under `site/`. Assets are stored in `site/-/`. 
 
+## Todo
+
+Below this, there's a more detailed breakdown of the site and what's needed.
+
+ - [ ] Lock in modules by writing tests (in their respective page in /docs/)
+     - [ ] `watch` and related
+     - [ ] `track` and related
+     - [ ] `flow` and related
+     - [ ] `when` and related
+     - [ ] `interval` and related
+     - [ ] `effect` and `purify`
+     - [ ] `fetch` (maybe throw this away)
+ - [ ] Finish component core
+     - [ ] Add `#for` and related
+     - [ ] Add sourcemaps
+ - [ ] Create playground
+     - [ ] Add global settings
+     - [ ] Add keybinds to textarea
+     - [ ] Add code editor based on above & prism (SpeedHighlightJS?)
+     - [ ] Add the fake filesystem
+     - [ ] Add layouts
+     - [ ] Add toolbar
+        - [ ] Add save button (save to preset/new)
+        - [ ] Add preset select
+        - [ ] Add layout picker
+        - [x] Add "hide navbar" button
+     - [ ] Add preview window and make it maybe not ugly
+     - [ ] Add default presets
+        - [ ] Add basic setup with yozo (HTML + CSS + JS + YZ)
+        - [ ] Add todo list app
+        - [ ] Add `Flow` visual example (using `when`)
+ - [ ] Create /docs/ pages
+     - [ ] Create system & default styles
+     - [ ] Create preview-code component
+     - [ ] Create each page
+ - [ ] Create tour
+     - [ ] Define steps and sections
+     - [ ] Build testing kit
+     - [ ] Building full testing sandbox
+     - [ ] Write all of the content
+ - [ ] Create the homepage
+
+
 ## Site
 
 The site consists of three major sections:
@@ -38,7 +81,7 @@ The tour highlights each individual part of Yozo in a logical order, allowing th
        - Outline WC dependency
        - Minimal component with `<title>`
  - Getting your hands dirty
-    - 
+
 
 
 
@@ -65,7 +108,7 @@ We need the following pages, in the same tree-like structure (~40 pages).
     - thenable.pipe()
     - thenable.now()
     - thenable.then()
-    - thenable.await()
+    <!-- - thenable.await() -->
     - thenable.if()
     - thenable.or()
     - thenable.after()
@@ -78,7 +121,6 @@ We need the following pages, in the same tree-like structure (~40 pages).
  - when()
     - when().observes()
  - purify()
- - html()
  - fetch()
  - timeout()
  - interval()
@@ -87,3 +129,9 @@ We need the following pages, in the same tree-like structure (~40 pages).
     - register.auto()
  - define()
     - define.register()
+
+## Also do
+ - Generate sourcemaps for dev version
+ - NPM package?
+ - Build a11y-friendly basic component package
+ - Check site for occurances of certain words

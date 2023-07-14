@@ -12,7 +12,6 @@ const {shadow} = elements
 effect(() => {
 	if(!$.type) return shadow.replaceChildren()
 	$.svgManager?.get(`icons/${$.type}.svg`)
-		.catch(() => console.log('foo'))
 		.then(svg => shadow.replaceChildren(...(svg ? [svg] : [])))
 })
 

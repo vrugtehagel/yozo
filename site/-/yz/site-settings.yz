@@ -1,0 +1,56 @@
+<title>site-settings</title>
+<meta attribute=label type=string>
+
+<template>
+	<ui-dropdown
+		icon=settings
+		:iconstate="$.open ? 'turned' : null"
+		:label="$.label || null"
+		:aria-label="$.label ? null : 'Site settings'"
+	>
+		<div class=item data-item=semicolons>
+			Semicolons
+			<ui-switch></ui-switch>
+		</div>
+	</ui-dropdown>
+</template>
+
+<script>
+const {uiDropdown} = elements
+
+// for(const item of elements.all('.item')){
+	// live.link(window.$settings[`$${item.dataset.item}`])
+// }
+
+
+live.link($.$open, {
+	get: () => uiDropdown.open,
+	set: value => uiDropdown.open = value,
+	changes: when(uiDropdown).opens()
+		.or(when(uiDropdown).closes())
+})
+</script>
+
+<style>
+site-settings {
+	display: inline-block;
+	position: relative;
+}
+site-settings ui-button:hover {
+	background-color: var(--highlight-color);
+}
+site-settings ui-dropdown:not(:defined){ display: none; }
+site-settings ui-dropdown::part(dropdown){
+	width: 20rem;
+	right: -4rem;
+}
+site-settings .item {
+	display: flex;
+	width: 100%;
+}
+
+site-settings .item ui-switch {
+	margin-left: auto;
+}
+
+</style>

@@ -1,0 +1,54 @@
+@script
+	export const layout = 'docs'
+	export const title = 'live.get()'
+	export const description = 'The ``live.get()`` utility function retrieves the value of a given live variable, or the value at any given key.'
+
+h2 Syntax
+
+ui-code
+	live.get(value);
+	live.get(value, key);
+
+h3 Parameters
+dl
+	dt ``value``
+	dd > p Any value, live or not.
+	dt ``key`` [[optional]]
+	dd > p A string or symbol to access on ``value``, regardless of whether or not it is dollar-prefixed.
+
+h3 Return value
+p A regular, non-live value. If a ``key`` was provided, then the value at that key is returned (even if the key starts with "$"). If a key was not provided or nullish, then its first argument is unwrapped (if it is live) and returned.
+
+p If the first argument is not live, then ``live.get(value)`` and ``live.get(value, key)`` simply return ``value`` and ``value[key]`` respectively.
+
+h2 Examples
+
+h3 Supporting live variables
+p When writing generic functions, it is sometimes convenient to be able to pass live variables directly instead of having to unwrap them manually before passing the value on to a utility function. ``live.get()`` makes that much easier, because it normalizes any value back to non-live. For example:
+
+ui-code
+	function capitalize(stringOrLiveString){
+		const string = live.get(stringOrLiveString);
+		return string[0].toUpperCase() + string.slice(1);
+	}
+
+p Now, we can either pass a regular string to ``capitalize``, but also a live variable, should the need arise.
+
+h3 Accessing arbitrary keys
+p When accessing arbitrary keys on live objects, we have to be careful; ``$data[key]`` is not necessarily safe if ``key`` can start with a "$". For example, if ``key`` is ``$foo``, then the regular way of accessing this property ``$data['$foo']`` yields not the value at ``$foo`` but a live variable around ``$data.foo``. To prevent issues, use ``live.get()`` to access arbitrary keys:
+
+ui-code
+	const $data = live({ foo: 23, $bar: 'baz' });
+	const keys = Object.keys($data);
+	const values = keys.map(key => live.get($data, key));
+
+	console.log(keys); // [ 'foo', '$bar' ]
+	console.log(values); // [ 23, 'baz' ]
+	console.log(Object.values($data)); // [ 23, Live<undefined> ]
+
+p Note the latter - ``Object.values(…)`` - naively accesses the properties through ``$data.foo`` and ``$data.$bar``, which works as expected for ``.foo`` but not for ``.$bar``.
+
+h2 Usage notes
+p In tracking contexts, ``live.get()`` is functionally equivalent to regular property accesses. That is, the live variable around the retrieved value is added to the live dependencies of the tracking context.
+
+

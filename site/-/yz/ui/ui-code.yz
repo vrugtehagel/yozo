@@ -1,0 +1,48 @@
+<title>ui-code</title>
+<meta attribute=language type=string default="js">
+
+<template mode=closed>
+	<ui-syntax-highlight
+		:language="$.language"
+		:value="$.value"
+		.style.tab-size="window.$settings.tabSize ?? 4"
+	>{{ $.value }}</ui-syntax-highlight>
+</template>
+
+<script>
+customElements.whenDefined('ui-syntax-highlight')
+	.then(() => $.highlighterLoaded = true)
+
+const {code} = elements
+
+$.content = ''
+$.value = ''
+
+connect(() => {
+	when(this).observes('mutation', {childList: true, characterData: true})
+		.then(() => $.content = this.textContent)
+		.now()
+})
+
+connect(() => effect(() => {
+	let value = $.content
+	value = value.replace(/^\s+\n|\n\s+$/, '')
+	if(!$.settingsLoaded) return $.value = value
+	if(!$settings.semicolons){
+		if(['yz', 'html'].includes($.language))
+			value = value
+				.replaceAll(/;(?=\s*?(?:\/\/.*)?$)(?=(?:[^](?!<script>))*?<\/script>)/gm, '')
+		else if($.language == 'js')
+			value = value.replaceAll(/;(?=\s*?(?:\/\/.*)?$)/gm, '')
+	}
+	value = value
+		.replaceAll(/^\t+/gm, match => $settings.indent.repeat(match.length))
+	$.value = value
+}))
+</script>
+
+<style>
+ui-syntax-highlight:not(:defined) {
+	white-space: pre;
+}
+</style>
