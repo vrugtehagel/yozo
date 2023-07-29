@@ -25,6 +25,11 @@ html[lang=en]
 				if(namespace) return `/-/yz/${namespace}/${name}.yz`
 				return `/-/yz/${name}.yz`
 			})
+
+			navigator.serviceWorker.register('/service-worker.js', {
+				updateViaCache: 'none'
+			}).then(registration => registration.update())
+
 			// Only for production
 			// Object.assign(window, window.yozo)
 	script
@@ -43,7 +48,7 @@ html[lang=en]
 	@if(hasJS)
 		script[type=module][src=./index.js]
 
-	@if(!exclude.has('nav'))
+	@if(!exclude.has('navigation-menu'))
 		navigation-menu
 
 
@@ -53,5 +58,5 @@ html[lang=en]
 		:html {{ content }}
 
 
-	@if(!exclude.has('footer'))
+	@if(!exclude.has('footer-menu'))
 		footer-menu

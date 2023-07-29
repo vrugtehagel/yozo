@@ -63,6 +63,11 @@ const messages = {
 		This is required, as it determines the component's tag name.`,
 	'define-attribute-$1-type-$2-does-not-exist': (attribute, type) => `
 		Attribute "${attribute}" defined type "${type}", but that doesn't exist.
-		The type attribute is converted to PascalCase, and that must be a global.`
+		The type attribute is converted to PascalCase, and that must be a global.`,
+	'transform-for-$1-not-iterable': expression => `
+		Expression "${expression}" in #for is not iterable.`,
+	'transform-if-found-loose-$1': statement => `
+		Found an "${statement}" attribute without an #if.
+		Make sure the element follows an element with an #if or #else-if.`
 }
 

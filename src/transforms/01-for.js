@@ -1,3 +1,4 @@
+import { error } from '../help.js' //
 import { define } from '../define.js'
 import { effect } from '../effect.js'
 
@@ -12,12 +13,17 @@ define.transform(1, (node, scopes, meta, context) => {
 	const anchor = element.previousSibling
 	element.remove()
 	const cache = []
-	const connectedNodes = []
-	const getter = meta.function(arrayExpression, ...scopes)
-	meta.connect(() => effect(() => {
-		const newNodes = [...getter(element, ...scopes)].map((item, index) => {
+	const getter = meta.__function(arrayExpression, ...scopes)
+	meta.x.connected(() => effect(() => {
+		const array = getter(element, ...scopes) //
+		if(!array[Symbol.iterator]) //
+			error`transform-for-${arrayExpression}-not-iterable` //
+		const newNodes = [...(
+				true ? array : //
+				getter(element, ...scopes)
+			)].map((item, index) => {
 			if(cache[index] && cache[index][0] === item) return cache[index][1]
-			const node = meta.render(
+			const node = meta.__render(
 				element.localName == 'template' ? element.content : element,
 				...scopes,
 				[initializer, item]
@@ -26,9 +32,8 @@ define.transform(1, (node, scopes, meta, context) => {
 			return cache[index][1]
 		})
 		while(cache.length > newNodes.length) cache.pop()
-		connectedNodes.splice(0).forEach(node => node.remove())
-		newNodes.forEach(nodes => connectedNodes.push(...nodes))
-		anchor.after(...connectedNodes)
+		meta.__anchoredRemove(anchor)
+		meta.__anchoredAdd(anchor, newNodes.flat())
 	}))
 })
 

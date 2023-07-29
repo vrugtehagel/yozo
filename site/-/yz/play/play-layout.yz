@@ -1,6 +1,6 @@
 <title>play-layout</title>
 
-<template>
+<template mode=closed>
 	<ui-dropdown
 		icon=layout
 		:iconstate="window.$settings.$play.layout"
@@ -31,15 +31,15 @@ $.layouts = [
 </script>
 
 <style>
-play-layout {
+:host {
 	display: inline-block;
 	position: relative;
 }
-play-layout ui-button:hover {
+ui-button:hover {
 	background-color: var(--highlight-color);
 }
-play-layout ui-dropdown::part(dropdown){
+::part(dropdown){
+	flex-direction: row; gap: .25rem;
 	right: -7rem;
-	gap: .25rem;
 }
 </style>

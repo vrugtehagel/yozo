@@ -33,8 +33,8 @@ export class ContextMessenger extends EventTarget {
 		const event = await when(this.#receiver).messages()
 			.if(event => event.data.uuid == uuid)
 			.once()
-		sender.postMessage({type, uuid, payload}, origin)
-		return await promise
+			.after(() => sender.postMessage({type, uuid, payload}, origin))
+		return event.data.payload
 	}
 
 	#respond(event){

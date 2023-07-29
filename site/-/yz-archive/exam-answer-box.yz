@@ -23,7 +23,7 @@ $.previewVisible = false
 $.error = null
 $.contextMessenger = null
 
-connect(() => {
+connected(() => {
 	when(preview).observes('intersection')
 		.then(([{isIntersecting}]) => $.previewVisible = isIntersecting)
 	when(fileEditor).fileupdates().then(() => {

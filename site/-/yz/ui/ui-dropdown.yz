@@ -11,17 +11,20 @@
 		aria-label="Site settings"
 		@click="$.open = !$.open"
 	>{{ $.label }}</ui-button>
-	<div id=menu .hidden="!$.open" part=dropdown>
+	<div id=menu .hidden="!$.open" part=dropdown tabindex=-1>
 		<slot></slot>
 	</div>
 </template>
 
 <script>
-connect(() => {
-	when(document).clicks()
-		.if(() => $.open)
-		.if(event => !event.composedPath().includes(this))
-		.then(event => $.open = false)
+connected(() => {
+	let currentEvent
+	when(this).clicks().then(event => currentEvent = event)
+	when(document).clicks().then(event => {
+		if(currentEvent == event) return
+		$.open = false
+		currentEvent = null
+	})
 })
 
 when($.$open).changes().then(() => {
@@ -40,14 +43,16 @@ ui-button:hover {
 }
 #menu {
 	display: flex; padding: .5rem; margin: 0;
+	flex-direction: column;
 	position: absolute; inset: 4rem auto auto auto;
 	background-color: var(--background-color);
 	border-radius: 1rem;
+	box-shadow: 0 0 10px 4px var(--sub-background-color);
 	transition: opacity .2s, translate .2s, visibility 0s 0s;
-}
-#menu[hidden]{
-	translate: 0 -.5rem;
-	opacity: 0; visibility: hidden;
-	transition: opacity .2s, translate .2s, visibility 0s .3s;
+	&[hidden] {
+		translate: var(--appear-from, 0 -.5rem);
+		opacity: 0; visibility: hidden;
+		transition: opacity .2s, translate .2s, visibility 0s .3s;
+	}
 }
 </style>

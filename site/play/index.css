@@ -14,8 +14,10 @@ navigation-menu {
 navigation-menu[hidden]{ top: -4.5rem; }
 #main-menu {
 	list-style: none;
-	display: flex; padding: .5rem 0 .5rem .5rem; margin: 0;
+	display: flex; width: min(100%, 1200px); padding: .5rem 0 .5rem .5rem;
+	margin: 0 auto; box-sizing: border-box;
 	flex-wrap: wrap; gap: .5em 1em;
+	z-index: 900;
 	background-color: var(--background-color);
 	border-radius: .75rem;
 	box-shadow: -2rem 0 0 inset var(--sub-background-color);
@@ -24,4 +26,8 @@ navigation-menu[hidden]{ top: -4.5rem; }
 
 #main-menu li.separator {
 	flex: 1;
+}
+
+play-spaces {
+	padding-top: 1rem;
 }

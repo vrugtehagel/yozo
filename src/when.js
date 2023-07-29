@@ -9,9 +9,9 @@ export const when = (...targets) => new Proxy({
 			handler = trigger
 			if(!targets.every(target => target instanceof EventTarget)) //
 				error`when-arg-not-event-target` //
-			targets.forEach(target => target.addEventListener(type, handler, options))
+			targets.map(target => target.addEventListener(type, handler, options))
 		}).cleanup(() => targets
-			.forEach(target => target.removeEventListener(type, handler, options)))
+			.map(target => target.removeEventListener(type, handler, options)))
 	},
 	observes: (type, options) => {
 		let observer
@@ -20,7 +20,7 @@ export const when = (...targets) => new Proxy({
 			if(typeof self[name] != 'function') //
 				error`when-cannot-observe-${type}-no-${name}` //
 			observer = new self[camelCase(`-${type}-observer`)](trigger, options)
-			targets.forEach(target => observer.observe(target, options))
+			targets.map(target => observer.observe(target, options))
 		}).cleanup(() => observer.disconnect())
 	}
 }, {get: (source, property) => {

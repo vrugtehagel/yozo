@@ -1,0 +1,4 @@
+@script
+	export const exclude = ['navigation-menu', 'footer-menu']
+
+if-test[foo][bar]

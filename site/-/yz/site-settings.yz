@@ -1,27 +1,43 @@
 <title>site-settings</title>
 <meta attribute=label type=string>
+<meta attribute=exclude type=string>
 
-<template>
+<template mode=closed>
 	<ui-dropdown
 		icon=settings
 		:iconstate="$.open ? 'turned' : null"
 		:label="$.label || null"
 		:aria-label="$.label ? null : 'Site settings'"
+		exportparts="dropdown"
 	>
-		<div class=item data-item=semicolons>
+		<label #if="$.show('visual')">
 			Semicolons
-			<ui-switch></ui-switch>
-		</div>
+			<ui-switch
+				.on="window.$settings.semicolons"
+				@change="window.$settings.semicolons = this.value"
+			></ui-switch>
+		</label>
+		<label #if="$.show('functional')">
+			Use tabs
+			<ui-switch
+				.on="window.$settings.useTabs"
+				@change="window.$settings.useTabs = this.value"
+			></ui-switch>
+		</label>
+		<label #if="$.show('visual', 'functional')">
+			Tab size
+			<ui-number-input
+				:value="window.$settings.tabSize"
+				min=2
+				max=8
+				@change="window.$settings.tabSize = this.value"
+			></ui-number-input>
+		</label>
 	</ui-dropdown>
 </template>
 
 <script>
 const {uiDropdown} = elements
-
-// for(const item of elements.all('.item')){
-	// live.link(window.$settings[`$${item.dataset.item}`])
-// }
-
 
 live.link($.$open, {
 	get: () => uiDropdown.open,
@@ -29,28 +45,32 @@ live.link($.$open, {
 	changes: when(uiDropdown).opens()
 		.or(when(uiDropdown).closes())
 })
+
+$.show = (...purposes) =>
+	!purposes.every(purpose => $.exclude.split(/, */).includes(purpose))
 </script>
 
 <style>
-site-settings {
+:host {
 	display: inline-block;
 	position: relative;
 }
-site-settings ui-button:hover {
+ui-button:hover {
 	background-color: var(--highlight-color);
 }
-site-settings ui-dropdown:not(:defined){ display: none; }
-site-settings ui-dropdown::part(dropdown){
-	width: 20rem;
-	right: -4rem;
+ui-dropdown:not(:defined){ display: none; }
+::part(dropdown){
+	width: 20rem; padding: 1rem;
+	gap: .5rem;
 }
-site-settings .item {
-	display: flex;
-	width: 100%;
+label {
+	display: flex; min-height: 3rem; padding: 0 1rem;
+	align-items: center;
+	& > :last-child {
+		margin-left: auto;
+	}
+	& > ui-switch {
+		margin-right: .5rem;
+	}
 }
-
-site-settings .item ui-switch {
-	margin-left: auto;
-}
-
 </style>

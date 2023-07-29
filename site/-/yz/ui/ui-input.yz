@@ -1,0 +1,76 @@
+<title>ui-input</title>
+<meta attribute=prefix type=string>
+<meta attribute=value type=string>
+
+<template mode=closed delegates-focus=true>
+	<div id=container>
+		<span
+			id=prefix
+			part=prefix
+			:style="`--scroll-left: ${ $.scrollLeft }px`"
+		>{{ $.prefix }}</span>
+		<input
+			@keydown="$.keydown(event)"
+			:style="`--prefix-width: ${ $.prefixWidth }px`"
+		>
+	</div>
+</template>
+
+<script>
+const {input} = elements
+
+live.link($.$value, input)
+$.scrollLeft = 0
+$.prefixWidth = 0
+
+connected(() => effect(() => {
+	if(!$.prefix) return
+	when(input).scrolls()
+		.then(() => $.scrollLeft = input.scrollLeft)
+		.now()
+
+	// chrome bug; scrollLeft updates after keydown
+	when(input).keydowns().then(async () => {
+		$.scrollLeft = input.scrollLeft
+		await frame().once()
+		$.scrollLeft = input.scrollLeft
+	})
+}))
+
+when(elements.prefix).observes('resize').then(([{borderBoxSize}]) => {
+	$.prefixWidth = borderBoxSize[0].inlineSize
+})
+
+$.keydown = event => {
+	if(event.key == 'Escape')
+		this.dispatchEvent(new CustomEvent('escape'))
+	if(event.key == 'Enter')
+		this.dispatchEvent(new CustomEvent('enter'))
+}
+</script>
+
+<style>
+:host {
+	display: inline-block; height: 3rem; padding: .5rem 1.25rem; box-sizing: border-box;
+	background-color: var(--highlight-color);
+	border-radius: .75rem;
+	font-family: var(--font-monospace);
+	overflow: clip;
+}
+#container {
+	display: flex; height: 100%;
+	align-items: center;
+	position: relative;
+}
+#prefix {
+	position: absolute; left: calc(-1 * var(--scroll-left, 0));
+	clip-path: inset(0 calc(-1 * var(--scroll-left, 0)) 0 var(--scroll-left));
+}
+input {
+	text-indent: var(--prefix-width);
+	width: 100%; min-width: 0; padding: 0; margin: 0;
+	color: inherit; background: none;
+	border: none; outline: none;
+	font-size: inherit; font-family: inherit;
+}
+</style>

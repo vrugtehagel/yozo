@@ -24,7 +24,8 @@ find dist/temp -type f -name "*.js" -exec sed -i "" 's/^.*\/\/$//g' {} \;
 deno run -A https://deno.land/x/esbuild@v0.17.18/mod.js \
 	lib=./dist/temp/index.js \
 	dev=./src/index.js \
-	--outdir=dist --bundle --minify --log-level=warning --mangle-props=^__
+	--outdir=dist --bundle --log-level=warning \
+	--minify --mangle-props=^__
 
 # Save the exit status of the build
 SUCCESS=$?

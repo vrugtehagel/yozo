@@ -26,12 +26,10 @@ a {
 	text-decoration: none;
 	overflow: clip;
 	cursor: pointer;
-}
-a:focus-visible {
-	box-shadow: 0 0 0 .25rem var(--keyword-color);
-}
-:host(:not(:empty)) a {
-	padding-right: 1rem;
+	&:focus-visible { box-shadow: 0 0 0 .25rem var(--keyword-color); }
+	:host(:not(:empty)) & {
+		padding-right: 1rem;
+	}
 }
 ui-icon {
 	width: 1.5rem; height: 1.5rem; padding: 0; box-sizing: border-box;

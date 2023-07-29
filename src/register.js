@@ -9,20 +9,15 @@ export const register = async url => {
 	const defineArg = uniqueName()
 	const template = document.createElement('template')
 	template.innerHTML = await response.text()
-	return new Function(defineArg, `return ${defineArg}(${add}=>{` +
-		`var{${Object.keys(self.yozo)}}=self.yozo;${
-		[...template.content.children].map(element =>
-			`${add}[\`${element.localName}\`]?.({${
-			 [...element.attributes].map(attribute => 
-			 	`${camelCase(attribute.name)}:` + 
-			 		`\`${attribute.value.replace(/[`$]/g, '\\$&')}\``)
-			 }},${
-			 	element.localName == 'script'
-					? `function({${define.public}}){${element.innerHTML}}`
-					: `\`${element.innerHTML.replace(/[`$]/g, '\\$&')}\``
-			})`
-		)}})`
-	)(define)
+	return define(add => {
+		for(const element of template.content.children){
+			add[element.localName]?.(
+				Object.fromEntries([...element.attributes].map(attribute => 
+				 	[camelCase(attribute.name), attribute.value])),
+				element.innerHTML
+			)
+		}
+	})
 }
 
 let initiated
@@ -36,21 +31,21 @@ register.auto = find => {
 		const url = find(name)
 		if(url) register(url)
 	}
+	const from = root => {
+		for(const element of root.querySelectorAll(':not(:defined)'))
+			autoDefine(element.localName)
+		for(const template of root.querySelectorAll('template'))
+			from(template.content)
+	}
 	define.register(6, null, context => {
 		if(cancelled) return {}
-		if(!context.template) return {}
-		for(const element of context.template.querySelectorAll(':not(:defined)'))
-			autoDefine(element.localName)
+		if(!context.__template) return {}
+		from(context.__template)
 		return {}
 	}, {})
-	return when(document).observes('mutation', {childList: true, subtree: true}).then(entries => {
-		for(const node of document.querySelectorAll(':not(:defined)')){
-			if(initiated.has(node.localName)) continue
-			autoDefine(node.localName)
-		}
-	}).if(() => null).after(() => {
-		for(const element of document.querySelectorAll(':not(:defined)'))
-			autoDefine(element.localName)
-	}).cleanup(() => cancelled = true)
-
+	return when(document).observes('mutation', {childList: true, subtree: true})
+		.then(() => from(document))
+		.now()
+		.if(() => null)
+		.cleanup(() => cancelled = true)
 }

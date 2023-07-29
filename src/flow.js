@@ -64,7 +64,7 @@ export class Flow {
 		if(this.#stopped) return
 		this.#stopped = true
 		this.#steps.splice(0)
-		this.#cleanup.splice(0).forEach(callback => callback())
+		this.#cleanup.splice(0).map(callback => callback())
 		return this
 	}
 

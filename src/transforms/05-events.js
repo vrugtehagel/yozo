@@ -9,8 +9,8 @@ define.transform(5, (node, scopes, meta, context) => {
 	const element = node.ownerElement
 	const type = node.name.slice(1)
 	element.removeAttribute(node.name)
-	const handler = meta.function(node.value, ...scopes, ['event'])
-	meta.connect(() => {
+	const handler = meta.__function(node.value, ...scopes, ['event'])
+	meta.x.connected(() => {
 		when(element).does(type).then(event => {
 			handler(element, ...scopes, ['event', event])
 		})

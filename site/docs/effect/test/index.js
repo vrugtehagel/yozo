@@ -1,7 +1,7 @@
 import { TestSuite } from '/-/js/testing/index.js'
 
 export const suite = new TestSuite({
-	name: 'connect()'
+	name: 'connected()'
 })
 
 // test.html
@@ -12,7 +12,7 @@ export const suite = new TestSuite({
 // <meta attribute=count type=number>
 //
 // <script>
-// connect(() => $.count++)
+// connected(() => $.count++)
 // </script>
 
 suite.test('Connect runs after element upgrade', {

@@ -18,7 +18,7 @@ import('/-/js/input-event-processor/index.js')
 
 const {textarea} = elements
 
-connect(() => $.$value.bind(textarea))
+connected(() => $.$value.bind(textarea))
 
 $.onkeydown = event => {
 	$.processor?.saveState(textarea);

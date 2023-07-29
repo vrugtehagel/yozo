@@ -3,6 +3,7 @@
 <template mode=closed>
 	<footer>
 		<nav>
+			<site-settings label="Settings"></site-settings>
 			<a href=https://github.com/vrugtehagel/yozo>
 				<ui-icon type=github></ui-icon>
 				Source code
@@ -46,15 +47,16 @@ a {
 	text-decoration: none;
 	transition: .2s;
 }
-
+site-settings::part(dropdown){
+	--appear-from: 0 .5rem;
+	inset: auto auto calc(100% + 1rem) 0;
+}
 :is(ui-button, a):hover {
 	background-color: var(--background-color);
 }
 ui-button {
 	margin-left: auto;
-}
-ui-button ui-icon {
-	margin: 0 -1rem;
+	ui-icon { margin: 0 -1rem; }
 }
 small {
 	display: block; margin-top: 1.5rem;

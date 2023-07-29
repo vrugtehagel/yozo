@@ -14,42 +14,43 @@ define.register(9, 'meta', (context, argslist) => {
 	]
 	for(const [options] of properties){
 		const get = function(){
-			return track.ignore(() => live.get(context.meta.get(this).$, options.property))
+			return track.ignore(() => live.get(context.__meta.get(this).x.$, options.property))
 		}
 		const set = function(value){
-			track.ignore(() => context.meta.get(this).$[options.property] = value)
+			track.ignore(() => context.__meta.get(this).x.$[options.property] = value)
 		}
-		if('readonly' in options) Object.defineProperty(context.body.prototype, options.property, {get})
-		else Object.defineProperty(context.body.prototype, options.property, {get, set})
+		if('readonly' in options) Object.defineProperty(context.__body.prototype, options.property, {get})
+		else Object.defineProperty(context.__body.prototype, options.property, {get, set})
 	}
-	context.body.observedAttributes = attributes.map(args => args[0].attribute)
+	context.__body.observedAttributes = attributes.map(args => args[0].attribute)
+	context.__body.formAssociated = argslist.some(args => args[0].formAssociated != null)
 	const constructor = function(meta){
-		meta.$.attributes = {}
+		meta.x.$.attributes = {}
 		for(const [options] of attributes){
 			const name = camelCase(options.attribute)
-			meta.$.$attributes[name] = null
-			when(meta.$.$attributes[`$${name}`]).change().then(() => {
-				const value = live.get(meta.$.$attributes, name)
+			meta.x.$.$attributes[name] = null
+			when(meta.x.$.$attributes[`$${name}`]).change().then(() => {
+				const value = live.get(meta.x.$.$attributes, name)
 				if(value == null) this.removeAttribute(options.attribute)
 				else this.setAttribute(options.attribute, value)
 			})
 			if(options.type == 'boolean'){
-				live.link(meta.$[`$${options.as ?? name}`], {
-					get: () => live.get(meta.$.$attributes, name) != null,
-					set: value => meta.$.$attributes[name] = value ? '' : null
+				live.link(meta.x.$[`$${options.as ?? name}`], {
+					get: () => live.get(meta.x.$.$attributes, name) != null,
+					set: value => meta.x.$.$attributes[name] = value ? '' : null
 				})
 			} else if(options.type){
 				const type = self[camelCase(`-${options.type}`)]
 				if(!type) error`define-attribute-${options.attribute}-type-${type}-does-not-exist` //
-				live.link(meta.$[`$${options.as ?? name}`], {
-					get: () => type(live.get(meta.$.$attributes, name) ?? options.default ?? ''),
-					set: value => meta.$.$attributes[name] = `${value}`
+				live.link(meta.x.$[`$${options.as ?? name}`], {
+					get: () => type(live.get(meta.x.$.$attributes, name) ?? options.default ?? ''),
+					set: value => meta.x.$.$attributes[name] = value == null ? null : `${value}`
 				})
 			}
 		}
 	}
 	const attributeChangedCallback = function(meta, name, oldValue, value){
-		meta.$.$attributes[camelCase(name)] = value
+		meta.x.$.$attributes[camelCase(name)] = value
 	}
 	return {constructor, attributeChangedCallback}
 })

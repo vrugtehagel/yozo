@@ -1,0 +1,110 @@
+<title>play-space</title>
+<meta attribute=mode type=string>
+<meta attribute=src type=string>
+
+<template mode=closed>
+	<div id=too-small>
+		<ui-icon type=implode></ui-icon>
+		<p>The window is too small for this layout.</p>
+	</div>
+	<div id=actions>
+		<div id=file-picker>
+			<ui-button
+				id=new-file
+				icon=plus
+				@click="$.adding = true"
+			>Add new file</ui-button>
+			<ui-icon type=spinner #if="!$.$imports.fileSystem"></ui-icon>
+			<ul #else id=files>
+				<li #for="uuid of $.uuids">
+					<play-file-listing :uuid="uuid"></play-file-listing>
+				</li>
+				<li #if="$.adding">
+					<play-file-listing
+						new
+						@rename="$.adding = false"
+						@cancel="$.adding = false"
+					></play-file-listing>
+				</li>
+			</ul>
+		</div>
+		<ui-button
+			id=open-preview
+			icon=browser-window
+		>Open preview</ui-button>
+	</div>
+</template>
+
+<script>
+$.imports = {}
+import('/-/js/file-system/index.js').then(async fileSystem => {
+	const {$files} = fileSystem
+	if(Object.values($files).some(file => file.src.startsWith('/file/')))
+		return $.$imports.fileSystem = fileSystem
+	const src = '/file/index.html'
+	const body = `<!DOCTYPE html>\n\n<title>Untitled</title>`
+	$files['file:index'] = {src, body}
+	await fileSystem.push()
+	$.$imports.fileSystem = fileSystem
+})
+
+connected(() => {
+	live.link($.$uuids, () => {
+		if(!$.$imports.fileSystem) return []
+		return Object.entries($.$imports.fileSystem.$files)
+			.filter(([uuid, file]) => file.src.startsWith('/file/'))
+			.map(([uuid]) => uuid)
+	})
+})
+</script>
+
+<style>
+:host {
+	display: grid;
+	place-items: center;
+	container: play-space / size;
+	border: .5rem dashed var(--background-color); border-radius: 1.5rem;
+}
+#too-small {
+	display: none; padding: 1rem;
+	flex-direction: column; align-items: center;
+	color: var(--comment-color);
+	text-align: center;
+	p { margin: 0; }
+}
+ui-icon { width: 2.5rem; height: 2.5rem; }
+#actions {
+	width: min(100% - 2rem, 28rem); padding: 1rem; box-sizing: border-box;
+	background-color: var(--background-color);
+	border-radius: 1.5rem;
+}
+@container play-space (width < 16rem) or (height < 16rem) {
+	#too-small { display: flex; }
+	#actions { display: none; }
+}
+@container play-space (height < 9rem) {
+	#too-small ui-icon { display: none; }
+}
+#file-picker {
+	padding: .5rem; margin: 0 0 1rem;
+	background-color: var(--sub-background-color);
+	border-radius: 1rem;
+}
+#new-file {
+	background-color: var(--background-color);
+}
+#new-file, #open-preview {
+	width: 100%;
+	&:hover { background-color: var(--highlight-color); }
+}
+ui-icon[type=spinner]{
+	display: block; margin: .5rem auto 0;
+}
+ul {
+	list-style: none;
+	padding: 0; margin: .5rem 0 0;
+}
+play-file-listing {
+	width: 100%;
+}
+</style>

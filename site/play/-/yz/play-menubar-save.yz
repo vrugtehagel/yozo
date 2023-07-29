@@ -34,7 +34,7 @@ const {saveButton, saveMenu} = elements
 
 $.expanded = false
 
-connect(() => {
+connected(() => {
 	when(saveButton).clicks().then(event => {
 		event.stopPropagation()
 		$.expanded = !$.expanded

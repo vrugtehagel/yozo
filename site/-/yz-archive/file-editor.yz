@@ -30,7 +30,7 @@ effect(async () => {
 })
 effect(() => $.language = $.src.split('.').at(-1) || 'txt')
 
-connect(() => {
+connected(() => {
 	when(codeEditor).inputs().debounce(500)
 		.await(() => $.fileSystem?.update($.uuid, codeEditor.value))
 		.then(() => this.dispatchEvent(new CustomEvent('fileupdate')))

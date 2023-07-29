@@ -1,8 +1,6 @@
 @script
 	export const title = 'Play'
-	export const exclude = ['footer']
-
-link[rel=stylesheet][href=/-/css/play.css]
+	export const exclude = ['footer-menu']
 
 h1.sr-only Play around with Yozo 
 
@@ -11,14 +9,19 @@ menu#main-menu
 	li > play-presets
 	li.separator
 	li > play-layout
-	li > site-settings
+	li > play-settings
 	li > play-navigation-menu-toggle
 
+play-spaces
 
-play-window
-play-window
-play-window
-play-window
+
+
+
+
+
+
+
+
 
 
 

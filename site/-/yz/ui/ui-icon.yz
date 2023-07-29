@@ -12,7 +12,7 @@ import('/-/js/svg-manager/index.js')
 
 const {container} = elements
 
-connect(() => effect(() => {
+connected(() => effect(() => {
 	if(!$.type) return container.replaceChildren()
 	$.svgManager?.get(`${$.type}.svg`)
 		.then(svg => container.replaceChildren(...(svg ? [svg] : [])))

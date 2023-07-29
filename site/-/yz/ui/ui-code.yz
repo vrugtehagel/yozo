@@ -10,24 +10,20 @@
 </template>
 
 <script>
-customElements.whenDefined('ui-syntax-highlight')
-	.then(() => $.highlighterLoaded = true)
-
 const {code} = elements
 
 $.content = ''
 $.value = ''
 
-connect(() => {
+connected(() => {
 	when(this).observes('mutation', {childList: true, characterData: true})
 		.then(() => $.content = this.textContent)
 		.now()
 })
 
-connect(() => effect(() => {
+connected(() => effect(() => {
 	let value = $.content
 	value = value.replace(/^\s+\n|\n\s+$/, '')
-	if(!$.settingsLoaded) return $.value = value
 	if(!$settings.semicolons){
 		if(['yz', 'html'].includes($.language))
 			value = value

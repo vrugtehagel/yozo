@@ -105,16 +105,16 @@ ui-code[language=js]
 p In this example, the effect will run four times; it will first log "23", then wait a second, and then log "0", "5", and "7". If we instead leave out the scheduler (i.e. using the default), then it only logs twice; once "23", then after one second (and a microtask!), "7". Because of this fact, it is often more performance-friendly to use a non-synchronous scheduler, and in most cases, the default is the best option.
 
 h3 Effect only when connected
-p Effects can be somewhat optimized by making sure it only runs while a certain component is connected. There are a two main ways to mix [``connect``](/docs/mods/connect/) and ``effect``, and they mean slightly different things. Let's go through them.
+p Effects can be somewhat optimized by making sure it only runs while a certain component is connected. There are a two main ways to mix [``connected``](/docs/mods/connected/) and ``effect``, and they mean slightly different things. Let's go through them.
 
-p The primary (i.e. this one is usually preferred) way to do it is nesting the ``effect`` call inside the ``connect`` call, like so:
+p The primary (i.e. this one is usually preferred) way to do it is nesting the ``effect`` call inside the ``connected`` call, like so:
 ui-code[language=js]
-	connect(() => effect(() => {
+	connected(() => effect(() => {
 		// code…
 	}));
 p This way, the effect is actively looking at its dependencies only while the relevant component is connected. When the element is removed from the DOM, then the effect is stopped automatically. When the component reconnects, the effect re-initializes.
 
-p The second way is nesting the ``connect`` call inside the ``effect`` call. This is often not desired, since ``connect`` creates its own tracking context and so the outer ``effect`` cannot see what is happening inside the ``connect``. It __can__ be useful occasionally for e.g. attaching a certain event handler based on a live variable. For example, let's say we have a component that logs only when a certain event fires, like so:
+p The second way is nesting the ``connected`` call inside the ``effect`` call. This is often not desired, since ``connected`` creates its own tracking context and so the outer ``effect`` cannot see what is happening inside the ``connected``. It __can__ be useful occasionally for e.g. attaching a certain event handler based on a live variable. For example, let's say we have a component that logs only when a certain event fires, like so:
 ui-code[language=yz]
 	<title>event-logger</title>
 	<meta attribute="event-type" type="string">
@@ -122,7 +122,7 @@ ui-code[language=yz]
 	// this works
 	effect(() => {
 		const type = $.eventType;
-		connect(() => {
+		connected(() => {
 			if(!type) return;
 			when(this).does(type).then(() => {
 				console.log(`Fired ${type}!`);
@@ -133,7 +133,7 @@ ui-code[language=yz]
 
 	// this does not work
 	effect(() => {
-		connect(() => {
+		connected(() => {
 			if(!$.eventType) return;
 			when(this).does($.eventType).then(() => {
 				console.log(`Fired ${$.eventType}!`);
@@ -142,7 +142,7 @@ ui-code[language=yz]
 	});
 	</script>
 
-p The former works because the effect is able to see that ``$.eventType`` is being accessed, and can properly schedule re-running the callback when ``$.eventType`` changes. The latter will run the effect only once, because it doesn't find any dependencies. ``connect`` is already creating its own tracking context (to track flows) and so the ``effect`` only sees what happens before and after the ``connect`` call happens.
+p The former works because the effect is able to see that ``$.eventType`` is being accessed, and can properly schedule re-running the callback when ``$.eventType`` changes. The latter will run the effect only once, because it doesn't find any dependencies. ``connected`` is already creating its own tracking context (to track flows) and so the ``effect`` only sees what happens before and after the ``connected`` call happens.
 
 h3 Usage notes
-p In general, it is safest to wrap ``effect`` calls in ``connect`` calls within component logic. This is because when an effect has external dependencies (that is, one defined outside the custom element's instance) the effect cannot be garbage collected even after releasing all references to the element's instance. This is expected (and necessary) behavior, because external dependencies can still change even after the custom element is no longer in use. Instead, wrapping the effect in a ``connect`` call causes the effect to be cleaned up after the custom element disconnects, and so it doesn't matter where its dependencies came from.
+p In general, it is safest to wrap ``effect`` calls in ``connected`` calls within component logic. This is because when an effect has external dependencies (that is, one defined outside the custom element's instance) the effect cannot be garbage collected even after releasing all references to the element's instance. This is expected (and necessary) behavior, because external dependencies can still change even after the custom element is no longer in use. Instead, wrapping the effect in a ``connected`` call causes the effect to be cleaned up after the custom element disconnects, and so it doesn't matter where its dependencies came from.

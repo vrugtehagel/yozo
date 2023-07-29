@@ -1,0 +1,14 @@
+<title>play-settings</title>
+
+<template mode=closed>
+	<site-settings exclude="visual"></site-settings>
+</template>
+
+<style>
+:host {
+	display: inline-block;
+}
+::part(dropdown){
+	right: -4rem;
+}
+</style>

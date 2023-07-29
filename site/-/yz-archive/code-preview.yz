@@ -16,7 +16,7 @@ const {code} = elements
 
 $.text = ''
 
-connect(() => {
+connected(() => {
 	when(this).observes('mutation', {childList: true, characterData: true}).then(() => {
 		$.text = $.notrim ? this.textContent : this.textContent.trim()
 	}).now()

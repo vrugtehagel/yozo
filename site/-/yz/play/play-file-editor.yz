@@ -1,0 +1,10 @@
+<title>play-file-editor</title>
+
+<meta attribute=uuid type=string>
+
+<template mode=closed>
+	<div id=titlebar>
+		<span id=title>Foo bar</span>
+		<ui-button icon=close></ui-button>
+	</div>
+</template>

@@ -1,29 +1,54 @@
 <title>ui-switch</title>
 <meta attribute=on type=boolean>
+<meta attribute=value type=boolean>
+<meta attribute=name type=string>
+<meta form-associated>
 
 <template mode=closed>
 	<ui-icon
 		type=switch
-		:state="$.on ? 'on' : 'off'"
+		:state="$.value ? 'on' : 'off'"
 	></ui-icon>
 </template>
 
 <script>
-connect(() => {
-	when(this).clicks().then(() => $.on = !$.on)
+// connected(() => {
+// 	when(this).clicks().then(() => $.value = !$.value)
+// })
+
+// Above does not work because of this Firefox bug:
+// https://bugzilla.mozilla.org/show_bug.cgi?id=1831650
+// so here's a workaround
+connected(() => {
+	let isFaultyTrigger = false
+	when(this).clicks().then(async () => {
+		if(isFaultyTrigger) return
+		$.value = !$.value
+		isFaultyTrigger = true
+		await frame()
+		isFaultyTrigger = false
+	})
+
+})
+
+live.link($.$on, {
+	get: () => $.value,
+	set: value => $.value = value
 })
 
 when($.$on).changes().then(() => {
 	this.dispatchEvent(new CustomEvent('input'))
+	this.dispatchEvent(new CustomEvent('change'))
 })
 </script>
 
 <style>
 :host {
 	display: inline-block;
+	line-height: 0;
 	cursor: pointer;
 }
 ui-icon {
-	width: 2rem; height: 2rem; padding: 0;
+	width: 2.5rem; height: 2.5rem; padding: 0;
 }
 </style>

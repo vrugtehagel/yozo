@@ -8,8 +8,8 @@ define.transform(3, (node, scopes, meta, context) => {
 	const element = node.ownerElement
 	const name = node.name.slice(1)
 	element.removeAttribute(node.name)
-	const getter = meta.function(node.value, ...scopes)
-	meta.connect(() => effect(() => {
+	const getter = meta.__function(node.value, ...scopes)
+	meta.x.connected(() => effect(() => {
 		const value = getter(element, ...scopes)
 		if(value == null) element.removeAttribute(name)
 		else element.setAttribute(name, value)

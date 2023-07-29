@@ -9,11 +9,11 @@ define.transform(4, (node, scopes, meta, context) => {
 	const element = node.ownerElement
 	element.removeAttribute(node.name)
 	const chain = node.name.slice(1).split('.').map(camelCase)
-	const getter = meta.function(node.value, ...scopes)
+	const getter = meta.__function(node.value, ...scopes)
 	const $isDefined = live(element.matches(':defined'))
 	if(!live.get($isDefined)) customElements.whenDefined(element.localName)
 		.then(() => live.set($isDefined, true))
-	meta.connect(() => effect(() => {
+	meta.x.connected(() => effect(() => {
 		if(!live.get($isDefined)) return
 		const value = getter(element, ...scopes)
 		let current = element

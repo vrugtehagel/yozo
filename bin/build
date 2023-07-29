@@ -2,9 +2,12 @@
 
 # This script just builds everything.
 
-# Move to where the build scripts are located
-cd "$(dirname "$0")"
+# Move to the project root
+cd "$(dirname "$0")/.."
 
-# And run them
-./build-site
-./build-yozo
+# Delete dist/ for a clean slate
+rm -rf ../dist
+
+# And run the build scripts
+./bin/build-site
+./bin/build-yozo

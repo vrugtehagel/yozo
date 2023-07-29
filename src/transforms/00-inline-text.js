@@ -10,8 +10,8 @@ define.transform(0, (node, scopes, meta, context) => {
 	for(let index = 1; index < parts.length; index += 2){
 		current = current.previousSibling.previousSibling
 		const node = current
-		const getter = meta.function(node.textContent, ...scopes)
-		meta.connect(() => effect(() => {
+		const getter = meta.__function(node.textContent, ...scopes)
+		meta.x.connected(() => effect(() => {
 			node.textContent = getter(null, ...scopes)
 		}))
 	}

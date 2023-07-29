@@ -19,8 +19,8 @@ effect(() => codePreview.textContent = $.value)
 effect(() => container.style.setProperty('--width', $.width))
 effect(() => container.style.setProperty('--height', $.height))
 
-connect(() => $.$value.bind(codeInput))
-connect(() => {
+connected(() => $.$value.bind(codeInput))
+connected(() => {
 	when(codePreview).observes('resize').then(([entry]) => {
 		$.width = entry.contentRect.width
 		$.height = entry.contentRect.height

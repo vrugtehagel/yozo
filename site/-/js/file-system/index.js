@@ -16,7 +16,7 @@ export async function pull(){
 
 export async function push(){
 	const data = Object.entries($files)
-	await requestServiceWorker('filepush', data)
+	await requestServiceWorker('filepush', {data})
 }
 
 await pull()
