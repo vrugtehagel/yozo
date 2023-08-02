@@ -1,66 +1,48 @@
 (() => {
-	const {when} = self.yozo
-	const {contextMessenger, SessionManager} = self
+	const {when, timeout} = self.yozo
+	const {ContextMessenger} = self
 
-	self.fileSystem = new class FileSystem {
-		scopes = ['/file/', '/exam/', '/test/']
+	// only urls under these scopes may be claimed
+	const scopes = ['/file/']
 
-		get storage(){ return SessionManager.active?.storage }
+	const contentTypes = {
+		html: 'text/html',
+		css: 'text/css',
+		js: 'text/javascript',
+		mjs: 'text/javascrtip',
+		json: 'application/json',
+		txt: 'text/plain',
+	}
 
-		getEntryBySrc(src){
-			if(!this.storage) return
-			return [...this.storage.values()].find(entry => entry.src == src)
-		}
+	const messenger = new ContextMessenger('file-system')
 
-		getContentType(src){
-			if(src.endsWith('.html')) return 'text/html'
-			if(src.endsWith('.css')) return 'text/css'
-			if(src.endsWith('.js') || src.endsWith('.mjs'))
-				return 'text/javascript'
-			if(src.endsWith('.json')) return 'application/json'
-			return 'text/plain'
-		}
+	function getContentType(src){
+		for(const [extension, contentType] of Object.entries(contentTypes))
+			if(src.endsWith(`.${extension}`)) return contentType
+		return contentTypes.txt
+	}
 
-		update(uuid, entry){
-			if(entry) this.storage?.set(uuid, entry)
-			else this.storage?.delete(uuid)
-		}
+	async function request(scope, src){
+		const body = await messenger.send('filerequest', {scope, src})
+		if(body == null) return new Response('Not Found', {status: 404})
+		const contentType = getContentType(src)
+		const headers = {'Content-Type': contentType}
+		return new Response(body, {status: 200, headers})
+	}
 
-		list(){
-			return this.storage ? [...this.storage] : []
-		}
-
+	async function gatewayTimeout(){
+		await timeout(5000)
+		return new Response('504 Gateway Timeout', {status: 504})
 	}
 
 	when(self).does('fetch').then(event => {
 		const url = new URL(event.request.url)
 		if(url.host != self.location.host) return
-		if(!fileSystem.scopes.some(scope => url.pathname.startsWith(scope))) return
+		const scope = scopes.find(scope => url.pathname.startsWith(scope))
+		if(!scope) return
 		const {pathname} = url
 		const src = pathname.endsWith('/') ? pathname + 'index.html' : pathname
-		const entry = fileSystem.getEntryBySrc(src)
-		if(!entry) return event.respondWith(new Response('', {status: 404}))
-		const status = 200
-		const {file} = entry
-		const contentType = fileSystem.getContentType(src)
-		const headers = {'Content-Type': contentType}
-		event.respondWith(new Response(file, {status, headers}))
+		event.respondWith(Promise.any([request(scope, src), gatewayTimeout()]))
 	})
 
-	when(contextMessenger).does('filepush').then(event => {
-		const {sessionId, data} = event.detail.payload
-		SessionManager.activate(sessionId)
-		const uuids = data.map(([uuid]) => uuid)
-		for(const [uuid] of fileSystem.storage)
-			if(!uuids.includes(uuid)) fileSystem.update(uuid)
-		for(const [uuid, entry] of data) fileSystem.update(uuid, entry)
-		event.detail.respond()
-	})
-
-	when(contextMessenger).does('filepull').then(event => {
-		const {sessionId} = event.detail.payload
-		SessionManager.activate(sessionId)
-		const entries = fileSystem.list()
-		event.detail.respond(entries)
-	})
 })()

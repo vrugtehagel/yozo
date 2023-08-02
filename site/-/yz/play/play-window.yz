@@ -1,0 +1,49 @@
+<title>play-window</title>
+
+<meta attribute=loading type=boolean>
+
+<template mode=closed>
+	<div id=titlebar>
+		<slot name=titlebar .hidden="$.loading"></slot>
+		<ui-button
+			icon=close
+			@click="$.close()"
+		></ui-button>
+	</div>
+	<div id=content>
+		<div id=loader #if="$.loading">
+			<ui-icon type=spinner></ui-icon>
+		</div>
+		<slot .hidden="$.loading"></slot>
+	</div>
+</template>
+
+<script>
+$.close = () => this.dispatchEvent(new CustomEvent('close'))
+</script>
+
+<style>
+:host {
+	display: grid; width: 100%; height: 100%; padding: .75rem; box-sizing: border-box;
+	grid: auto 1fr / 1fr; gap: .75rem;
+	background-color: var(--background-color);
+	border-radius: 1.5rem;
+}
+#titlebar {
+	display: flex;
+	align-items: center;
+	& > :last-child { margin-left: auto; }
+}
+ui-button:hover {
+	background-color: var(--highlight-color);
+}
+#content {
+	display: flex;
+	flex-direction: column;
+}
+#loader {
+	display: grid; width: 100%; height: 100%;
+	place-items: center;
+}
+slot[hidden]{ display: none; }
+</style>

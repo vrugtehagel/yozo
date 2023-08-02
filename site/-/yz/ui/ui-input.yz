@@ -64,6 +64,7 @@ $.keydown = event => {
 }
 #prefix {
 	position: absolute; left: calc(-1 * var(--scroll-left, 0));
+	color: var(--meta-color);
 	clip-path: inset(0 calc(-1 * var(--scroll-left, 0)) 0 var(--scroll-left));
 }
 input {

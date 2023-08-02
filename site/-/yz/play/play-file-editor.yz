@@ -3,8 +3,112 @@
 <meta attribute=uuid type=string>
 
 <template mode=closed>
-	<div id=titlebar>
-		<span id=title>Foo bar</span>
-		<ui-button icon=close></ui-button>
-	</div>
+	<play-window
+		.loading="!$.$imports.fileSystem"
+		@close="$.close()"
+	>
+		<div id=titlebar slot=titlebar>
+			<ui-dropdown icon=menu .hidden="$.renaming">
+				<ui-button
+					icon=edit
+					@click="$.startRename()"
+				>Rename</ui-button>
+				<ui-button
+					icon=delete
+					danger
+					@activate="$.delete()"
+				>Delete</ui-button>
+			</ui-dropdown>
+			<span
+				id=title
+				.hidden="$.renaming"
+				@dblclick="$.startRename()"
+			>{{ $.src }}</span>
+			<div id=rename .hidden="!$.renaming">
+				<ui-button icon=checkmark @click="$.rename()"></ui-button>
+				<ui-input
+					prefix="/file/"
+					@enter="$.rename()"
+					@escape="$.renaming = false"
+				></ui-input>
+			</div>
+		</div>
+		<ui-code-editor
+			:language="$.language"
+		></ui-code-editor>
+	</play-window>
 </template>
+
+<script>
+$.imports = {}
+import('/-/js/file-system/index.js')
+	.then(fileSystem => $.$imports.fileSystem = fileSystem)
+
+const {uiCodeEditor, uiInput} = elements
+
+connected(() => effect(() => {
+	const {fileSystem} = $.$imports
+	if(!fileSystem) return
+	if(!($.uuid in fileSystem.$files)) return $.close()
+	const $file = fileSystem.$files[`$${$.uuid}`]
+	uiCodeEditor.value = $file.body
+	live.link($file.$body, uiCodeEditor)
+	live.link($.$src, () => $file.src)
+	live.link($.$language, () => {
+		if(!($.uuid in fileSystem.$files)) return $.language
+		return fileSystem.extension($.uuid)
+	})
+}))
+
+$.close = () => {
+	$.renaming = false
+	this.dispatchEvent(new CustomEvent('close'))
+}
+$.delete = () => {
+	const {fileSystem} = $.$imports
+	if(!fileSystem) return
+	$.close()
+	delete fileSystem.$files[$.uuid]
+}
+$.startRename = () => {
+	uiInput.value = $.src.slice(6)
+	$.renaming = true
+}
+$.rename = () => {
+	const {fileSystem} = $.$imports
+	if(!fileSystem) return
+	const $file = fileSystem.$files[`$${$.uuid}`]
+	$file.src = `/file/${elements('#rename ui-input').value}`
+	$.renaming = false
+}
+</script>
+
+<style>
+:host {
+	display: block; width: 100%; height: 100%;
+}
+ui-button:hover {
+	background-color: var(--highlight-color);
+}
+#titlebar {
+	display: flex;
+	align-items: center; gap: .75rem;
+}
+#rename {
+	display: flex;
+	align-items: center; gap: .5rem;
+	&[hidden]{ display: none; }
+}
+ui-dropdown {
+	&[hidden]{ display: none; }
+	&::part(dropdown){
+		width: 15rem;
+		inset: 4.25rem auto auto .5rem; z-index: 3;
+		box-shadow: none;
+	}
+}
+ui-code-editor {
+	width: 100%; height: 100%; box-sizing: border-box;
+	border-radius: 1rem 1rem .75rem .75rem;
+}
+</style>

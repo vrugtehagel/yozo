@@ -45,7 +45,7 @@ a {
 	color: var(--text-color);
 	border-radius: .5rem;
 	text-decoration: none;
-	transition: .2s;
+	/*transition: .2s;*/
 }
 site-settings::part(dropdown){
 	--appear-from: 0 .5rem;
@@ -53,6 +53,10 @@ site-settings::part(dropdown){
 }
 :is(ui-button, a):hover {
 	background-color: var(--background-color);
+}
+ui-icon:not(:defined){
+	width: 3rem;
+	height: 3rem;
 }
 ui-button {
 	margin-left: auto;

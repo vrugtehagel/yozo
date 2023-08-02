@@ -1,33 +1,22 @@
 const {when} = self.yozo
 
 export class ContextMessenger extends EventTarget {
-	static #all = Symbol()
-	static #messengers = new WeakMap
-	static #constructing = false
-	static get(sender, receiver = self){
-		if(sender == '*') sender = this.#all
-		if(this.#messengers.has(sender)) return this.#messengers.get(sender)
-		this.#constructing = true
-		const messenger = new ContextMessenger(sender, receiver)
-		this.#constructing = false
-		ContextMessenger.#messengers.set(sender, messenger)
-		return messenger
-	}
-
+	#isBroadcastChannel
 	#receiver
 	#sender
 
-	constructor(sender, receiver){
+	constructor(sender, receiver = self){
 		super()
-		if(!ContextMessenger.#constructing) throw Error('Illegal constructor')
-		this.#receiver = receiver
+		this.#isBroadcastChannel = typeof sender == 'string'
+		if(this.#isBroadcastChannel)
+			sender = receiver = new BroadcastChannel(sender)
 		this.#sender = sender
+		this.#receiver = receiver
 		when(this.#receiver).messages().then(event => this.#respond(event))
 	}
 
 	async send(type, payload = null){
 		const sender = this.#sender
-		if(sender == ContextMessenger.#all) return
 		const uuid = crypto.randomUUID()
 		const origin = location
 		const event = await when(this.#receiver).messages()
@@ -38,12 +27,13 @@ export class ContextMessenger extends EventTarget {
 	}
 
 	#respond(event){
-		if(this.#sender != ContextMessenger.#all && this.#sender != event.source) return
+		const sender = this.#isBroadcastChannel ? this.#sender : event.source
+		if(this.#sender != sender) return
 		const {type, uuid, payload} = event.data
+		if(type == 'respond') return
 		const respond = payload =>
-			event.source.postMessage({type: 'respond', uuid, payload})
-		const originalEvent = event
-		const detail = {payload, respond, originalEvent}
+			sender.postMessage({type: 'respond', uuid, payload})
+		const detail = {payload, respond}
 		this.dispatchEvent(new CustomEvent(type, {detail}))
 	}
 }

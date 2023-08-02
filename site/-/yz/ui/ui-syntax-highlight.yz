@@ -13,9 +13,12 @@ const {code} = elements
 
 effect(async () => {
 	if(!$.prismLoaded) return code.textContent = $.value
-	code.className = `language-${$.language}`
-	const grammar = window.Prism.languages[$.language]
-	code.innerHTML = window.Prism.highlight($.value, grammar, $.language)
+	const language = window.Prism.languages[$.language]
+		? $.language
+		: 'txt'
+	code.className = `language-${language}`
+	const grammar = window.Prism.languages[language]
+	code.innerHTML = window.Prism.highlight($.value, grammar, language)
 })
 </script>
 

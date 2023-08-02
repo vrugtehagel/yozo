@@ -1,0 +1,95 @@
+<title>play-preview</title>
+
+<meta method=deactivate>
+<meta method=activate>
+
+<template mode=closed>
+	<play-window @close="$.close()">
+		<div slot=titlebar id=titlebar>
+			<ui-button
+				icon=arrow
+				aria-label="Back"
+				iconstate=left
+			></ui-button>
+			<ui-button
+				icon=arrow
+				aria-label="Forward"
+				iconstate=right
+			></ui-button>
+			<ui-button
+				icon=repeat
+				aria-label="Reload"
+				@click="$.reload()"
+			></ui-button>
+			<ui-input
+				:prefix="`${window.location.host}/file/`"
+				@enter="$.navigate()"
+			></ui-input>
+		</div>
+		<ui-input
+			:prefix="`${window.location.host}/file/`"
+			@enter="$.navigate()"
+		></ui-input>
+		<iframe></iframe>
+	</play-window>
+</template>
+
+<script>
+const { iframe } = elements
+
+customElements.whenDefined('ui-input').then(() => {
+	live.link($.$address, elements('#titlebar ui-input'))
+	live.link($.$address, elements('play-window > ui-input'))
+	$.navigate()
+})
+
+$.close = () => this.dispatchEvent(new CustomEvent('close'))
+$.reload = () => iframe.contentWindow.location.reload()
+$.navigate = () => {
+	if($.inactive) return
+	iframe.src = `${location.origin}/file/${$.address}`
+}
+$.deactivate = () => {
+	iframe.src = 'about:blank'
+	$.active = false
+}
+$.activate = () => {
+	iframe.src = `${location.origin}/file/${$.address}`
+	$.active = true
+}
+</script>
+
+<style>
+:host {
+	display: block; width: 100%; height: 100%;
+	container: play-preview / inline-size;
+}
+@container play-preview (width <= 40rem){
+	#titlebar ui-input { display: none; }
+}
+@container play-preview (width > 40rem){
+	play-window > ui-input { display: none; }
+}
+#titlebar {
+	flex: 1 1 0;
+	display: flex; margin-right: .75rem;
+	align-items: center; gap: .25rem;
+	& ui-button:hover {
+		background-color: var(--highlight-color);
+	}
+	& ui-input {
+		flex: 1 1 0;
+		margin-left: .5rem;
+	}
+}
+play-window > ui-input {
+	margin-bottom: .75rem;
+}
+iframe {
+	flex: 1 1 0;
+	border: none; border-radius: 0.75rem;
+	background-color: var(--sub-background-color);
+}
+</style>
+
+

@@ -37,8 +37,8 @@ effect(() => {
 }
 button {
 	display: grid; width: 100%; height: 100%; padding: .75rem; margin: 0;
-	grid-template: 100% / auto; grid-auto-flow: column; grid-auto-columns: 1fr;
-	place-items: center start; gap: .75rem;
+	grid: 100% / min-content;
+	place-items: center start; gap: 0 .75rem;
 	position: relative;
 	color: inherit; background: none;
 	border: none; border-radius: inherit; outline: none;
@@ -47,7 +47,16 @@ button {
 	cursor: pointer;
 	&:focus-visible { box-shadow: 0 0 0 .25rem var(--keyword-color); }
 	&:disabled { pointer-events: none; }
-	:host(:not(:empty)) & { padding: .75rem 1rem; }
+	:host(:not(:empty)) & {
+		grid: 100% / min-content 1fr;
+		padding: .75rem 1rem;
+	}
+}
+:host([disabled]){
+	opacity: .4;
+	pointer-events: none;
+}
+:host([danger]) button {
 	&::after {
 		content: "";
 		display: block; height: 0;
@@ -56,14 +65,10 @@ button {
 		mix-blend-mode: lighten;
 		transition: 0s;
 	}
-}
-:host([disabled]){
-	opacity: .4;
-	pointer-events: none;
-}
-:host([danger]) button:active::after {
-	height: 100%;
-	transition: height 1s cubic-bezier(0, .3, 0, .3);
+	&:active::after {
+		height: 100%;
+		transition: height 1s cubic-bezier(0, .3, 0, .3);
+	}
 }
 ui-icon {
 	width: 1.5rem; height: 1.5rem; padding: 0; box-sizing: border-box;

@@ -3,15 +3,12 @@
 		<style>
 			path {
 				opacity: 0;
-				transition: .2s;
 			}
 			.filetype-unknown {
-				transition: .1s;
 				opacity: 1;
 			}
 			:is(.html, .css, .js, .json, .yz, .txt) .filetype-unknown {
 				opacity: 0;
-				transition: .2s;
 			}
 			.html .filetype-html,
 			.css .filetype-css,
@@ -20,7 +17,6 @@
 			.yz .filetype-yz,
 			.txt .filetype-txt {
 				opacity: 1;
-				transition: .1s;
 			}
 		</style>
 	</defs>

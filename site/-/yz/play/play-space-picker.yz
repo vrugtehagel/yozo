@@ -1,0 +1,136 @@
+<title>play-space-picker</title>
+
+<template mode=closed>
+	<div id=file-picker>
+		<ui-button
+			id=add-file
+			icon=plus
+			@click="$.addInstantly = false, $.adding = true"
+		>Add new file</ui-button>
+		<ui-icon type=spinner #if="!$.$imports.fileSystem"></ui-icon>
+		<ul
+			#else
+			id=files
+			:class="$.uuids.length == 0 && !$.adding ? 'empty' : null"
+		>
+			<li #for="uuid of $.uuids">
+				<ui-button
+					icon=filetype
+					:iconstate="$.$imports.fileSystem.extension(uuid)"
+					@click="$.open(uuid)"
+				>
+					{{ $.$imports.fileSystem.$files[`$${uuid}`].src }}
+				</ui-button>
+			</li>
+			<li
+				id=new-file
+				.hidden="!$.adding"
+				:class="$.addInstantly == false ? null : 'instant'"
+				@transitionend="$.adding && this.firstElementChild.focus()"
+			>
+				<ui-input
+					prefix="/file/"
+					@enter="$.add()"
+					@escape="$.adding = false"
+				></ui-input>
+				<ui-button icon=checkmark @click="$.add()"></ui-button>
+				<ui-button
+					icon=close
+					@click="$.adding = false"
+				></ui-button>
+			</li>
+		</ul>
+	</div>
+	<ui-button
+		id=open-preview
+		icon=browser-window
+		@click="$.preview()"
+	>Open preview</ui-button>
+</template>
+
+<script>
+$.imports = {}
+import('/-/js/file-system/index.js').then(async fileSystem => {
+	const {$files} = fileSystem
+	if(Object.values($files).some(file => file.src.startsWith('/file/')))
+		return $.$imports.fileSystem = fileSystem
+	const $file = fileSystem.add()
+	$file.src = '/file/index.html'
+	$file.body = `<!DOCTYPE html>\n\n<title>Untitled</title>\n`
+	$.$imports.fileSystem = fileSystem
+})
+
+connected(() => {
+	live.link($.$uuids, () => {
+		if(!$.$imports.fileSystem) return []
+		return Object.entries($.$imports.fileSystem.$files)
+			.filter(([uuid, file]) => file.src.startsWith('/file/'))
+			.map(([uuid]) => uuid)
+	})
+})
+
+$.open = uuid =>
+	this.dispatchEvent(new CustomEvent('open', {detail: {uuid}}))
+$.preview = () =>
+	this.dispatchEvent(new CustomEvent('preview'))
+
+$.add = async () => {
+	const $file = $.$imports.fileSystem.add()
+	const uiInput = elements('#new-file ui-input')
+	$file.src = `/file/${uiInput.value}`
+	uiInput.value = ''
+	$.adding = false
+	$.addInstantly = true
+	await frame().once()
+	await frame().once()
+	$.addInstantly = false
+}
+
+</script>
+
+<style>
+:host {
+	display: block; width: min(100% - 2rem, 28rem); padding: 1rem; box-sizing: border-box;
+	background-color: var(--background-color);
+	border-radius: 1.5rem;
+}
+#file-picker {
+	padding: .5rem; margin: 0 0 1rem;
+	background-color: var(--sub-background-color);
+	border-radius: 1rem;
+}
+#add-file { background-color: var(--background-color); }
+#add-file, #open-preview {
+	width: 100%;
+	&:hover { background-color: var(--highlight-color); }
+}
+#new-file {
+	display: flex; height: 3rem;
+	gap: .5rem;
+	overflow: clip;
+	transition: opacity .2s, height .2s, visibility 0s 0s;
+	&[hidden]{
+		height: 0;
+		opacity: 0; visibility: hidden;
+		transition: opacity .2s, height .2s, visibility 0s .2s;
+	}
+	&.instant { transition: all 0s; }
+	ui-input { flex: 1 1 0; }
+}
+ui-icon[type=spinner]{
+	display: block; margin: .5rem auto 0;
+}
+ui-button {
+	&:only-child { width: 100%; }
+	&:hover { background-color: var(--background-color); }
+}
+ul {
+	list-style: none;
+	padding: 0; margin: .5rem 0 0;
+	transition: margin-top .2s;
+	&.empty {
+		margin-top: 0;
+	}
+}
+play-file-listing { width: 100%; }
+</style>

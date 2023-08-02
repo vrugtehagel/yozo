@@ -1,14 +1,12 @@
-import { ContextMessenger } from '/-/js/context-messenger/index.js'
+const {when} = self.yozo
 
-let contextMessenger = null
-const loading = navigator.serviceWorker.ready.then(registration => {
-	const sender = registration.active
-	const receiver = navigator.serviceWorker
-	contextMessenger = ContextMessenger.get(sender, receiver)
+await navigator.serviceWorker.register('/service-worker.js', {
+	updateViaCache: 'none'
 })
 
-export async function requestServiceWorker(type, payload = {}){
-	if(!contextMessenger) await loading
-	payload.sessionId = sessionStorage.getItem('sessionId')
-	return await contextMessenger.send(type, payload)
+const registration = await navigator.serviceWorker.ready
+
+if(!navigator.serviceWorker.controller){
+	await when(navigator.serviceWorker).controllerchanges().once()
+		.after(() => registration.active.postMessage({type: 'forceactivate'}))
 }

@@ -5,7 +5,6 @@
 // Refactor when ES6 modules are supported in service workers
 
 importScripts('/dev.js')
+importScripts('/-/js/service-worker/service-worker.js')
 importScripts('/-/js/context-messenger/service-worker.js')
-importScripts('/-/js/session-manager/service-worker.js')
-importScripts('/-/js/fetch-test/service-worker.js')
 importScripts('/-/js/file-system/service-worker.js')

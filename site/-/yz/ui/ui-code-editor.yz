@@ -1,0 +1,66 @@
+<title>ui-code-editor</title>
+
+<meta attribute=value type=string>
+<meta attribute=language type=string default="txt">
+
+<template mode=closed delegates-focus=true>
+	<div id=container>
+		<textarea
+			spellcheck=false
+		></textarea>
+		<ui-syntax-highlight
+			:language="$.language"
+			:value="$.value"
+		></ui-syntax-highlight>
+	</div>
+</template>
+
+<script>
+$.imports = {}
+
+const {textarea, uiSyntaxHighlight} = elements
+
+live.link($.$value, textarea)
+
+connected(() => {
+	when(uiSyntaxHighlight).observes('resize').then(([entry]) => {
+		const {width, height} = entry.contentRect
+		textarea.style.setProperty('--width', width)
+		textarea.style.setProperty('--height', height)
+	})
+})
+</script>
+
+<style>
+:host {
+	display: block; padding: 1.5rem 2rem;
+	background: var(--highlight-color);
+	position: relative;
+	font-family: var(--font-monospace);
+	overflow: auto;
+	scroll-padding: 1.5rem 2rem;
+}
+#container {
+	width: 100%; height: 100%;
+	position: relative;
+}
+textarea, ui-syntax-highlight {
+	display: block; padding: 0;
+	background: none;
+	font-size: 1rem; line-height: 1.375; font-family: inherit;
+	letter-spacing: 0;
+}
+textarea {
+	width: max(100%, var(--width) * 1px + 2rem); height: max(100%, var(--height) * 1px + 2rem);
+	margin: 0;
+	color: white; background: transparent;
+	border: none; outline: none;
+	resize: none;
+	caret-color: white;
+}
+ui-syntax-highlight {
+	pointer-events: none;
+	position: absolute; inset: 0 auto auto 0;
+	overflow: visible;
+}
+</style>
