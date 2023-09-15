@@ -4,15 +4,15 @@
 			to { rotate: 360deg; }
 		}
 		@keyframes stretch {
-			from { stroke-dasharray: 3 19; }
-			to { stroke-dasharray: 10 6; }
+			from { stroke-dasharray: 3 26; }
+			to { stroke-dasharray: 12 8; }
 		}
 		path {
 			transform-origin: 6px 6px;
-			stroke-dasharray: 5 25;
+			stroke-dasharray: 5 30;
 			animation: rotate linear .8s infinite,
 				stretch ease-in-out 1.2s infinite alternate;
 		}
 	</style>
-	<path d="M10 6A1 1 0 0 0 2 6A1 1 0 0 0 10 6" stroke="currentColor" fill="none" stroke-linecap="round"/>
+	<path d="M11 6A1 1 0 0 0 1 6A1 1 0 0 0 11 6" stroke="currentColor" fill="none" stroke-linecap="round"/>
 </svg>

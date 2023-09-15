@@ -6,10 +6,10 @@ export const effect = (callback, schedule = queueMicrotask) => {
 	let updater
 	const flow = new Flow
 	flow.then(() => {
-		const call = track(['live', 'flows'], callback)
+		const call = track(['live', 'undo'], callback)
 		updater = track.ignore(() => when(call.live).change()).once()
 			.then(() => schedule(() => flow.now()))
-			.cleanup(() => call.flows.stop())
+			.cleanup(() => call.undo())
 	}).cleanup(() => updater?.stop())
 	schedule(() => flow.now())
 	return flow

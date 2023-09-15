@@ -1,33 +1,26 @@
 body {
-	display: grid; height: 100vh; padding: 5.5rem 1rem 1rem; box-sizing: border-box;
-	grid-template: auto 1fr / 1fr;
+	display: grid; height: 100vh; padding: 5.5rem 1rem 1rem 0; box-sizing: border-box;
+	grid-template: auto 1fr / auto 1fr; gap: 1rem;
 	transition: padding-top .3s;
 	overflow: hidden;
 }
-body:has(navigation-menu[hidden]){
-	padding-top: 1rem;
-}
+body:has(navigation-menu[hidden]){ padding-top: .875rem; }
 navigation-menu {
 	transition: top .3s;
 	box-shadow: none;
 }
 navigation-menu[hidden]{ top: -4.5rem; }
 #main-menu {
+	grid-area: 1 / 2 / 2 / 3;
 	list-style: none;
-	display: flex; width: min(100%, 1200px); padding: .5rem 0 .5rem .5rem;
-	margin: 0 auto; box-sizing: border-box;
-	flex-wrap: wrap; gap: .5em 1em;
+	display: flex; padding: 0; margin: 0;
+	gap: 1rem;
 	z-index: 900;
+}
+#main-menu li.separator { flex: 1; }
+#main-menu site-settings::part(button):hover,
+#main-menu site-settings[open]::part(button) {
 	background-color: var(--background-color);
-	border-radius: .75rem;
-	box-shadow: -2rem 0 0 inset var(--sub-background-color);
-	transition: border-bottom-left-radius .1s;
 }
-
-#main-menu li.separator {
-	flex: 1;
-}
-
-play-spaces {
-	padding-top: 1rem;
-}
+#main-menu site-settings::part(dropdown){ inset: 3.5rem -4rem auto auto; }
+play-creations { grid-area: 1 / 1 / -1 / 2; }

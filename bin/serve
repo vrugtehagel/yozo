@@ -6,7 +6,7 @@
 cd "$(dirname "$0")/.."
 
 # Run a local server at localhost:8787 using php
-php -q -S localhost:8787 -t dist/ &
+php -q --docroot dist/ --server localhost:8787 &
 
 # Save the process ID so we can kill it later
 PHP_PID=$!

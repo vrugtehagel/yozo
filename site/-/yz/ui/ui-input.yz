@@ -1,6 +1,7 @@
 <title>ui-input</title>
 <meta attribute=prefix type=string>
 <meta attribute=value type=string>
+<meta property=fullValue readonly>
 
 <template mode=closed delegates-focus=true>
 	<div id=container>
@@ -19,7 +20,9 @@
 <script>
 const {input} = elements
 
+input.value = $.value
 live.link($.$value, input)
+live.link($.$fullValue, () => $.prefix + $.value)
 $.scrollLeft = 0
 $.prefixWidth = 0
 

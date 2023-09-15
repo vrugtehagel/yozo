@@ -1,7 +1,7 @@
 import { define } from '../define.js'
 
 
-define.register(6, 'template', (context, [args]) => {
+define.register(5, 'template', (context, [args]) => {
 	if(!args){
 		const constructor = function(meta){
 			meta.root = this
@@ -15,11 +15,13 @@ define.register(6, 'template', (context, [args]) => {
 		const constructor = function(meta){
 			meta.root = this.attachShadow(args[0])
 			meta.root.append(meta.__render(context.__template, [`{${[...context.x]}}`, meta.x]))
+			customElements.upgrade(meta.root)
 		}
 		return {constructor} 
 	}
 	const constructor = function(meta){
 		meta.root = meta.__render(context.__template, [`{${[...context.x]}}`, meta.x])
+		customElements.upgrade(meta.root)
 	}
 	const connectedCallback = function(meta){
 		this.replaceChildren(meta.root)

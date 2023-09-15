@@ -15,25 +15,21 @@ define.transform(1, (node, scopes, meta, context) => {
 	const cache = []
 	const getter = meta.__function(arrayExpression, ...scopes)
 	meta.x.connected(() => effect(() => {
-		const array = getter(element, ...scopes) //
-		if(!array[Symbol.iterator]) //
-			error`transform-for-${arrayExpression}-not-iterable` //
-		const newNodes = [...(
-				true ? array : //
-				getter(element, ...scopes)
-			)].map((item, index) => {
-			if(cache[index] && cache[index][0] === item) return cache[index][1]
+		const array = getter(element, ...scopes)
+		let index = -1
+		while(cache.length > array.length) cache.pop()
+		for(const item of array){
+			index++
+			if(cache[index] && cache[index][0] === item) continue
 			const node = meta.__render(
 				element.localName == 'template' ? element.content : element,
 				...scopes,
 				[initializer, item]
 			)
+			cache[index]?.[1].map(node => node.remove())
 			cache[index] = [item, node.nodeType == 11 ? [...node.childNodes] : [node]]
-			return cache[index][1]
-		})
-		while(cache.length > newNodes.length) cache.pop()
-		meta.__anchoredRemove(anchor)
-		meta.__anchoredAdd(anchor, newNodes.flat())
+			;(cache[index - 1]?.[1].at(-1) ?? anchor).after(...cache[index][1])
+		}
 	}))
 })
 

@@ -1,67 +1,70 @@
 <title>play-space</title>
-<meta attribute=mode type=string>
-<meta attribute=src type=string>
+<meta attribute=index type=number>
 
 <template mode=closed>
-	<div id=too-small>
-		<ui-icon type=implode></ui-icon>
-		<p>The window is too small for this layout.</p>
-	</div>
-	<play-space-picker
-		@open="$.uuid = event.detail.uuid, $.editorOpen = true"
-		@preview="$.previewing = true, elements.playPreview.activate()"
-	></play-space-picker>
-	<div id=occupant .hidden="!$.editorOpen && !$.previewing">
-		<play-file-editor
-			.hidden="!$.editorOpen"
-			:uuid="$.uuid"
-			@close="$.editorOpen = false"
-		></play-file-editor>
-		<!--play-preview
-			.hidden="!$.previewing"
-			@close="$.previewing = false, elements.playPreview.deactivate()"
-		></play-preview-->
-	</div>
+	<play-file-picker
+		:index="$.index"
+		@open="$.occupy(event.detail.uuid)"
+		@preview="$.occupy(`preview:${$.defaultPreviewUrl}`)"
+	></play-file-picker>
+	<play-file-editor
+		.hidden="!$.fileOpen"
+		:uuid="$.recentFile"
+		@close="$.occupy(null)"
+	></play-file-editor>
 </template>
+
+<script>
+self.yozo.register('/-/yz/play/play-preview.yz')
+
+const {$play} = window.$site
+
+$.occupy = space => $play.$current.$spaces[$.index] = space
+
+live.link($.$occupant, () => $play.$current.$spaces[$.index])
+live.link($.$preview, () => $.occupant?.startsWith('preview'))
+live.link($.$fileOpen, () => $.occupant && !$.preview)
+live.link($.$recentFile, () => $.fileOpen ? $.occupant : $.recentFile)
+live.link($.$defaultPreviewUrl, () => {
+	return Object.values(window.$site.$play.$current.files ?? {})
+		.map(file => file.src)
+		.filter(src => src.endsWith('.html'))
+		[0] ?? 'vrugtehagel.nl'
+})
+when($.$preview).changes().then(purify(async () => {
+	if(!$.preview) return
+	const fadeIn = [{scale: '.95', opacity: '0'}, {scale: '1', opacity: '1'}]
+	const fadeOut = [...fadeIn].reverse()
+	await until(customElements.whenDefined('play-preview'))
+	const playPreview = document.createElement('play-preview')
+	const options = {duration: 200, easing: 'ease'}
+	playPreview.src = $.occupant.slice(8)
+	playPreview.animate(fadeIn, options)
+	elements.shadow.append(playPreview)
+	when(playPreview).srcchanges()
+		.then(() => $.occupy(`preview:${playPreview.src}`))
+	when(playPreview).closes().once().then(() => {
+		$.occupy('')
+	}).cleanup(() => {
+		const animation = playPreview.animate(fadeOut, options)
+		animation.finished.then(() => playPreview.remove())
+	})
+})).now()
+</script>
 
 <style>
 :host {
 	display: grid;
 	place-items: center;
-	container: play-space / size;
 	border: .5rem dashed var(--background-color); border-radius: 1.5rem;
 }
 :host > * {
 	grid-area: 1 / 1;
 	margin: -.5rem;
 }
-#too-small {
-	display: none; padding: 1rem;
-	flex-direction: column; align-items: center;
-	color: var(--comment-color);
-	text-align: center;
-	p { margin: 0; }
-}
-ui-icon { width: 2.5rem; height: 2.5rem; }
-@container play-space (width < 16rem) or (height < 16rem) {
-	#too-small { display: flex; }
-	#too-small ~ * { display: none; }
-}
-@container play-space (height < 9rem) {
-	#too-small ui-icon { display: none; }
-}
-play-space-picker { z-index: 1; }
-#occupant {
+:host > :not(play-file-picker){
 	place-self: stretch;
-	display: grid;
-	grid: 100% / 100%; place-items: center;
 	z-index: 2;
-	transition: scale .3s, opacity .3s, visibility 0s 0s;
-	& > * { grid-area: 1 / 1; }
-	&[hidden], & > [hidden] {
-		scale: .95;
-		opacity: 0; visibility: hidden;
-		transition: scale .3s, opacity .3s, visibility .3s 0s;
-	}
 }
+:host > :not(:defined){ display: none; }
 </style>

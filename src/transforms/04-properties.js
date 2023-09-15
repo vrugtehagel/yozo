@@ -8,18 +8,17 @@ define.transform(4, (node, scopes, meta, context) => {
 	if(node.name[0] != '.') return
 	const element = node.ownerElement
 	element.removeAttribute(node.name)
+	const originalLast = node.name.slice(1).split('.').at(-1)
 	const chain = node.name.slice(1).split('.').map(camelCase)
-	const getter = meta.__function(node.value, ...scopes)
-	const $isDefined = live(element.matches(':defined'))
-	if(!live.get($isDefined)) customElements.whenDefined(element.localName)
-		.then(() => live.set($isDefined, true))
+	const getter = meta.__function(node.value || true, ...scopes)
 	meta.x.connected(() => effect(() => {
-		if(!live.get($isDefined)) return
 		const value = getter(element, ...scopes)
 		let current = element
 		const properties = [...chain]
 		const last = properties.pop()
 		for(const property of properties) current = current?.[property]
-		if(current != null) current[last] = value
+		if(current instanceof DOMTokenList)
+			current.toggle(originalLast, value)
+		else if(current != null) current[last] = value
 	}))
 })

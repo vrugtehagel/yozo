@@ -9,10 +9,16 @@
 		<a href=/tour/ >Tour</a>
 		<a href=/play/ >Play</a>
 		<a href=/docs/ >Docs</a>
-		<site-search
+		<ui-search
+			icon=search
+			label="Search the site"
+			@choose="location.assign(event.detail.option.href)"
+			@input="$.search()"
+		></ui-search>
+		<!--site-search
 			.hidden="!$.showSearch"
 			@blur="$.showSearch = false"
-		></site-search>
+		></site-search-->
 		<ui-button
 			icon="search"
 			.hidden="$.showSearch"
@@ -22,11 +28,31 @@
 	</nav>
 </template>
 <script>
+const {uiSearch} = elements
 $.showSearch = false
 $.onactivate = async () => {
 	$.showSearch = true
 	await frame().once()
 	elements.siteSearch.focus()
+}
+$.search = () => {
+	if(uiSearch.value.length > 6) return uiSearch.populate([])
+	return uiSearch.populate([
+		{name: 'effect()', subname: 'docs > effect'},
+		{name: 'live()', subname: 'docs > live'},
+	])
+	// const url = new URL('/api/search', location.origin)
+	// url.searchParams.set('q', uiSearch.value)
+	// const transformOption = ({title, url}) => {
+	// 	const name = title
+	// 	const {href} = new URL(url, location.origin)
+	// 	const subname = href.split('/').filter(part => part != '').join(' › ')
+	// 	return {name, subname, url, href}
+	// }
+	// const promise = fetch(url)
+	// 	.then(response => response.json())
+	// 	.then(options => options.map(option => transformOption(option)))
+	// uiSearch.populate(promise)
 }
 </script>
 <style>
@@ -50,16 +76,16 @@ a {
 	font: clamp(1rem, 4vw + .25rem, 1.25rem) / 1.2 var(--font-sans-serif);
 	text-decoration: none;
 	transition: background-color .2s;
-	&:focus-visible { box-shadow: 0 0 0 .25rem var(--keyword-color); }
-	&:hover { background-color: var(--highlight-color); }
-	&:has(ui-icon){ padding-inline: .25em; }
-	&:has(ui-icon):hover { background-color: transparent; }
-	&:last-of-type { margin-right: min(8vw, 2rem); }
 }
+a:focus-visible { box-shadow: 0 0 0 .25rem var(--keyword-color); }
+a:hover { background-color: var(--highlight-color); }
+a:has(ui-icon){ padding-inline: .25em; }
+a:has(ui-icon):hover { background-color: transparent; }
+a:last-of-type { margin-right: min(8vw, 2rem); }
 ui-button {
 	display: none; margin-left: auto;
 }
-site-search {
+ui-search {
 	flex: 1;
 	max-width: 20rem; margin: 0 0 0 auto;
 }
@@ -71,24 +97,24 @@ site-search {
 	ui-button {
 		display: block;
 		transition: opacity .2s, visibility 0s 0s, background .2s;
-		&[hidden]{
-			background-color: transparent;
-			visibility: hidden;
-			opacity: 0;
-			transition: opacity .2s .1s, visibility 0s .2s, background-color .08s;
-		}
 	}
-	site-search {
+	ui-button[hidden]{
+		background-color: transparent;
+		visibility: hidden;
+		opacity: 0;
+		transition: opacity .2s .1s, visibility 0s .2s, background-color .08s;
+	}
+	ui-search {
 		max-width: none;
 		width: max(92vw - 8vw, 100vw - 2rem);
 		position: absolute; right: min(4vw, 1rem);
 		transition: opacity .2s .08s, visibility 0s 0s, width .3s;
-		&[hidden]{
-			width: 0;
-			visibility: hidden;
-			opacity: 0;
-			transition: opacity .2s, visibility 0s .3s, width .3s;
-		}
+	}
+	ui-search[hidden]{
+		width: 0;
+		visibility: hidden;
+		opacity: 0;
+		transition: opacity .2s, visibility 0s .3s, width .3s;
 	}
 }
 </style>

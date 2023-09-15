@@ -1,0 +1,49 @@
+<title>play-session-guard</title>
+
+<template mode=closed>
+	<ui-icon type=spinner #if="!$.loaded"></ui-icon>
+	<div id=disconnected #else-if="!$.claimed">
+		<img
+			src=/-/svg/img/play-disconnected.svg
+			alt=""
+			width=16
+			height=16
+			loading=lazy
+		>
+		Session disconnected.
+		<ui-button
+			@click="$.webServer?.claim('/file/')"
+		>Reconnect</ui-button>
+	</div>
+	<slot #else></slot>
+</template>
+
+<script>
+import('/-/js/web-server/index.js').then(webServer => {
+	$.webServer = webServer
+	$.webServer.claim('/file/')
+	$.loaded = true
+})
+
+live.link($.$claimed, () => $.webServer?.claimed('/file/'))
+</script>
+
+<style>
+:host {
+	display: grid;
+	grid: 1fr / 1fr; place-items: stretch;
+}
+:host > *, ::slotted(*) { grid-area: 1 / 1; }
+ui-icon { place-self: center; }
+#disconnected {
+	display: flex;
+	flex-direction: column; gap: 1rem;
+	align-items: center; justify-content: center;
+}
+img {
+	display: block; width: 8rem; height: auto; margin: 0 0 .5rem;
+}
+:is(ui-icon, #disconnected, slot)[hidden]{ display: none; }
+ui-button { background-color: var(--background-color); }
+ui-button:hover { background-color: var(--highlight-color); }
+</style>

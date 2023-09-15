@@ -1,13 +1,10 @@
 <title>ui-code-editor</title>
-
 <meta attribute=value type=string>
 <meta attribute=language type=string default="txt">
 
 <template mode=closed delegates-focus=true>
 	<div id=container>
-		<textarea
-			spellcheck=false
-		></textarea>
+		<textarea spellcheck=false></textarea>
 		<ui-syntax-highlight
 			:language="$.language"
 			:value="$.value"
@@ -16,10 +13,14 @@
 </template>
 
 <script>
-$.imports = {}
-
 const {textarea, uiSyntaxHighlight} = elements
 
+connected(async () => {
+	const {attach} = await until(import('/-/js/input-keybinds/index.js'))
+	effect(() => attach(textarea, $.language))
+})
+
+if($.value) textarea.value = $.value
 live.link($.$value, textarea)
 
 connected(() => {
@@ -29,6 +30,7 @@ connected(() => {
 		textarea.style.setProperty('--height', height)
 	})
 })
+
 </script>
 
 <style>
@@ -40,6 +42,9 @@ connected(() => {
 	overflow: auto;
 	scroll-padding: 1.5rem 2rem;
 }
+::selection {
+	background-color: color-mix(in hsl, var(--highlight-color), white 20%);
+}
 #container {
 	width: 100%; height: 100%;
 	position: relative;
@@ -47,7 +52,7 @@ connected(() => {
 textarea, ui-syntax-highlight {
 	display: block; padding: 0;
 	background: none;
-	font-size: 1rem; line-height: 1.375; font-family: inherit;
+	font-size: 1rem; line-height: 1.5; font-family: inherit;
 	letter-spacing: 0;
 }
 textarea {

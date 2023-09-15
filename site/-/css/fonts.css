@@ -2,7 +2,7 @@
 	font-family: 'DM Sans';
 	font-weight: 400;
 	font-display: swap;
-	src: url(/-/ttf/dm-sans.ttf);
+	src: url("/-/ttf/dm-sans.ttf");
 }
 
 @font-face {
@@ -10,7 +10,7 @@
 	font-style: italic;
 	font-weight: 400;
 	font-display: swap;
-	src: url(/-/ttf/dm-sans-italic.ttf);
+	src: url("/-/ttf/dm-sans-italic.ttf");
 }
 
 @font-face {
@@ -18,7 +18,7 @@
 	font-style: normal;
 	font-weight: bold;
 	font-display: swap;
-	src: url(/-/ttf/dm-sans-bold.ttf);
+	src: url("/-/ttf/dm-sans-bold.ttf");
 }
 
 @font-face {
@@ -26,6 +26,6 @@
 	font-style: normal;
 	font-weight: normal;
 	font-display: swap;
-	src: url(/-/ttf/dm-mono.ttf);
+	src: url("/-/ttf/dm-mono.ttf");
 }
 

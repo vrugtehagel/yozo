@@ -1,95 +1,96 @@
 <title>play-preview</title>
-
-<meta method=deactivate>
-<meta method=activate>
+<meta attribute=src type=string>
 
 <template mode=closed>
-	<play-window @close="$.close()">
-		<div slot=titlebar id=titlebar>
-			<ui-button
-				icon=arrow
-				aria-label="Back"
-				iconstate=left
-			></ui-button>
-			<ui-button
-				icon=arrow
-				aria-label="Forward"
-				iconstate=right
-			></ui-button>
-			<ui-button
-				icon=repeat
-				aria-label="Reload"
-				@click="$.reload()"
-			></ui-button>
-			<ui-input
-				:prefix="`${window.location.host}/file/`"
-				@enter="$.navigate()"
-			></ui-input>
-		</div>
+	<div id=titlebar>
+		<ui-button
+			:icon="$.loading ? 'close' : 'repeat'"
+			aria-label="Reload"
+			@click="$.loading ? $.cancel() : $.go()"
+		></ui-button>
 		<ui-input
-			:prefix="`${window.location.host}/file/`"
-			@enter="$.navigate()"
+			.class-list.invalid="$.invalid"
+			@enter="$.go()"
 		></ui-input>
-		<iframe></iframe>
-	</play-window>
+		<ui-button
+			icon=close
+			aria-label="Close"
+			@click="$.close()"
+		></ui-button>
+	</div>
+	<ui-browser .hidden="$.loading"></ui-browser>
+	<div id=content .hidden="!$.loading">
+		<ui-icon type=spinner></ui-icon>
+	</div>
 </template>
 
 <script>
-const { iframe } = elements
+const {iframe, uiInput, uiBrowser} = elements
 
-customElements.whenDefined('ui-input').then(() => {
-	live.link($.$address, elements('#titlebar ui-input'))
-	live.link($.$address, elements('play-window > ui-input'))
-	$.navigate()
-})
+live.link($.$src, uiInput)
 
 $.close = () => this.dispatchEvent(new CustomEvent('close'))
-$.reload = () => iframe.contentWindow.location.reload()
-$.navigate = () => {
-	if($.inactive) return
-	iframe.src = `${location.origin}/file/${$.address}`
+$.cancel = () => uiBrowser.cancel?.()
+$.go = async () => {
+	await customElements.whenDefined('ui-browser')
+	try {
+		await uiBrowser.navigate($.src)
+	} catch {
+		const keyframes = [{backgroundColor: 'var(--error-color)', offset: 0}]
+		uiInput.animate(keyframes, {duration: 1000})
+		return
+	}
+	$.src = uiBrowser.status == 'complete'
+		? uiBrowser.src.replace(/^https:\/\/(?:www\.)?/, '')
+		: uiBrowser.src
+	uiBrowser.focus()
+	this.dispatchEvent(new CustomEvent('srcchange'))
+	if(!$.sameOrigin) return
+	uiBrowser.inject(`<link rel=stylesheet href=/-/css/file.css>`)
 }
-$.deactivate = () => {
-	iframe.src = 'about:blank'
-	$.active = false
-}
-$.activate = () => {
-	iframe.src = `${location.origin}/file/${$.address}`
-	$.active = true
-}
+
+connected(() => {
+	console.log($.src)
+	if(!$.src) return
+	$.go()
+})
 </script>
 
 <style>
 :host {
-	display: block; width: 100%; height: 100%;
-	container: play-preview / inline-size;
+	display: grid; padding: .75rem; box-sizing: border-box;
+	grid: auto 1fr / 1fr; gap: .75rem;
+	background-color: var(--background-color);
+	border-radius: 1.5rem;
+	transition: opacity .2s, scale .2s, visibility 0s 0s;
 }
-@container play-preview (width <= 40rem){
-	#titlebar ui-input { display: none; }
-}
-@container play-preview (width > 40rem){
-	play-window > ui-input { display: none; }
+:host([hidden]){
+	scale: .95;
+	opacity: 0; visibility: hidden;
+	transition: opacity .2s, scale .2s, visibility 0s .2s;
 }
 #titlebar {
-	flex: 1 1 0;
-	display: flex; margin-right: .75rem;
-	align-items: center; gap: .25rem;
-	& ui-button:hover {
-		background-color: var(--highlight-color);
-	}
-	& ui-input {
-		flex: 1 1 0;
-		margin-left: .5rem;
-	}
+	display: flex; padding: 0; margin: 0;
+	align-items: center;
+	list-style: none;
 }
-play-window > ui-input {
-	margin-bottom: .75rem;
+ui-button:hover, ::part(button):hover {
+	background-color: var(--highlight-color);
 }
-iframe {
+ui-input {
 	flex: 1 1 0;
-	border: none; border-radius: 0.75rem;
+	margin: 0 .75rem 0 .5rem;
+}
+ui-browser, #content {
+	place-self: stretch;
+	border-radius: 1rem;
+	/* clip-path to avoid weird AA in Firefox (didn't test in Chrome) */
+	clip-path: inset(0 round 1rem);
+}
+#content {
+	display: grid;
 	background-color: var(--sub-background-color);
+	place-items: center;
 }
+ui-browser[hidden], #content[hidden] { display: none; }
 </style>
-
-

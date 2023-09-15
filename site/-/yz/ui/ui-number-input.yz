@@ -55,16 +55,16 @@ ui-button {
 	height: 3rem;
 	font-size: 2rem;
 	line-height: 0;
-	&:first-of-type {
-		padding-left: .125rem;
-		border-radius: 1.5rem .25rem .25rem 1.5rem;
-	}
-	&:last-of-type {
-		padding-right: .125rem;
-		border-radius: .25rem 1.5rem 1.5rem .25rem;
-	}
-	&:hover { background-color: var(--highlight-color); }
 }
+ui-button:first-of-type {
+	padding-left: .125rem;
+	border-radius: 1.5rem .25rem .25rem 1.5rem;
+}
+ui-button:last-of-type {
+	padding-right: .125rem;
+	border-radius: .25rem 1.5rem 1.5rem .25rem;
+}
+ui-button:hover { background-color: var(--highlight-color); }
 input {
 	flex: 1 0 3rem;
 	min-width: 3rem; height: 3rem; padding: 1rem 1.25rem; box-sizing: border-box;
@@ -74,9 +74,8 @@ input {
 	text-align: center;
 	-moz-appearance: textfield;
 	transition: .2s;
-	ui-button:first-of-type:hover + & { border-radius: .25rem .75rem .75rem .25rem; }
-	&:has(+ ui-button:hover) { border-radius: .75rem .25rem .25rem .75rem; }
 }
-::-webkit-outer-spin-button,
-::-webkit-inner-spin-button { display: none; }
+ui-button:first-of-type:hover + input { border-radius: .25rem .75rem .75rem .25rem; }
+input:has(+ ui-button:hover) { border-radius: .75rem .25rem .25rem .75rem; }
+::-webkit-outer-spin-button, ::-webkit-inner-spin-button { display: none; }
 </style>

@@ -7,14 +7,15 @@
 </template>
 
 <script>
+$.imports = {}
 import('/-/js/svg-manager/index.js')
-	.then(({svgManager}) => $.svgManager = svgManager)
+	.then(svgManager => $.$imports.svgManager = svgManager)
 
 const {container} = elements
 
 connected(() => effect(() => {
 	if(!$.type) return container.replaceChildren()
-	$.svgManager?.get(`${$.type}.svg`)
+	$.$imports.svgManager?.get(`${$.type}.svg`)
 		.then(svg => container.replaceChildren(...(svg ? [svg] : [])))
 }))
 </script>

@@ -1,8 +1,10 @@
 import { define } from './define.js'
 import { when } from './when.js'
-import { camelCase, uniqueName } from './utils.js'
+import { camelCase, uniqueName, R } from './utils.js'
 
 export const register = async url => {
+	if(register[R].has(url)) return
+	register[R].add(url)
 	const response = await fetch(url)
 	if(!response.ok) return
 	const add = uniqueName()
@@ -19,6 +21,7 @@ export const register = async url => {
 		}
 	})
 }
+register[R] = new Set
 
 let initiated
 let cancelled

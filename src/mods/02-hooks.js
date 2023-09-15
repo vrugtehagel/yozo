@@ -4,28 +4,26 @@ import { track } from '../track.js'
 import { S, R, compose } from '../utils.js'
 
 
-define.register(3, 'meta', (context, argslist) => {
+define.register(2, 'meta', (context, argslist) => {
 	context.hook = (hook, unhook) => {
 		const constructor = function(meta){
 			meta.x[hook] = callback => {
-				const item = [callback]
-				meta.x[hook][R].add(item)
-				if(meta.x[hook][S]) item[1] = track.flows(() => item[0](...meta.x[hook][S]))
-				const flow = new Flow().cleanup(() => {
-					item[1]?.flows.stop()
+				const item = [new Flow().then((...args) => {
+					item[1]?.undo()
+					item[1] = track.undo(() => callback?.(...args))
+				}).cleanup(() => {
+					item[1]?.undo()
 					meta.x[hook][R].delete(item)
-				})
-				track.add('flows', flow)
-				return flow
+				})]
+				meta.x[hook][R].add(item)
+				if(meta.x[hook][S]) queueMicrotask(() => item[0].now(...meta.x[hook][S]))
+				return item[0]
 			}
 			meta.x[hook][R] = new Set
 		}
 		const hookCallback = function(meta, ...args){
 			meta.x[hook][S] = args
-			for(const item of meta.x[hook][R]){
-				item[1]?.flows.stop()
-				item[1] = track.flows(() => item[0](...args))
-			}
+			for(const item of meta.x[hook][R]) item[0].now(...args)
 		}
 		if(!unhook) return {constructor, [`${hook}Callback`]: hookCallback}
 		return {
@@ -33,7 +31,7 @@ define.register(3, 'meta', (context, argslist) => {
 			[`${hook}Callback`]: hookCallback,
 			[`${unhook}Callback`]: function(meta, ...args){
 				meta.x[hook][S] = null
-				for(const item of meta.x[hook][R]) item[1]?.flows.stop()
+				for(const item of meta.x[hook][R]) item[1]?.undo()
 			}
 		}
 	}

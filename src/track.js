@@ -29,9 +29,9 @@ export const until = thing => {
 
 track.ignore = callback => track([], callback).result
 
-track.add = (name, thing) => {
+track.add = (name, ...things) => {
 	if(!track[R][name]) warn`track-add-${name}-not-in-registry` //
-	track[S]?.[name]?.add(thing)
+	track[S]?.[name]?.add(...things)
 }
 
 track[R] = {result: true}
@@ -44,20 +44,30 @@ track.register = (name, registration) => {
 	track[name] ??= callback => track([name], callback)
 }
 
-track.register('flows', class {
+track.register('undo', class {
+	[R] = []
 	#stopped
-	result = new Flow().if(() => null).cleanup(() => this.#stopped = true)
-	add(flow){ this.result.or(flow) }
+	result = () => {
+		if(this.#stopped) return
+		this[R].splice(0).map(callback => callback())
+		this.#stopped = true
+	}
+	add(callback){
+		if(this.#stopped) return callback()
+		this[R].push(callback)
+	}
 	until(){ return this.#stopped }
 })
 
 track.register('live', class {
-	[R] = new WeakSet
+	[R] = new WeakMap
 	result = new EventTarget
-	add($thing){
-		if(this[R].has($thing)) return
-		this[R].add($thing)
-		track.ignore(() => when($thing).change())
+	add($live, type){
+		const cache = this[R].get($live) ?? []
+		if(cache.includes(type)) return
+		cache.push(type)
+		this[R].set($live, cache)
+		track.ignore(() => when($live).does(type))
 			.then(() => this.result.dispatchEvent(new CustomEvent('change')))
 	}
 })

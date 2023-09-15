@@ -2,29 +2,38 @@
 
 <template mode=closed>
 	<ui-button
-		role=menuitemcheckbox
 		icon=pointer
-		:iconstate="$.navigationMenuHidden ? 'down' : 'up'"
-		@click="$.toggleNavigationMenu()"
+		:iconstate="$.hidden ? 'down' : 'up'"
+		@click="$.hidden = !$.hidden"
 	></ui-button>
 </template>
 
 <script>
-$.navigationMenuHidden = false
-$.toggleNavigationMenu = () => $.navigationMenuHidden = !$.navigationMenuHidden
-const navigationMenu = document.querySelector('navigation-menu')
-effect(() => navigationMenu.hidden = $.navigationMenuHidden)
+effect(() => {
+	const hidden = $.hidden
+	const navigationMenu = document.querySelector('navigation-menu')
+	if(!navigationMenu) return
+	navigationMenu.hidden = hidden
+})
 </script>
 
 <style>
 :host {
-	display: inline-block; padding: 1rem 0 0 0; margin: -1rem 0 0;
-	color: inherit; background: var(--background-color);
-	border: none; border-top: none; border-radius: 0 0 10rem 10rem;
-	box-shadow:
-		0 -.5rem 0 var(--background-color),
-		0 0 0 .5rem var(--sub-background-color);
-	cursor: pointer;
+	display: inline-block; padding: 1rem 0 0; margin: -1rem -.5rem -.5rem -.5rem;
+	position: relative;
+	background-color: var(--background-color);
+	border: .5rem solid var(--sub-background-color); border-top-width: 0;
+	border-radius: 0 0 10rem 10rem;
+}
+:host::after {
+	content: "";
+	width: 1.5rem; height: 1.5rem;
+	position: absolute; inset: 0 100% auto auto;
+	background: no-repeat center / cover
+		radial-gradient(circle 1.5rem at bottom left, transparent 0 100%, var(--background-color) 100%);
+}
+ui-button:not(:defined){
+	display: block; width: 3rem; height: 3rem;
 }
 ui-button {
 	border-radius: 50%;

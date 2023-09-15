@@ -2,6 +2,20 @@
 
 Yozo itself is written in the `src/` directory. The documentation (and rest of the site) resides under `site/`. Assets are stored in `site/-/`. 
 
+## Current todo (in order)
+ - Add code-editor behavior (`input-keybinds`)
+ - Add presets
+ - Add save system
+ - Add console logs and pings
+
+## Potential additions
+Here's a list of things that I would like if they fit within budget
+ - Make `elements.foobar` work even for conditional (`#if`, `#else-if`, `#else`) elements. _I SHOULD DO THIS_ because the current implementation is wasteful. Elements should be reused whereever possible, and if they are reused, there is no reason not to have `elements` work as expected.
+ - Simplify `__achoredAdd` and related
+ - Easier imports (potentially using `<link>`). Not sure if this is actually useful enough; it is already possible to import things and the API for this would not fit into `$` very prettily (maybe it should just go into `imports`?).
+ - Add warning for when you use a global effect (i.e. effect with non-local dependencies) inside a component definition.
+ -
+
 ## Todo
 
 Below this, there's a more detailed breakdown of the site and what's needed.
@@ -43,6 +57,7 @@ Below this, there's a more detailed breakdown of the site and what's needed.
      - [ ] Building full testing sandbox
      - [ ] Write all of the content
  - [ ] Create the homepage
+ - [ ] Create versioning for `lib.js` and `dev.js`
 
 
 ## Site
@@ -52,11 +67,6 @@ The site consists of three major sections:
  - `tour/`: a gradual interactive experience teaching Yozo.
  - `play/`: an interactive sandbox allowing users to play around with Yozo.
  - `docs/`: this is where the formal documentention is written. Each feature is described in MDN-like fashion.
-
-Also we'd probably want to provide the user some global site settings:
- - semicolons  (on/off)
- - tabs        (on/off)
- - tab size    1---4----10
 
 ### Tour
 

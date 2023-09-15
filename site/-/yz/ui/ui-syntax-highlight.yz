@@ -7,18 +7,21 @@
 </template>
 
 <script>
-import('/-/js/libraries/prism.js').then(() => $.prismLoaded = true)
+import('/-/js/libraries/prism.js').then(() => $.loaded = true)
 
 const {code} = elements
 
-effect(async () => {
-	if(!$.prismLoaded) return code.textContent = $.value
+effect(() => {
+	// console.time('highlight')
+	console.log($)
+	if(!$.loaded) return code.textContent = $.value
 	const language = window.Prism.languages[$.language]
 		? $.language
 		: 'txt'
 	code.className = `language-${language}`
 	const grammar = window.Prism.languages[language]
 	code.innerHTML = window.Prism.highlight($.value, grammar, language)
+	// console.timeEnd('highlight')
 })
 </script>
 

@@ -3,7 +3,7 @@ import { track } from '../track.js'
 import { S, camelCase, uniqueName } from '../utils.js'
 
 
-define.register(2, Symbol(), context => {
+define.register(3, Symbol(), context => {
 	const constructor = function(meta){
 		meta.__function = (expression, ...scopes) => {
 			const variables = scopes.map(() => uniqueName())
@@ -34,21 +34,6 @@ define.register(2, Symbol(), context => {
 			}
 			return root
 		})
-		const anchoredNodes = new WeakMap
-		meta.__anchoredAdd = (anchor, nodes) => {
-			const cached = anchoredNodes.get(anchor) ?? []
-			cached.push(...nodes)
-			anchoredNodes.set(anchor, cached)
-			anchor.after(...nodes)
-		}
-		meta.__anchoredRemove = anchor => {
-			const cached = anchoredNodes.get(anchor)
-			if(!cached) return
-			for(const node of cached.splice(0)){
-				meta.__anchoredRemove(node)
-				node.remove()
-			}
-		}
 	}
 	return {constructor}
 })

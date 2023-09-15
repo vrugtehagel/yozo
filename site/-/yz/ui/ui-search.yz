@@ -1,0 +1,150 @@
+<title>ui-search</title>
+<meta attribute=label type=string>
+<meta attribute=icon type=string>
+<meta attribute=iconstate type=string>
+<meta attribute=value type=string>
+<meta attribute=mustchoose type=boolean as=mustChoose>
+<meta method=populate>
+<meta method=go>
+<meta event=choose>
+
+<template mode=closed delegates-focu=true>
+	<label for=input>{{ $.label }}</label>
+	<input
+		id=input
+		type=text
+		autocomplete=off
+		autocapitalize=none
+		spellcheck=false
+		enterkeyhint=go
+		.class-list.empty="!$.value"
+		@keydown="$.onkeydown(event)"
+		@focus="$.focused = true, $.selected = 0"
+		@blur="$.focused = false"
+	>
+	<ul
+		.hidden="!$.focused || $.value == '' || $.forceHide"
+		.class-list.no-results="$.amount == 0"
+	>
+		<li
+			#for="[index, option] of $.options.entries()"
+			.part.option
+			.part.selected="index == $.selected"
+			tabindex=0
+			@mouseenter="$.selected = index"
+			@click="$.selected = index, $.go()"
+		>
+			<span .part.option-name>{{ option.name }}</span>
+			<span
+				#if="option.subname"
+				.part.option-subname
+			>{{ option.subname }}</span>
+		</li>
+	</ul>
+	<ui-icon :type="$.icon" :state="$.iconstate"></ui-icon>
+</template>
+
+<script>
+const {input, ul} = elements
+
+$.options = []
+$.selected = 0
+$.forceHide = false
+live.link($.$value, input)
+live.link($.$amount, () => $.options.length)
+
+$.populate = async promise => {
+	$.forceHide = false
+	$.loading = true
+	const results = [...(await promise)]
+	$.loading = false
+	if(results.length == 0 && !$.mustchoose) return $.forceHide = true
+	$.options = [...results]
+		.map(result => typeof result == 'string' ? {title: result} : result)
+}
+
+$.shortcuts = {
+	ArrowDown: () => $.selected = ($.selected + 1) % $.amount,
+	ArrowUp: () => $.selected = ($.selected + $.amount - 1) % $.amount,
+	Home: () => $.selected = 0,
+	End: () => $.selected = $.amount - 1,
+	Enter: () => $.go()
+}
+$.onkeydown = event => {
+	if(!$.shortcuts[event.key]) return
+	event.preventDefault()
+	$.shortcuts[event.key]()
+}
+$.go = () => {
+	const value = $.value
+	const option = $.options[$.selected]
+	const detail = {value, option}
+	this.dispatchEvent(new CustomEvent('choose', {detail}))
+}
+</script>
+
+<style>
+:host {
+	display: grid; width: 100%; height: 3rem;
+	grid-template: auto / 1fr 3rem; place-items: center start;
+	position: relative;
+}
+label {
+	grid-area: 1 / 1 / -1 / -1;
+	padding: 0 1.25rem;
+	opacity: 0;
+	white-space: nowrap;
+}
+ui-icon {
+	grid-area: 1 / 2 / -1 / -1;
+	opacity: .5;
+}
+label:has(+ input.empty){ opacity: .5; }
+input {
+	grid-area: 1 / 1 / -1 / -1;
+	width: 100%; min-width: 0; height: 3rem; padding: 1rem 1.25rem; box-sizing: border-box;
+	color: inherit; background-color: var(--highlight-color);
+	border: none; border-radius: .75rem; outline: none;
+	font-size: inherit; font-family: var(--font-monospace);
+	transition: border-radius .08s;
+}
+input:has(+ ul:not([hidden])){ border-radius: .75rem .75rem 0 0; }
+ul {
+	display: flex; max-height: calc(60vh); padding: .25rem .5rem .5rem; margin: 0;
+	flex-direction: column; gap: .5rem;
+	list-style: none;
+	position: absolute; inset: 100% 0 auto 0;
+	background-color: var(--highlight-color);
+	border-radius: 0 0 .75rem .75rem;
+	overflow: auto;
+	transition: opacity .2s, translate .2s, visibility 0s 0s;
+}
+:host([mustchoose]) ul.no-results, ul[hidden]{
+	translate: 0 -1rem;
+	opacity: 0; visibility: hidden;
+	transition: opacity .2s, translate .2s, visibility .2s 0s;
+}
+ul.no-results::after {
+	content: "No results found.";
+	display: block; padding: .5rem 1rem;
+	color: var(--comment-color);
+	background-color: var(--background-color);
+	border-radius: .5rem;
+}
+li {
+	display: flex; padding: .5rem 1rem;
+	flex-direction: column;
+	background-color: var(--background-color);
+	border-radius: .5rem;
+	box-shadow: 2rem 0 0 -2rem inset var(--name-color);
+	transition: .2s;
+	cursor: pointer;
+}
+li[part~=selected] {
+	background-color: var(--sub-background-color);
+	border-radius: 3px .5rem .5rem 3px;
+	box-shadow: calc(2rem + 3px) 0 0 -2rem inset var(--name-color);
+}
+span[part~=option-name]{ color: var(--text-color); }
+span[part~=option-subname]{ color: var(--comment-color); }
+</style>

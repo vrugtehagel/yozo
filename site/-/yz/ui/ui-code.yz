@@ -5,12 +5,14 @@
 	<ui-syntax-highlight
 		:language="$.language"
 		:value="$.value"
-		.style.tab-size="window.$settings.tabSize ?? 4"
+		.style.tab-size="window.$site.$settings.tabSize ?? 4"
 	>{{ $.value }}</ui-syntax-highlight>
 </template>
 
 <script>
 const {code} = elements
+
+const {$settings} = window.$site
 
 $.content = ''
 $.value = ''

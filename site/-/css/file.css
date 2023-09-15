@@ -1,0 +1,10 @@
+@font-face {
+	font-family: 'DM Sans';
+	font-weight: 400;
+	font-display: swap;
+	src: url("/-/ttf/dm-sans.ttf");
+}
+:root {
+	font: 1rem 'DM Sans', monospace;
+	color: white;
+}

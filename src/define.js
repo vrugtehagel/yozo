@@ -38,6 +38,6 @@ define.register = (priority, name, mod) => {
 }
 
 define.transform = (priority, transform) => {
-	define[S].push([transform, null, priority])
+	define[S].push([transform, priority])
 	define[S].sort((a, b) => a[1] - b[1])
 }

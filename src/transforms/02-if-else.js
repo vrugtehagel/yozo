@@ -29,13 +29,15 @@ define.transform(2, (node, scopes, meta, context) => {
 	logicNode.remove()
 	let connectedIndex
 	const getter = meta.__function(`[${expressions}].findIndex(e=>e())`, ...scopes)
+	let connectedNodes = []
 	meta.x.connected(() => effect(() => {
 		const index = getter(null, ...scopes)
 		if(index == connectedIndex) return
 		connectedIndex = index
-		meta.__anchoredRemove(anchor)
+		connectedNodes.splice(0).map(node => node.remove())
 		if(!ifElseChain[index]) return
 		const node = meta.__render(ifElseChain[index], ...scopes)
-		meta.__anchoredAdd(anchor, node.nodeType == 11 ? node.childNodes : [node])
+		connectedNodes.push(...(node.nodeType == 11 ? node.childNodes : [node]))
+		anchor.after(...connectedNodes)
 	}))
 })

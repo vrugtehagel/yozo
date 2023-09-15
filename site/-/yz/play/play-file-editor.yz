@@ -1,114 +1,113 @@
 <title>play-file-editor</title>
-
 <meta attribute=uuid type=string>
 
 <template mode=closed>
-	<play-window
-		.loading="!$.$imports.fileSystem"
-		@close="$.close()"
-	>
-		<div id=titlebar slot=titlebar>
-			<ui-dropdown icon=menu .hidden="$.renaming">
-				<ui-button
-					icon=edit
-					@click="$.startRename()"
-				>Rename</ui-button>
-				<ui-button
-					icon=delete
-					danger
-					@activate="$.delete()"
-				>Delete</ui-button>
-			</ui-dropdown>
-			<span
-				id=title
-				.hidden="$.renaming"
-				@dblclick="$.startRename()"
-			>{{ $.src }}</span>
-			<div id=rename .hidden="!$.renaming">
-				<ui-button icon=checkmark @click="$.rename()"></ui-button>
-				<ui-input
-					prefix="/file/"
-					@enter="$.rename()"
-					@escape="$.renaming = false"
-				></ui-input>
-			</div>
-		</div>
-		<ui-code-editor
-			:language="$.language"
-		></ui-code-editor>
-	</play-window>
+	<div id=titlebar .hidden="$.renaming">
+		<ui-dropdown icon=menu>
+			<ui-button
+				icon=edit
+				@click="$.renaming = true"
+			>Rename</ui-button>
+			<ui-button
+				icon=delete
+				danger
+				@activate="$.delete()"
+			>Delete</ui-button>
+		</ui-dropdown>
+		<span id=title>{{ $.title }}</span>
+		<ui-button
+			icon=close
+			aria-label="Close"
+			@click="$.close()"
+		></ui-button>
+	</div>
+	<div id=titlebar-renaming .hidden="!$.renaming">
+		<ui-button
+			icon=arrow
+			iconstate=left
+			aria-label="Cancel"
+			@click="$.renaming = false"
+		></ui-button>
+		<ui-input
+			:value="$.src?.slice('/file/'.length)"
+			prefix=/file/
+			@enter="$.rename()"
+			@escape="$.renaming = false"
+		></ui-input>
+		<ui-button
+			icon=checkmark
+			aria-label="Rename"
+			@click="$.rename()"
+		></ui-button>
+	</div>
+	<ui-code-editor
+		:language="$.webServer?.extension($.src)"
+	></ui-code-editor>
 </template>
 
 <script>
-$.imports = {}
-import('/-/js/file-system/index.js')
-	.then(fileSystem => $.$imports.fileSystem = fileSystem)
+import('/-/js/web-server/index.js')
+	.then(webServer => $.webServer = webServer)
 
-const {uiCodeEditor, uiInput} = elements
+const {uiInput, uiCodeEditor} = elements
+const $files = window.$site.$play.$current.$files
+$.title = ''
 
 connected(() => effect(() => {
-	const {fileSystem} = $.$imports
-	if(!fileSystem) return
-	if(!($.uuid in fileSystem.$files)) return $.close()
-	const $file = fileSystem.$files[`$${$.uuid}`]
+	if(!$files[$.uuid]) return
+	const $file = $files[`$${$.uuid}`]
 	uiCodeEditor.value = $file.body
+	$.title = $file.src
 	live.link($file.$body, uiCodeEditor)
-	live.link($.$src, () => $file.src)
-	live.link($.$language, () => {
-		if(!($.uuid in fileSystem.$files)) return $.language
-		return fileSystem.extension($.uuid)
-	})
+	live.link($.$src, () => $files[`$${$.uuid}`].src)
 }))
 
-$.close = () => {
-	$.renaming = false
-	this.dispatchEvent(new CustomEvent('close'))
-}
-$.delete = () => {
-	const {fileSystem} = $.$imports
-	if(!fileSystem) return
-	$.close()
-	delete fileSystem.$files[$.uuid]
-}
-$.startRename = () => {
-	uiInput.value = $.src.slice(6)
-	$.renaming = true
-}
+
 $.rename = () => {
-	const {fileSystem} = $.$imports
-	if(!fileSystem) return
-	const $file = fileSystem.$files[`$${$.uuid}`]
-	$file.src = `/file/${elements('#rename ui-input').value}`
+	$files[`$${$.uuid}`].src = uiInput.fullValue
 	$.renaming = false
+}
+
+$.close = () => this.dispatchEvent(new CustomEvent('close'))
+$.delete = () => {
+	delete window.$site.$play.$current.$files[$.uuid]
+	$.close()
 }
 </script>
 
 <style>
 :host {
-	display: block; width: 100%; height: 100%;
+	display: grid; padding: .75rem; box-sizing: border-box;
+	grid: auto 1fr / 1fr; gap: .75rem;
+	background-color: var(--background-color);
+	border-radius: 1.5rem;
+	transition: opacity .2s, scale .2s, visibility 0s 0s;
 }
-ui-button:hover {
+:host([hidden]){
+	scale: .95;
+	opacity: 0; visibility: hidden;
+	transition: opacity .2s, scale .2s, visibility 0s .2s;
+}
+#titlebar, #titlebar-renaming {
+	display: flex; padding: 0; margin: 0;
+	align-items: center;
+	list-style: none;
+}
+:is(#titlebar, #titlebar-renaming)[hidden]{ display: none; }
+#title { margin: 0 auto 0 1rem; }
+#titlebar-renaming { gap: .5rem; }
+#titlebar-renaming ui-input {
+	flex: 1 1 0;
+}
+ui-button:hover, ::part(button):hover {
 	background-color: var(--highlight-color);
 }
-#titlebar {
-	display: flex;
-	align-items: center; gap: .75rem;
-}
-#rename {
-	display: flex;
-	align-items: center; gap: .5rem;
-	&[hidden]{ display: none; }
-}
-ui-dropdown {
-	&[hidden]{ display: none; }
-	&::part(dropdown){
-		width: 15rem;
-		inset: 4.25rem auto auto .5rem; z-index: 3;
-		box-shadow: none;
-	}
+::part(dropdown){
+	width: 14rem;
+	inset: 4.25rem auto auto 0.5rem; z-index: 1;
+	box-shadow: none;
 }
 ui-code-editor {
-	width: 100%; height: 100%; box-sizing: border-box;
-	border-radius: 1rem 1rem .75rem .75rem;
+	border-radius: 1rem;
 }
 </style>

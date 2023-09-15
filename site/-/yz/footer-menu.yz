@@ -45,28 +45,25 @@ a {
 	color: var(--text-color);
 	border-radius: .5rem;
 	text-decoration: none;
-	/*transition: .2s;*/
 }
 site-settings::part(dropdown){
 	--appear-from: 0 .5rem;
 	inset: auto auto calc(100% + 1rem) 0;
 }
-:is(ui-button, a):hover {
-	background-color: var(--background-color);
+ui-button, a, site-settings {
+	transition: background-color .2s;
+	&:hover { background-color: var(--background-color); }
 }
 ui-icon:not(:defined){
 	width: 3rem;
 	height: 3rem;
 }
-ui-button {
-	margin-left: auto;
-	ui-icon { margin: 0 -1rem; }
-}
+ui-button { margin-left: auto; }
+ui-button ui-icon { margin: 0 -1rem 0 0; }
 small {
 	display: block; margin-top: 1.5rem;
 	color: var(--comment-color);
 	font-size: 1rem;
 	text-align: center;
 }
-
 </style>

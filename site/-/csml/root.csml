@@ -25,12 +25,11 @@ html[lang=en]
 				if(namespace) return `/-/yz/${namespace}/${name}.yz`
 				return `/-/yz/${name}.yz`
 			})
-
-			// Only for production
-			// Object.assign(window, window.yozo)
 	script
-		$settings = yozo.live({})
+		window.$site = yozo.live({})
 		import('/-/js/site-settings/index.js')
+		// Only for production
+		// Object.assign(window, window.yozo)
 	style
 		@layer base, custom-elements, layout;
 	@if(!exclude.has('fonts'))

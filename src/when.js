@@ -7,7 +7,7 @@ export const when = (...targets) => new Proxy({
 		let handler
 		return new Flow(trigger => {
 			handler = trigger
-			if(!targets.every(target => target instanceof EventTarget)) //
+			if(!targets.every(target => typeof target?.addEventListener == 'function')) //
 				error`when-arg-not-event-target` //
 			targets.map(target => target.addEventListener(type, handler, options))
 		}).cleanup(() => targets

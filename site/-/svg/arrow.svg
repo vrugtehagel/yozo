@@ -2,12 +2,12 @@
 	<style>
 		path {
 			transform-origin: 6px 6px;
-			transition: .3s;
+			transition: transform .3s, d .3s;
 		}
 		.down path { transform: rotate(0deg); }
 		.left path { transform: rotate(90deg); }
 		.right path { transform: rotate(-90deg); }
 		.up path { transform: rotate(180deg); }
 	</style>
-	<path d="M3 7L6 10M9 7L6 10M6 2V10" stroke="currentColor" stroke-linecap="round"/>
+	<path d="M6 2V10M9 7L6 10M3 7L6 10M6 2H6" stroke="currentColor" stroke-linecap="round"/>
 </svg>

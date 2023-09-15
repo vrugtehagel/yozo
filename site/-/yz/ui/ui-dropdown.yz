@@ -3,12 +3,13 @@
 <meta attribute=icon type=string>
 <meta attribute=iconstate type=string>
 <meta attribute=label type=string>
+<meta attribute=autoclose type=boolean>
 
 <template mode=closed>
 	<ui-button
+		part=button
 		:icon="$.icon"
 		:iconstate="$.iconstate"
-		aria-label="Site settings"
 		@click="$.open = !$.open"
 	>{{ $.label }}</ui-button>
 	<div id=menu .hidden="!$.open" part=dropdown tabindex=-1>
@@ -27,6 +28,14 @@ connected(() => {
 	})
 })
 
+effect(() => {
+	if(!$.autoclose) return
+	when(this).clicks().then(() => {
+		if(this.matches(':focus')) return
+		$.open = false
+	})
+})
+
 when($.$open).changes().then(() => {
 	if($.open) this.dispatchEvent(new CustomEvent('open'))
 	else this.dispatchEvent(new CustomEvent('close'))
@@ -38,21 +47,18 @@ when($.$open).changes().then(() => {
 	display: inline-block;
 	position: relative;
 }
-ui-button:hover {
-	background-color: var(--highlight-color);
-}
 #menu {
 	display: flex; padding: .5rem; margin: 0;
 	flex-direction: column;
 	position: absolute; inset: 4rem auto auto auto;
 	background-color: var(--background-color);
 	border-radius: 1rem;
-	box-shadow: 0 0 10px 4px var(--sub-background-color);
+	box-shadow: 0 0 20px 3px var(--sub-background-color);
 	transition: opacity .2s, translate .2s, visibility 0s 0s;
-	&[hidden] {
-		translate: var(--appear-from, 0 -.5rem);
-		opacity: 0; visibility: hidden;
-		transition: opacity .2s, translate .2s, visibility 0s .3s;
-	}
+}
+#menu[hidden]{
+	translate: var(--appear-from, 0 -.5rem);
+	opacity: 0; visibility: hidden;
+	transition: opacity .2s, translate .2s, visibility 0s .3s;
 }
 </style>

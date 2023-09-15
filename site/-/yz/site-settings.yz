@@ -1,6 +1,7 @@
 <title>site-settings</title>
 <meta attribute=label type=string>
 <meta attribute=exclude type=string>
+<meta attribute=open type=boolean>
 
 <template mode=closed>
 	<ui-dropdown
@@ -8,29 +9,32 @@
 		:iconstate="$.open ? 'turned' : null"
 		:label="$.label || null"
 		:aria-label="$.label ? null : 'Site settings'"
-		exportparts="dropdown"
+		.open="$.open"
+		exportparts="button, dropdown"
+		@open="$.open = true"
+		@close="$.open = false"
 	>
 		<label #if="$.show('visual')">
 			Semicolons
 			<ui-switch
-				.on="window.$settings.semicolons"
-				@change="window.$settings.semicolons = this.value"
+				.on="window.$site.$settings.semicolons"
+				@change="window.$site.$settings.semicolons = this.value"
 			></ui-switch>
 		</label>
 		<label #if="$.show('functional')">
 			Use tabs
 			<ui-switch
-				.on="window.$settings.useTabs"
-				@change="window.$settings.useTabs = this.value"
+				.on="window.$site.$settings.useTabs"
+				@change="window.$site.$settings.useTabs = this.value"
 			></ui-switch>
 		</label>
 		<label #if="$.show('visual', 'functional')">
 			Tab size
 			<ui-number-input
-				:value="window.$settings.tabSize"
+				:value="window.$site.$settings.tabSize"
 				min=2
 				max=8
-				@change="window.$settings.tabSize = this.value"
+				@change="window.$site.$settings.tabSize = this.value"
 			></ui-number-input>
 		</label>
 	</ui-dropdown>
@@ -54,9 +58,7 @@ $.show = (...purposes) =>
 :host {
 	display: inline-block;
 	position: relative;
-}
-ui-button:hover {
-	background-color: var(--highlight-color);
+	border-radius: .5rem;
 }
 ui-dropdown:not(:defined){ display: none; }
 ::part(dropdown){
@@ -66,11 +68,7 @@ ui-dropdown:not(:defined){ display: none; }
 label {
 	display: flex; min-height: 3rem; padding: 0 1rem;
 	align-items: center;
-	& > :last-child {
-		margin-left: auto;
-	}
-	& > ui-switch {
-		margin-right: .5rem;
-	}
 }
+label > :last-child { margin-left: auto; }
+label > ui-switch { margin-right: .5rem; }
 </style>
