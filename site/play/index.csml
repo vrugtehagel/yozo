@@ -4,13 +4,5 @@
 
 h1.sr-only Play around with Yozo 
 
-menu#main-menu
-	li > play-creations-toggle
-	li.separator
-	li > play-layout-button
-	li > site-settings[exclude=visual]
-	li > play-navigation-menu-toggle
-
-play-creations
-play-session-guard
-	play-session
+play-toolbar
+play-session

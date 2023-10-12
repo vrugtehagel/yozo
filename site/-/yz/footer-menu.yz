@@ -16,18 +16,14 @@
 				<ui-icon type=vrugtehagel></ui-icon>
 				vrugtehagel
 			</a>
-			<ui-button
-				#if="document.documentElement.scrollHeight > 3000"
-				@click="window.scroll({top: 0, behavior: 'smooth'})"
-			>
+			<ui-button #if="document.documentElement.scrollHeight > 3000"
+				@click="window.scroll({top: 0, behavior: 'smooth'})">
 				Back to top
 				<ui-icon type=pointer state=up></ui-icon>
 			</ui-button>
 		</nav>
-		<small>
-			&copy; {{ (new Date).getFullYear() }} vrugtehagel,
-			released under the MIT license
-		</small>
+		<small>&copy; {{ (new Date).getFullYear() }} vrugtehagel,
+			released under the MIT license</small>
 	</footer>
 </template>
 

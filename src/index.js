@@ -4,7 +4,7 @@ import { live } from './live.js'
 import { when } from './when.js'
 import { purify } from './purify.js'
 import { effect } from './effect.js'
-import { frame, interval, timeout } from './timers.js'
+import { frame, interval, paint, timeout } from './timers.js'
 
 import { register } from './register.js'
 
@@ -31,7 +31,7 @@ self.yozo = {
 	when,
 	purify,
 	effect,
-	frame, interval, timeout,
+	frame, interval, paint, timeout,
 }
 
 Object.defineProperty(self.yozo, 'register', {value: register})

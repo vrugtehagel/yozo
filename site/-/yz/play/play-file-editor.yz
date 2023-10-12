@@ -2,105 +2,51 @@
 <meta attribute=uuid type=string>
 
 <template mode=closed>
-	<div id=titlebar .hidden="$.renaming">
-		<ui-dropdown icon=menu>
-			<ui-button
-				icon=edit
-				@click="$.renaming = true"
+	<div id=titlebar>
+		<ui-dropdown icon=menu autoclose>
+			<ui-button icon=edit @click="elements.uiDisplayName.editing = true"
 			>Rename</ui-button>
-			<ui-button
-				icon=delete
-				danger
-				@activate="$.delete()"
-			>Delete</ui-button>
+			<ui-button icon=delete
+				@click="$.playManager?.removeFile($.uuid), $.close()">Delete</ui-button>
 		</ui-dropdown>
-		<span id=title>{{ $.title }}</span>
-		<ui-button
-			icon=close
-			aria-label="Close"
-			@click="$.close()"
-		></ui-button>
+		<ui-display-name prefix=/file/ :value="$.playManager?.file($.uuid).src"
+			@rename="$.playManager.file($.uuid).src = event.detail.fullValue"></ui-display-name>
+		<ui-button icon=close @click="$.close()"></ui-button>
 	</div>
-	<div id=titlebar-renaming .hidden="!$.renaming">
-		<ui-button
-			icon=arrow
-			iconstate=left
-			aria-label="Cancel"
-			@click="$.renaming = false"
-		></ui-button>
-		<ui-input
-			:value="$.src?.slice('/file/'.length)"
-			prefix=/file/
-			@enter="$.rename()"
-			@escape="$.renaming = false"
-		></ui-input>
-		<ui-button
-			icon=checkmark
-			aria-label="Rename"
-			@click="$.rename()"
-		></ui-button>
-	</div>
-	<ui-code-editor
-		:language="$.webServer?.extension($.src)"
+	<ui-code-editor :language="$.webServer?.extension($.playManager?.file($.uuid).src)"
 	></ui-code-editor>
 </template>
 
 <script>
+import('/-/js/play-manager/index.js')
+	.then(playManager => $.playManager = playManager)
 import('/-/js/web-server/index.js')
 	.then(webServer => $.webServer = webServer)
 
-const {uiInput, uiCodeEditor} = elements
-const $files = window.$site.$play.$current.$files
-$.title = ''
+$.close = () => this.dispatchEvent(new CustomEvent('close'))
 
 connected(() => effect(() => {
-	if(!$files[$.uuid]) return
-	const $file = $files[`$${$.uuid}`]
-	uiCodeEditor.value = $file.body
-	$.title = $file.src
+	if(!$.playManager) return
+	if(!$.uuid) return
+	const $file = $.playManager.file($.uuid)
+	const {uiCodeEditor} = elements
+	uiCodeEditor.value = $file.body ?? ''
 	live.link($file.$body, uiCodeEditor)
-	live.link($.$src, () => $files[`$${$.uuid}`].src)
 }))
-
-
-$.rename = () => {
-	$files[`$${$.uuid}`].src = uiInput.fullValue
-	$.renaming = false
-}
-
-$.close = () => this.dispatchEvent(new CustomEvent('close'))
-$.delete = () => {
-	delete window.$site.$play.$current.$files[$.uuid]
-	$.close()
-}
 </script>
 
 <style>
 :host {
-	display: grid; padding: .75rem; box-sizing: border-box;
-	grid: auto 1fr / 1fr; gap: .75rem;
+	display: flex; padding: .75rem; box-sizing: border-box;
+	flex-direction: column; gap: .75rem;
 	background-color: var(--background-color);
 	border-radius: 1.5rem;
-	transition: opacity .2s, scale .2s, visibility 0s 0s;
 }
-:host([hidden]){
-	scale: .95;
-	opacity: 0; visibility: hidden;
-	transition: opacity .2s, scale .2s, visibility 0s .2s;
-}
-#titlebar, #titlebar-renaming {
-	display: flex; padding: 0; margin: 0;
-	align-items: center;
-	list-style: none;
-}
-:is(#titlebar, #titlebar-renaming)[hidden]{ display: none; }
-#title { margin: 0 auto 0 1rem; }
-#titlebar-renaming { gap: .5rem; }
-#titlebar-renaming ui-input {
-	flex: 1 1 0;
-}
-ui-button:hover, ::part(button):hover {
-	background-color: var(--highlight-color);
+ui-display-name:not([editing]){ padding: 0 0 0 .5rem; }
+#titlebar {
+	display: flex;
+	gap: 1rem;
+	& ui-button[icon=close] { margin-left: auto; }
 }
 ::part(dropdown){
 	width: 14rem;
@@ -108,6 +54,7 @@ ui-button:hover, ::part(button):hover {
 	box-shadow: none;
 }
 ui-code-editor {
+	flex: 1;
 	border-radius: 1rem;
 }
 </style>

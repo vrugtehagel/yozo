@@ -1,30 +1,43 @@
 <title>ui-icon</title>
 <meta attribute=type type=string>
 <meta attribute=state type=string>
+<meta attribute=width type=number default=1>
+<meta attribute=height type=number default=1>
 
 <template mode=closed>
-	<div id=container :class="$.state || null"></div>
+	<div id=container :class="$.state || null"
+		:style="`aspect-ratio: ${$.width} / ${$.height};`"></div>
 </template>
 
 <script>
-$.imports = {}
-import('/-/js/svg-manager/index.js')
-	.then(svgManager => $.$imports.svgManager = svgManager)
-
 const {container} = elements
+this.constructor.cache ??= new Map
+const {cache} = this.constructor
 
-connected(() => effect(() => {
-	if(!$.type) return container.replaceChildren()
-	$.$imports.svgManager?.get(`${$.type}.svg`)
-		.then(svg => container.replaceChildren(...(svg ? [svg] : [])))
+connected(() => effect(async () => {
+	container.replaceChildren()
+	if(!$.type) return
+	const url = new URL(`${$.type}.svg`, `${window.location.origin}/-/svg/`)
+	const {pathname} = url
+	const cached = cache.get(pathname)
+	if(cached) return container.append(cached.cloneNode(true))
+	if(!pathname.startsWith('/-/svg/')) return
+	const response = await until(fetch(url).catch(() => null))
+	if(!response?.ok) return
+	const text = await until(response.text())
+	const template = document.createElement('template')
+	template.innerHTML = text
+	const fragment = template.content
+	cache.set(pathname, fragment)
+	container.append(fragment.cloneNode(true))
 }))
 </script>
 
 <style>
 :host {
-	display: inline-block; width: 1.5rem; height: 1.5rem; padding: .75rem;
+	display: inline-block; height: 1.5rem; padding: .75rem;
 }
 #container, svg {
-	display: block; width: 100%; height: 100%;
+	display: block; height: 100%;
 }
 </style>

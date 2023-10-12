@@ -1,77 +1,52 @@
 <title>ui-button</title>
 <meta attribute=icon type=string>
 <meta attribute=iconstate type=string>
-<meta attribute=danger type=boolean>
 <meta attribute=disabled type=boolean>
-<meta method=activate>
+<meta attribute=href type=string>
 
 <template mode=closed delegates-focus=true>
-	<button :class="$.danger ? 'danger' : null" .disabled="$.disabled">
+	<a #if="$.href" :href="$.href">
+		<ui-icon #if="$.icon" :type="$.icon" :state="$.iconstate"></ui-icon>
+		<slot></slot>
+	</a>
+	<button #else .disabled="$.disabled">
 		<ui-icon #if="$.icon" :type="$.icon" :state="$.iconstate"></ui-icon>
 		<slot></slot>
 	</button>
 </template>
 
-<script>
-const {button} = elements
-
-$.activate = () => this.dispatchEvent(new CustomEvent('activate'))
-
-effect(() => {
-	if(!$.danger) return when(button).clicks().then($.activate)
-	when(button).pointerdowns().then(() => {
-		when(button).transitionends().once()
-			.then($.activate)
-			.until(when(document).pointerups())
-	})
-})
-</script>
-
 <style>
 :host {
-	display: inline-block; height: 3em;
-	color: rgb(255 255 255 / 90%);
+	display: inline-block; height: 3rem;
+	color: var(--text-color);
 	border-radius: .75rem;
 	transition: background-color .2s;
 	white-space: nowrap;
-}
-button {
-	display: flex; width: 100%; height: 100%; padding: .75rem; margin: 0;
-	align-items: center;
-	place-items: center start;
-	position: relative;
-	color: inherit; background: none;
-	border: none; border-radius: inherit; outline: none;
-	font-size: inherit; line-height: inherit; font-family: inherit;
-	white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-	cursor: pointer;
-}
-button:focus-visible { box-shadow: 0 0 0 .25rem var(--keyword-color); }
-button:disabled { pointer-events: none; }
-:host(:not(:empty)) button {
-	grid: 100% / min-content 1fr;
-	padding: .75rem 1rem;
 }
 :host([disabled]){
 	opacity: .25;
 	pointer-events: none;
 }
-:host([danger]) button::after {
-	content: "";
-	display: block; height: 0;
-	position: absolute; inset: auto 0 0 0;
-	background-color: var(--error-color);
-	mix-blend-mode: lighten;
-	transition: 0s;
-}
-:host([danger]) button:active::after {
-	height: 100%;
-	transition: height 1s cubic-bezier(0, .3, 0, .3);
+:host(:hover){ background-color: var(--highlight-color); }
+::slotted(ui-icon){ padding: 0; }
+button, a {
+	display: flex; max-width: 100%; width: 100%; height: 100%;
+	padding: .75rem 1rem; margin: 0; box-sizing: border-box;
+	align-items: center; place-items: center start; gap: .75rem;
+	position: relative;
+	color: inherit; background: none;
+	border: none; border-radius: inherit; outline: none;
+	font-size: inherit; line-height: inherit; font-family: inherit;
+	text-decoration: none;
+	white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+	cursor: pointer;
+	&:focus-visible { box-shadow: 0 0 0 .25rem var(--keyword-color); }
+	&:disabled { pointer-events: none; }
+	&:has(ui-icon){ padding-left: .75rem; }
+	:host(:empty) & { padding-right: .75rem; }
 }
 ui-icon {
 	width: 1.5rem; height: 1.5rem; padding: 0; box-sizing: border-box;
 }
-:host(:not(:empty)) ui-icon { margin-right: .75rem; }
-:host(:not(:empty)) button { max-width: 100%; }
 </style>
 

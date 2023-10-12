@@ -2,7 +2,7 @@ import { Flow } from './flow.js'
 import { track } from './track.js'
 import { when } from './when.js'
 
-export const effect = (callback, schedule = queueMicrotask) => {
+export const effect = (callback, schedule = queueMicrotask, x) => {
 	let updater
 	const flow = new Flow
 	flow.then(() => {

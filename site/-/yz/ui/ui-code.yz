@@ -4,39 +4,20 @@
 <template mode=closed>
 	<ui-syntax-highlight
 		:language="$.language"
-		:value="$.value"
-		.style.tab-size="window.$site.$settings.tabSize ?? 4"
-	>{{ $.value }}</ui-syntax-highlight>
+		:value="$.siteSettings?.format($.content ?? '', $.language) ?? ''"
+		.style.tab-size="$.siteSettings?.$settings.tabSize ?? 4"
+	>{{ $.content }}</ui-syntax-highlight>
 </template>
 
 <script>
-const {code} = elements
-
-const {$settings} = window.$site
-
-$.content = ''
-$.value = ''
+import('/-/js/site-settings/index.js')
+	.then(siteSettings => $.siteSettings = siteSettings)
 
 connected(() => {
 	when(this).observes('mutation', {childList: true, characterData: true})
 		.then(() => $.content = this.textContent)
 		.now()
 })
-
-connected(() => effect(() => {
-	let value = $.content
-	value = value.replace(/^\s+\n|\n\s+$/, '')
-	if(!$settings.semicolons){
-		if(['yz', 'html'].includes($.language))
-			value = value
-				.replaceAll(/;(?=\s*?(?:\/\/.*)?$)(?=(?:[^](?!<script>))*?<\/script>)/gm, '')
-		else if($.language == 'js')
-			value = value.replaceAll(/;(?=\s*?(?:\/\/.*)?$)/gm, '')
-	}
-	value = value
-		.replaceAll(/^\t+/gm, match => $settings.indent.repeat(match.length))
-	$.value = value
-}))
 </script>
 
 <style>

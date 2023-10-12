@@ -23,7 +23,8 @@ export const until = thing => {
 	return {then: resolve => Promise.resolve(thing).then(result => {
 		if(Object.keys(before).some(name => before[name].until?.())) return
 		queueMicrotask(() => track[S] = before)
-		return resolve(result)
+		resolve(result)
+		queueMicrotask(() => track[S] = null)
 	})}
 }
 
@@ -60,7 +61,7 @@ track.register('undo', class {
 })
 
 track.register('live', class {
-	[R] = new WeakMap
+	[R] = new Map
 	result = new EventTarget
 	add($live, type){
 		const cache = this[R].get($live) ?? []

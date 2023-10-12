@@ -8,20 +8,15 @@
 
 <script>
 import('/-/js/libraries/prism.js').then(() => $.loaded = true)
-
 const {code} = elements
 
 effect(() => {
-	// console.time('highlight')
-	console.log($)
 	if(!$.loaded) return code.textContent = $.value
-	const language = window.Prism.languages[$.language]
-		? $.language
-		: 'txt'
+	const grammar = window.Prism.languages[$.language]
+	const language = grammar ? $.language : 'txt'
 	code.className = `language-${language}`
-	const grammar = window.Prism.languages[language]
+	if(language == 'txt') return code.textContent = $.value
 	code.innerHTML = window.Prism.highlight($.value, grammar, language)
-	// console.timeEnd('highlight')
 })
 </script>
 
@@ -71,4 +66,3 @@ code { color: var(--text-color); }
 .regex-delimiter, .regex-source { color: var(--string-color); }
 .regex-flags { color: var(--keyword-color); }
 </style>
-

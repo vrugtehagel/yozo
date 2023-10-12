@@ -42,13 +42,6 @@ export class Flow {
 		})
 	}
 
-	// await(callback){
-	// 	return this.flow(async (next, ...args) => {
-	// 		await callback(...args)
-	// 		next()
-	// 	})
-	// }
-
 	if(callback){
 		return this.flow((next, ...args) => {
 			if(callback(...args)) next()
@@ -71,7 +64,7 @@ export class Flow {
 	until(thing){
 		if(typeof thing == 'function')
 			return this.flow((next, ...args) => thing(...args) ? this.stop() : next())
-		this.cleanup(() => thing?.stop())
+		this.cleanup(() => thing.stop?.())
 		thing.then(() => this.stop())
 		return this
 	}

@@ -2,18 +2,14 @@
 <meta attribute=prefix type=string>
 <meta attribute=value type=string>
 <meta property=fullValue readonly>
+<meta method=focus>
 
 <template mode=closed delegates-focus=true>
 	<div id=container>
-		<span
-			id=prefix
-			part=prefix
-			:style="`--scroll-left: ${ $.scrollLeft }px`"
+		<span id=prefix part=prefix :style="`--scroll-left: ${ $.scrollLeft }px`"
 		>{{ $.prefix }}</span>
-		<input
-			@keydown="$.keydown(event)"
-			:style="`--prefix-width: ${ $.prefixWidth }px`"
-		>
+		<input :style="`--prefix-width: ${ $.prefixWidth }px`"
+			@keydown="$.keydown(event)">
 	</div>
 </template>
 
@@ -26,11 +22,19 @@ live.link($.$fullValue, () => $.prefix + $.value)
 $.scrollLeft = 0
 $.prefixWidth = 0
 
+$.keydown = event => {
+	const key = event.key.toLowerCase()
+	if(key.length < 3) return
+	this.dispatchEvent(new CustomEvent(key))
+}
+
+$.focus = () => input.focus()
+
 connected(() => effect(() => {
 	if(!$.prefix) return
-	when(input).scrolls()
-		.then(() => $.scrollLeft = input.scrollLeft)
-		.now()
+	when(input).scrolls().then(() => {
+		$.scrollLeft = input.scrollLeft
+	}).now()
 
 	// chrome bug; scrollLeft updates after keydown
 	when(input).keydowns().then(async () => {
@@ -43,13 +47,6 @@ connected(() => effect(() => {
 when(elements.prefix).observes('resize').then(([{borderBoxSize}]) => {
 	$.prefixWidth = borderBoxSize[0].inlineSize
 })
-
-$.keydown = event => {
-	if(event.key == 'Escape')
-		this.dispatchEvent(new CustomEvent('escape'))
-	if(event.key == 'Enter')
-		this.dispatchEvent(new CustomEvent('enter'))
-}
 </script>
 
 <style>

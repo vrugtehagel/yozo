@@ -21,7 +21,7 @@
 	}
 	body {
 		padding-top: 4.5rem;
-		color: rgb(255 255 255 / 80%); background: var(--sub-background-color);
+		color: var(--text-color); background: var(--sub-background-color);
 		font: 1rem / 1.75 var(--font-sans-serif);
 	}
 	.sr-only {

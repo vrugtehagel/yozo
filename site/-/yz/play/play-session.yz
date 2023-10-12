@@ -1,46 +1,85 @@
 <title>play-session</title>
 
 <template mode=closed>
-	<div
-		id=layout
-		:class="window.$site.$play.$current.layout"
-	>
-		<play-space
-			#for="index of [0, 1, 2, 3]"
-			:index="index"
-		></play-space>
+	<ui-loader #if="!$.playManager"></ui-loader>
+	<div id=disconnected #if="$.playManager?.$play.mode == 'disconnected'">
+		<img src=/-/svg/img/play-disconnected.svg alt="">
+		Session disconnected.
+		<ui-button @click="$.playManager?.reconnect()">Reconnect</ui-button>
+	</div>
+	<div id=creation-picker .hidden="$.playManager?.$play.mode != 'picking'">
+		<p>Open a preset</p>
+		<div id=creations-list>
+			<ui-button icon=plus @click="$.playManager?.create()">New...</ui-button>
+			<ui-button
+				#for="[uuid, name] of $.playManager?.list() ?? []"
+				@click="$.playManager?.open(uuid)"
+			>{{ name }}</ui-button>
+		</div>
+	</div>
+	<div #if="$.playManager" id=layout :class="$.playManager.current().layout"
+		.hidden="$.playManager.$play.mode != 'editing'">
+		<play-space #for="index of [0, 1, 2, 3]"
+			:occupant="$.playManager.current().$spaces[index]"
+			@change="$.playManager.current().$spaces[index] = this.occupant"></play-space>
 	</div>
 </template>
 
+<script>
+import('/-/js/play-manager/index.js')
+	.then(playManager => $.playManager = playManager)
+</script>
+
 <style>
 :host {
-	display: grid;
-	grid: 1fr / 1fr; place-items: stretch;
+	display: grid; width: 100%; height: 100%;
+	grid: 100% / 100%; place-items: center;
+}
+#disconnected {
+	display: flex;
+	flex-direction: column; gap: 1.5rem; align-items: center;
+	& img { display: block; width: 8rem; height: auto; margin: 0; }
+	& ui-button { background-color: var(--background-color); }
+	& ui-button:hover { background-color: var(--highlight-color); }
+}
+#creation-picker {
+	width: min(90vw, 20rem); padding: .75rem;
+	border-radius: 1.5rem;
+	background-color: var(--background-color);
+	& p { margin: 0.75rem 0 1.25rem; text-align: center; }
+	#creations-list {
+  		display: flex; max-height: calc(40vh - 3rem); padding: .5rem;
+		flex-direction: column;
+		background-color: var(--sub-background-color);
+		border-radius: 1rem;
+		overflow: auto;
+		&:has(> :only-child){
+			min-height: 0;
+			&::after {
+				content: "That's a clean slate!";
+				display: block; padding: .75rem;
+				color: var(--comment-color);
+				text-align: center;
+			}
+		}
+	}
+	& ui-button:hover { background-color: var(--background-color); }
+	& ui-button[icon=plus] {
+		margin-bottom: .5rem;
+		background-color: var(--background-color);
+		&:hover { background-color: var(--highlight-color); }
+	}
 }
 #layout {
-	grid-area: 1 / 1;
-	display: grid;
+	display: grid; width: 100%; height: 100%;
 	grid-template: 1fr / 1fr; gap: 1rem;
-	transition: opacity .2s .1s, visibility 0s .1s;
-}
-#layout[hidden]{
-	opacity: 0; visibility: hidden;
-	transition: opacity .2s, visibility 0s .2s;
-}
-#session {
-	place-self: stretch;
-	display: grid;
-	grid: 1fr / 1fr; place-items: stretch;
-}
-
-#layout.side-by-side { grid-template: 1fr / 1fr 1fr; }
-#layout.triple-split { grid-template: 1fr / 1fr 1fr 1fr; }
-#layout.stack { grid-template: 1fr 1fr / 1fr; }
-#layout.quartiles { grid-template: 1fr 1fr / 1fr 1fr; }
-#layout:is(.single) > :nth-last-child(-n + 3){ display: none; }
-#layout:is(.side-by-side, .stack) > :nth-last-child(-n + 2){ display: none; }
-#layout:is(.triple-split) > :nth-last-child(-n + 1){ display: none; }
-#layout:not(.single, .side-by-side, .triple-split, .stack, .quartiles) > * {
-	display: none;
+	&.side-by-side { grid-template: 1fr / 1fr 1fr; }
+	&.triple-split { grid-template: 1fr / 1fr 1fr 1fr; }
+	&.stack { grid-template: 1fr 1fr / 1fr; }
+	&.quartiles { grid-template: 1fr 1fr / 1fr 1fr; }
+	&:is(.single) > :nth-last-child(-n + 3){ display: none; }
+	&:is(.side-by-side, .stack) > :nth-last-child(-n + 2){ display: none; }
+	&:is(.triple-split) > :nth-last-child(-n + 1){ display: none; }
+	&[hidden], &:not([class]) > * { display: none; }
 }
 </style>

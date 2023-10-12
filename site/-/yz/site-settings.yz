@@ -5,42 +5,32 @@
 
 <template mode=closed>
 	<ui-dropdown
-		icon=settings
-		:iconstate="$.open ? 'turned' : null"
-		:label="$.label || null"
-		:aria-label="$.label ? null : 'Site settings'"
-		.open="$.open"
+		icon=settings :iconstate="$.open ? 'turned' : null" .open="$.open"
+		:label="$.label || null" :aria-label="$.label ? null : 'Site settings'"
 		exportparts="button, dropdown"
-		@open="$.open = true"
-		@close="$.open = false"
-	>
+		.disabled="!$.siteSettings"
+		@open="$.open = true" @close="$.open = false">
 		<label #if="$.show('visual')">
 			Semicolons
-			<ui-switch
-				.on="window.$site.$settings.semicolons"
-				@change="window.$site.$settings.semicolons = this.value"
-			></ui-switch>
+			<ui-switch .on="$.siteSettings?.$settings.semicolons"
+				@change="$.siteSettings.$settings.semicolons = this.value"></ui-switch>
 		</label>
 		<label #if="$.show('functional')">
 			Use tabs
-			<ui-switch
-				.on="window.$site.$settings.useTabs"
-				@change="window.$site.$settings.useTabs = this.value"
-			></ui-switch>
+			<ui-switch .on="$.siteSettings?.$settings.useTabs"
+				@change="$.siteSettings.$settings.useTabs = this.value"></ui-switch>
 		</label>
 		<label #if="$.show('visual', 'functional')">
 			Tab size
-			<ui-number-input
-				:value="window.$site.$settings.tabSize"
-				min=2
-				max=8
-				@change="window.$site.$settings.tabSize = this.value"
-			></ui-number-input>
+			<ui-number-input :value="$.siteSettings?.$settings.tabSize" min=2 max=8
+				@change="$.siteSettings.$settings.tabSize = this.value"></ui-number-input>
 		</label>
 	</ui-dropdown>
 </template>
 
 <script>
+import('/-/js/site-settings/index.js')
+	.then(siteSettings => $.siteSettings = siteSettings)
 const {uiDropdown} = elements
 
 live.link($.$open, {

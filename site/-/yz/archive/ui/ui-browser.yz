@@ -1,0 +1,141 @@
+<title>ui-browser</title>
+<meta method=navigate>
+<meta method=reload>
+<meta method=cancel>
+<meta method=inject>
+<meta property=src readonly>
+<meta property=sameOrigin readonly>
+<meta property=status readonly>
+
+<template mode=closed delegates-focus=true>
+	<div id=container tabindex=0>
+		<div id=loading .hidden="$.status != 'loading'">
+			<ui-icon type=spinner></ui-icon>
+		</div>
+		<div id=offline .hidden="$.status != 'offline'">
+			<ui-icon type=offline></ui-icon>
+			<p>You're offline!</p>
+		</div>
+		<div id=unreachable .hidden="$.status != 'unreachable'">
+			<p>Unreachable</p>
+		</div>
+		<iframe
+			:src="$.src"
+			.class-list.same-origin="$.sameOrigin"
+			.hidden="$.status != 'complete'"
+		></iframe>
+	</div>
+</template>
+
+<script>
+const {iframe} = elements
+$.src = 'about:blank'
+$.valid = true
+$.loading = false
+$.online = true
+
+live.link($.$sameOrigin, () => {
+	if($.src == window.location.origin) return true
+	return $.src.startsWith(`${window.location.origin}/`)
+})
+live.link($.$status, () => {
+	if(!$.online) return 'offline'
+	if($.loading) return 'loading'
+	if($.unreachable) return 'unreachable'
+	return 'complete'
+})
+
+when($.$status).changes()
+	.then(() => this.dispatchEvent(new CustomEvent('statuschange')))
+
+$.navigate = purify(async src => {
+	$.online = navigator.onLine
+	const originalSrc = src
+	src = src.trim()
+	if(!src) throw Error(`"${originalSrc}" is not a valid URL`)
+	$.loading = true
+	$.unreachable = false
+	$.valid = true
+	const isBlank = src == 'about:blank'
+	if(src.startsWith('/')) src = `${window.location.origin}${src}`
+	if(!src.match(/^https?:\/\//)) src = `https://${src}`
+	try {
+		const url = new URL(src)
+		url.username = url.password = ''
+		src = url.href
+	}
+	catch { src = 'about:blank' }
+	if(!isBlank && src == 'about:blank')
+		throw Error(`"${originalSrc}" is not a valid URL`)
+	const success = await until(when(iframe).loads().or(timeout(5000))
+		.after(() => iframe.src = $.src = src)
+		.once())
+	if(success){
+		$.loading = false
+		return
+	}
+	const method = 'HEAD'
+	const mode = 'no-cors'
+	const controller = new AbortController
+	const {signal} = controller
+	track.add('undo', () => controller.abort())
+	const options = {method, mode, signal}
+	await until(fetch($.src, options).catch(() => $.unreachable = true))
+	$.loading = false
+})
+
+$.cancel = () => {
+	if(!$.loading) return
+	iframe.src = 'about:blank'
+	$.loading = false
+}
+
+$.reload = async () => $.navigate($.src)
+
+$.inject = async (html, selector = 'head') => {
+	if(!$.sameOrigin) return
+	if($.loading) await when(this).completes().once()
+	const target = iframe.contentDocument?.querySelector(selector)
+	if(!target) return
+	target.insertAdjacentHTML('afterbegin', html)
+}
+</script>
+
+<style>
+:host {
+	display: block;
+}
+#container {
+	display: grid; width: 100%; height: 100%;
+	place-items: stretch;
+	overflow: hidden;
+}
+iframe {
+	border: none;
+	background-color: white;
+	transition: background-color 0s .05s;
+}
+p { margin: 0; }
+#offline { color: var(--comment-color); }
+#offline ui-icon { width: 3rem; height: 3rem; }
+#container > div {
+	display: flex;
+	flex-direction: column; align-items: center; justify-content: center;
+}
+#unreachable {
+	background: no-repeat center / 100% 100% url("/-/svg/img/play-unreachable.svg");
+}
+#unreachable p {
+	padding: 1rem 2rem;
+	color: var(--text-color); background-color: black;
+	font-weight: 900;
+	text-transform: uppercase;
+}
+iframe.same-origin {
+	background-color: var(--sub-background-color);
+	transition: background-color 0s 0s;
+}
+:is(iframe, #loading, #unreachable, #offline)[hidden]{
+	display: none;
+}
+</style>

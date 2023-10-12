@@ -1,0 +1,114 @@
+<title>play-preset-menu</title>
+
+<template mode=closed>
+	<ui-dropdown
+		id=menu
+		icon=dots
+		aria-label="Options..."
+		.hidden="$.renaming"
+	>
+		<ui-dropdown id=creation-picker>
+			<span slot=label>
+				<ui-icon type=folder></ui-icon>
+				Open...
+				<ui-icon type=pointer state=right></ui-icon>
+			</span>
+			<ui-button icon=plus>New...</ui-button>
+			<ui-button
+				#for="uuid of $.uuids"
+				@click="$.open(uuid)"
+			>{{ window.$site.$play.$creations[`$${uuid}`].name }}</ui-button>
+		</ui-dropdown>
+		<ui-button
+			icon=edit
+			@click="$.renaming = true"
+		>Rename</ui-button>
+		<ui-button
+			icon=save
+		>Save</ui-button>
+		<ui-button
+			icon=duplicate
+		>Duplicate</ui-button>
+		<ui-button
+			icon=delete
+			danger
+		>Delete</ui-button>
+	</ui-dropdown>
+	<ui-button
+		icon=arrow
+		iconstate=left
+		aria-label="Cancel"
+		.hidden="!$.renaming"
+		@click="$.renaming = false"
+	></ui-button>
+	<!--span
+		id=creation-name
+		.class-list.untitled="!window.$site.$play.$current.name"
+		.hidden="!window.$site.$play.current || $.renaming"
+	>
+		{{ window.$site.$play.$current.name || 'Untitled' }}
+	</span-->
+	<ui-input
+		.readonly="window.$site.$play.current && !$.renaming"
+		@enter="$.rename()"
+		@escape="$.renaming = false"
+	></ui-input>
+	<ui-button
+		icon=checkmark
+		aria-label="Rename"
+		.hidden="!$.renaming"
+		@click="$.rename()"
+	></ui-button>
+</template>
+
+<script>
+const {uiDropdown, uiInput} = elements
+const $play = window.$site.$play
+
+connected(() => {
+	live.link($.$uuids, () => Object.keys($play.$creations))
+})
+$.open = uuid => {
+	uiDropdown.open = false
+	if(uuid == $play.uuid) return
+	$play.uuid = uuid
+}
+</script>
+
+<style>
+:host {
+	display: flex;
+	align-items: center; gap: 1rem;
+}
+ui-dropdown {
+	&:not(:defined), &[hidden] { display: none; }
+	&::part(button):hover, &[open]::part(button) {
+		background-color: var(--background-color);
+	}
+	&::part(dropdown){
+		width: min(90vw, 16rem);
+		inset: 3.5rem auto auto 0;
+	}
+}
+ui-button:hover,
+#creation-picker::part(button):hover {
+	background-color: var(--highlight-color);
+}
+#creation-picker::part(dropdown){
+	--appear-from: -.5rem 0;
+	inset: -.5rem auto auto calc(100% + 1rem);
+}
+#creation-picker > [slot=label] {
+	display: contents;
+	ui-icon { padding: 0; }
+	ui-icon:last-child { margin-left: auto; }
+}
+#creation-name.untitled {
+	color: var(--comment-color);
+}
+#renaming {
+	display: flex;
+	gap: .5rem;
+	&[hidden] { display: none; }
+}
+</style>

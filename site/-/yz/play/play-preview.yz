@@ -3,24 +3,15 @@
 
 <template mode=closed>
 	<div id=titlebar>
-		<ui-button
-			:icon="$.loading ? 'close' : 'repeat'"
-			aria-label="Reload"
-			@click="$.loading ? $.cancel() : $.go()"
-		></ui-button>
-		<ui-input
-			.class-list.invalid="$.invalid"
-			@enter="$.go()"
-		></ui-input>
-		<ui-button
-			icon=close
-			aria-label="Close"
-			@click="$.close()"
-		></ui-button>
+		<ui-button :icon="$.loading ? 'close' : 'repeat'" aria-label="Reload"
+			@click="$.loading ? $.cancel() : $.go()"></ui-button>
+		<ui-input .class-list.invalid="$.invalid" @enter="$.go()"></ui-input>
+		<ui-button icon=close aria-label="Close" @click="$.close()"></ui-button>
 	</div>
-	<ui-browser .hidden="$.loading"></ui-browser>
-	<div id=content .hidden="!$.loading">
-		<ui-icon type=spinner></ui-icon>
+	<ui-browser></ui-browser>
+	<div id=ping-lights>
+		<ui-icon id=ping type=ping></ui-icon>
+		<ui-icon id=pong type=ping></ui-icon>
 	</div>
 </template>
 
@@ -28,13 +19,17 @@
 const {iframe, uiInput, uiBrowser} = elements
 
 live.link($.$src, uiInput)
+live.link($.$loading, {
+	get: () => uiBrowser.status == 'loading',
+	changes: when(uiBrowser).statuschanges()
+})
 
 $.close = () => this.dispatchEvent(new CustomEvent('close'))
 $.cancel = () => uiBrowser.cancel?.()
-$.go = async () => {
-	await customElements.whenDefined('ui-browser')
+$.go = purify(async () => {
+	await until(customElements.whenDefined('ui-browser'))
 	try {
-		await uiBrowser.navigate($.src)
+		await until(uiBrowser.navigate($.src))
 	} catch {
 		const keyframes = [{backgroundColor: 'var(--error-color)', offset: 0}]
 		uiInput.animate(keyframes, {duration: 1000})
@@ -45,12 +40,17 @@ $.go = async () => {
 		: uiBrowser.src
 	uiBrowser.focus()
 	this.dispatchEvent(new CustomEvent('srcchange'))
-	if(!$.sameOrigin) return
-	uiBrowser.inject(`<link rel=stylesheet href=/-/css/file.css>`)
-}
+	if(!uiBrowser.messenger) return
+	const {ping, pong} = elements
+	when(uiBrowser.messenger).pings().then(() => {
+		ping.animate([{color: 'var(--keyword-color)', offset: 0}], {duration: 1000})
+	})
+	when(uiBrowser.messenger).pongs().then(() => {
+		pong.animate([{color: 'var(--name-color)', offset: 0}], {duration: 1000})
+	})
+})
 
 connected(() => {
-	console.log($.src)
 	if(!$.src) return
 	$.go()
 })
@@ -81,16 +81,22 @@ ui-input {
 	flex: 1 1 0;
 	margin: 0 .75rem 0 .5rem;
 }
-ui-browser, #content {
+ui-browser {
+	grid-area: 2 / 1;
 	place-self: stretch;
 	border-radius: 1rem;
-	/* clip-path to avoid weird AA in Firefox (didn't test in Chrome) */
-	clip-path: inset(0 round 1rem);
+	overflow: clip;
 }
-#content {
-	display: grid;
-	background-color: var(--sub-background-color);
-	place-items: center;
+#ping-lights {
+	grid-area: 2 / 1; place-self: end;
+	display: flex; padding: .5rem 0 0 .5rem;
+	flex-direction: row-reverse; gap: .25rem;
+	z-index: 1;
+	background-color: var(--background-color);
+	border-radius: 1.25rem 0 0 0;
+	& ui-icon {
+		width: 3rem; height: 3rem; padding: 0;
+		color: transparent;
+	}
 }
-ui-browser[hidden], #content[hidden] { display: none; }
 </style>

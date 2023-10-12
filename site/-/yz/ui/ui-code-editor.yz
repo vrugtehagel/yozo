@@ -2,13 +2,10 @@
 <meta attribute=value type=string>
 <meta attribute=language type=string default="txt">
 
-<template mode=closed delegates-focus=true>
+<template mode=closed>
 	<div id=container>
 		<textarea spellcheck=false></textarea>
-		<ui-syntax-highlight
-			:language="$.language"
-			:value="$.value"
-		></ui-syntax-highlight>
+		<ui-syntax-highlight :language="$.language" :value="$.value"></ui-syntax-highlight>
 	</div>
 </template>
 
@@ -30,17 +27,15 @@ connected(() => {
 		textarea.style.setProperty('--height', height)
 	})
 })
-
 </script>
 
 <style>
 :host {
 	display: block; padding: 1.5rem 2rem;
-	background: var(--highlight-color);
 	position: relative;
+	background: var(--highlight-color);
 	font-family: var(--font-monospace);
-	overflow: auto;
-	scroll-padding: 1.5rem 2rem;
+	overflow: auto; scroll-padding: 1.5rem 2rem;
 }
 ::selection {
 	background-color: color-mix(in hsl, var(--highlight-color), white 20%);
@@ -58,6 +53,7 @@ textarea, ui-syntax-highlight {
 textarea {
 	width: max(100%, var(--width) * 1px + 2rem); height: max(100%, var(--height) * 1px + 2rem);
 	margin: 0;
+	position: absolute;
 	color: white; background: transparent;
 	border: none; outline: none;
 	resize: none;

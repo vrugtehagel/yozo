@@ -9,6 +9,7 @@
 <style>
 :host([type=info]){ --callout-color: var(--name-color); }
 :host([type=warning]){ --callout-color: var(--string-color); }
+:host([type=danger]){ --callout-color: var(--error-color); }
 
 :host {
 	position: relative;

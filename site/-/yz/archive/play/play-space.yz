@@ -1,0 +1,70 @@
+<title>play-space</title>
+<meta attribute=index type=number>
+
+<template mode=closed>
+	<play-file-picker
+		:index="$.index"
+		@open="$.occupy(event.detail.uuid)"
+		@preview="$.occupy(`preview:${$.defaultPreviewUrl}`)"
+	></play-file-picker>
+	<play-file-editor
+		.hidden="!$.fileOpen"
+		:uuid="$.recentFile"
+		@close="$.occupy(null)"
+	></play-file-editor>
+</template>
+
+<script>
+self.yozo.register('/-/yz/play/play-preview.yz')
+
+const {$play} = window.$site
+
+$.occupy = space => $play.$current.$spaces[$.index] = space
+
+live.link($.$occupant, () => $play.$current.$spaces[$.index])
+live.link($.$preview, () => $.occupant?.startsWith('preview'))
+live.link($.$fileOpen, () => $.occupant && !$.preview)
+live.link($.$recentFile, () => $.fileOpen ? $.occupant : $.recentFile)
+live.link($.$defaultPreviewUrl, () => {
+	return Object.values(window.$site.$play.$current.files ?? {})
+		.map(file => file.src)
+		.filter(src => src.endsWith('.html'))
+		[0] ?? 'vrugtehagel.nl'
+})
+when($.$preview).changes().then(purify(async () => {
+	if(!$.preview) return
+	const fadeIn = [{scale: '.95', opacity: '0'}, {scale: '1', opacity: '1'}]
+	const fadeOut = [...fadeIn].reverse()
+	await until(customElements.whenDefined('play-preview'))
+	const playPreview = document.createElement('play-preview')
+	const options = {duration: 200, easing: 'ease'}
+	playPreview.src = $.occupant.slice(8)
+	playPreview.animate(fadeIn, options)
+	elements.shadow.append(playPreview)
+	when(playPreview).srcchanges()
+		.then(() => $.occupy(`preview:${playPreview.src}`))
+	when(playPreview).closes().once().then(() => {
+		$.occupy('')
+	}).cleanup(() => {
+		const animation = playPreview.animate(fadeOut, options)
+		animation.finished.then(() => playPreview.remove())
+	})
+})).now()
+</script>
+
+<style>
+:host {
+	display: grid;
+	place-items: center;
+	border: .5rem dashed var(--background-color); border-radius: 1.5rem;
+}
+:host > * {
+	grid-area: 1 / 1;
+	margin: -.5rem;
+}
+:host > :not(play-file-picker){
+	place-self: stretch;
+	z-index: 2;
+}
+:host > :not(:defined){ display: none; }
+</style>

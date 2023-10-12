@@ -1,8 +1,10 @@
+import { $settings } from '/-/js/site-settings/index.js'
+
 export const single = {
 	shortcut: 'Tab',
 	selection: false,
 	run: state => {
-		const {indent = '\t'} = window.$site.$settings
+		const {indent = '\t'} = $settings
 		state.before += indent
 		return true
 	}
@@ -12,7 +14,7 @@ export const selection = {
 	shortcut: 'Tab',
 	selection: true,
 	run: state => {
-		const {indent = '\t'} = window.$site.$settings
+		const {indent = '\t'} = $settings
 		const index = state.before.lastIndexOf('\n') + 1
 		state.before = state.before.slice(0, index)
 			+ indent
@@ -25,7 +27,7 @@ export const selection = {
 export const dedentSelection = {
 	shortcut: 'Shift+Tab',
 	run: state => {
-		const {indent = '\t'} = window.$site.$settings
+		const {indent = '\t'} = $settings
 		const index = state.before.lastIndexOf('\n') + 1
 		if(state.before.startsWith(indent, index))
 			state.before = state.before.slice(0, index)
@@ -42,7 +44,7 @@ export const dedentSelection = {
 export const newline = {
 	action: 'insertLineBreak',
 	run: state => {
-		const {indent = '\t'} = window.$site.$settings
+		const {indent = '\t'} = $settings
 		const currentIndent = state.before
 			.slice(state.before.lastIndexOf('\n') + 1)
 			.match(/^[ \t]*/)[0]

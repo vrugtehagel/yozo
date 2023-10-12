@@ -6,10 +6,7 @@
 <meta attribute=autoclose type=boolean>
 
 <template mode=closed>
-	<ui-button
-		part=button
-		:icon="$.icon"
-		:iconstate="$.iconstate"
+	<ui-button part=button :icon="$.icon" :iconstate="$.iconstate"
 		@click="$.open = !$.open"
 	>{{ $.label }}</ui-button>
 	<div id=menu .hidden="!$.open" part=dropdown tabindex=-1>
@@ -30,10 +27,9 @@ connected(() => {
 
 effect(() => {
 	if(!$.autoclose) return
-	when(this).clicks().then(() => {
-		if(this.matches(':focus')) return
-		$.open = false
-	})
+	when(this).clicks()
+		.if(() => !this.matches(':focus'))
+		.then(() => $.open = false)
 })
 
 when($.$open).changes().then(() => {
@@ -47,6 +43,7 @@ when($.$open).changes().then(() => {
 	display: inline-block;
 	position: relative;
 }
+ui-button { width: 100%; }
 #menu {
 	display: flex; padding: .5rem; margin: 0;
 	flex-direction: column;

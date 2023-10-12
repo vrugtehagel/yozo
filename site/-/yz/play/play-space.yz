@@ -1,70 +1,147 @@
 <title>play-space</title>
-<meta attribute=index type=number>
+<meta attribute=occupant type=string>
+<meta event=occupy>
 
 <template mode=closed>
-	<play-file-picker
-		:index="$.index"
-		@open="$.occupy(event.detail.uuid)"
-		@preview="$.occupy(`preview:${$.defaultPreviewUrl}`)"
-	></play-file-picker>
-	<play-file-editor
-		.hidden="!$.fileOpen"
-		:uuid="$.recentFile"
-		@close="$.occupy(null)"
-	></play-file-editor>
+	<div id=file-picker>
+		<div id=file-list>
+			<ui-button icon=plus @click="$.adding = true">Add new file</ui-button>
+			<ui-button #for="[uuid, src] of $.playManager?.filelist() ?? []"
+				icon=filetype :iconstate="$.webServer?.extension(src)"
+				@click="$.occupant = `file:${uuid}`"
+			>{{ src }}</ui-button>
+			<div id=new-file .hidden="!$.adding"
+				@transitionend="$.adding && this.children[0].focus()">
+				<ui-input prefix=/file/
+					@enter="$.add()" @escape="$.adding = false"></ui-input>
+				<ui-button icon=checkmark @click="$.add()"></ui-button>
+			</div>
+		</div>
+		<ui-button icon=browser-window @click="$.occupant = $.defaultPreviewUrl"
+		>Open preview</ui-button>
+	</div>
+	<slot></slot>
 </template>
 
 <script>
-self.yozo.register('/-/yz/play/play-preview.yz')
+Promise.all([
+	import('/-/js/web-server/index.js')
+		.then(webServer => $.webServer = webServer),
+	import('/-/js/play-manager/index.js')
+		.then(playManager => $.playManager = playManager),
+	customElements.whenDefined('play-file-editor'),
+	customElements.whenDefined('play-preview')
+]).then(() => $.loaded = true)
+window.yozo.register('/-/yz/play/play-file-editor.yz'),
+window.yozo.register('/-/yz/play/play-preview.yz')
 
-const {$play} = window.$site
-
-$.occupy = space => $play.$current.$spaces[$.index] = space
-
-live.link($.$occupant, () => $play.$current.$spaces[$.index])
-live.link($.$preview, () => $.occupant?.startsWith('preview'))
-live.link($.$fileOpen, () => $.occupant && !$.preview)
-live.link($.$recentFile, () => $.fileOpen ? $.occupant : $.recentFile)
 live.link($.$defaultPreviewUrl, () => {
-	return Object.values(window.$site.$play.$current.files ?? {})
-		.map(file => file.src)
-		.filter(src => src.endsWith('.html'))
-		[0] ?? 'vrugtehagel.nl'
+	const srcs = $.playManager?.filelist().map(([uuid, src]) => src)
+	const src = srcs?.filter(src => src.endsWith('.html'))?.[0]
+	return `preview:${src ?? '/file/index.html'}`
 })
-when($.$preview).changes().then(purify(async () => {
-	if(!$.preview) return
-	const fadeIn = [{scale: '.95', opacity: '0'}, {scale: '1', opacity: '1'}]
-	const fadeOut = [...fadeIn].reverse()
-	await until(customElements.whenDefined('play-preview'))
-	const playPreview = document.createElement('play-preview')
-	const options = {duration: 200, easing: 'ease'}
-	playPreview.src = $.occupant.slice(8)
-	playPreview.animate(fadeIn, options)
-	elements.shadow.append(playPreview)
-	when(playPreview).srcchanges()
-		.then(() => $.occupy(`preview:${playPreview.src}`))
-	when(playPreview).closes().once().then(() => {
-		$.occupy('')
-	}).cleanup(() => {
-		const animation = playPreview.animate(fadeOut, options)
-		animation.finished.then(() => playPreview.remove())
-	})
-})).now()
+
+let occupantBefore
+effect(async () => {
+	if(!$.loaded) return
+	const before = occupantBefore
+	const occupant = $.occupant
+	occupantBefore = occupant
+	if(this.hasAttribute('occupant'))
+		this.dispatchEvent(new CustomEvent('change'))
+	const [child, ...other] = this.children
+	const [full, type, identifier] = occupant?.match(/^(\w+):([^]*)$/) ?? []
+	if(before?.startsWith('preview:') && type == 'preview' && child){
+		when(child).closes().then(() => $.occupant = '')
+		child.src = identifier
+		return
+	}
+	other.forEach(child => child.remove())
+	if(child) when(child).transitionends().once()
+		.then(() => child.remove())
+		.after(() => child.hidden = true)
+	if(!type) return
+	const tagName = type == 'preview' ? 'play-preview' : 'play-file-editor'
+	const element = document.createElement(tagName)
+	when(element).closes().then(() => $.occupant = '')
+	element.hidden = true
+	if(type == 'preview'){
+		element.src = identifier
+		when(element).srcchanges()
+			.then(() => $.occupant = `preview:${element.src}`)
+	} else element.uuid = identifier
+	this.append(element)
+	await until(paint())
+	element.hidden = false
+})
+
+$.add = async () => {
+	const {uiInput, newFile} = elements
+	const src = uiInput.fullValue
+	const {fullValue} = uiInput
+	$.playManager?.createFile({src})
+	uiInput.value = ''
+	$.adding = false
+	newFile.style.setProperty('transition', 'none')
+	await paint()
+	newFile.style.removeProperty('transition')
+}
 </script>
 
 <style>
 :host {
 	display: grid;
-	place-items: center;
-	border: .5rem dashed var(--background-color); border-radius: 1.5rem;
+	grid: 100% / 100%;
+	border: .25rem dashed var(--background-color); border-radius: 1.5rem;
 }
-:host > * {
-	grid-area: 1 / 1;
-	margin: -.5rem;
+#file-picker, ::slotted(*) { grid-area: 1 / 1; }
+#file-picker {
+	place-self: center;
+	width: min(100% - 4rem, 26rem); padding: .75rem;
+	background-color: var(--background-color);
+	border-radius: 1.5rem;
+	& > ui-button { width: 100%; }
 }
-:host > :not(play-file-picker){
-	place-self: stretch;
-	z-index: 2;
+#file-list {
+	display: flex; padding: .5rem; margin: 0 0 .75rem;
+	flex-direction: column; gap: .5rem;
+	background-color: var(--sub-background-color);
+	border-radius: 1rem;
+	& ui-button[icon=plus] { background-color: var(--background-color); }
+	& ui-button[icon=plus]:hover { background-color: var(--highlight-color); }
+	& ui-button:hover { background-color: var(--background-color); }
+	& ui-button:last-of-type { margin-bottom: -.5rem; }
 }
-:host > :not(:defined){ display: none; }
+#new-file {
+	display: flex; height: 3rem; margin-top: .5rem;
+	gap: .25rem;
+	overflow: clip;
+	transition: opacity .2s, margin-top .2s, height .2s, visibility 0s 0s;
+	&[hidden]{
+		height: 0; margin-top: 0;
+		opacity: 0; visibility: hidden;
+		transition: opacity .2s, margin-top .2s, height .2s, visibility 0s .2s;
+	}
+	& ui-input {
+		flex: 1 1 0;
+		border-top-right-radius: .25rem;
+		border-bottom-right-radius: .25rem;
+	}
+	& ui-button {
+		background-color: var(--background-color);
+		border-bottom-left-radius: .25rem;
+		border-top-left-radius: .25rem;
+		&:hover { background-color: var(--highlight-color); }
+	}
+}
+::slotted(*){
+	margin: -.25rem;
+	z-index: 1;
+	transition: scale .2s, opacity .2s, visibility 0s 0s;
+}
+::slotted([hidden]){
+	scale: .95;
+	opacity: 0; visibility: hidden;
+	transition: scale .2s, opacity .2s, visibility 0s .2s;
+}
 </style>

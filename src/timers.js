@@ -1,4 +1,5 @@
 import { Flow } from './flow.js'
+import { until } from './track.js'
 
 export const interval = duration => {
 	let id
@@ -17,4 +18,9 @@ export const frame = () => {
 		})
 		next()
 	}).cleanup(() => cancelAnimationFrame(id))
+}
+
+export const paint = () => {
+	let count = 0
+	return frame().if(() => count++).once()
 }

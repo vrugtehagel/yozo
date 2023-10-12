@@ -2,10 +2,10 @@
 <meta method=navigate>
 <meta method=reload>
 <meta method=cancel>
-<meta method=inject>
 <meta property=src readonly>
-<meta property=sameOrigin readonly>
 <meta property=status readonly>
+<meta property=messenger readonly>
+<meta event=statuschange>
 
 <template mode=closed delegates-focus=true>
 	<div id=container tabindex=0>
@@ -19,25 +19,20 @@
 		<div id=unreachable .hidden="$.status != 'unreachable'">
 			<p>Unreachable</p>
 		</div>
-		<iframe
-			:src="$.src"
-			.class-list.same-origin="$.sameOrigin"
-			.hidden="$.status != 'complete'"
-		></iframe>
+		<iframe :src="$.src" .hidden="$.status != 'complete'"></iframe>
+		<div id=interrupted>
+			<ui-icon type=cut></ui-icon>
+			<p>Page load interrupted</p>
+		</div>
 	</div>
 </template>
 
 <script>
 const {iframe} = elements
 $.src = 'about:blank'
-$.valid = true
 $.loading = false
 $.online = true
 
-live.link($.$sameOrigin, () => {
-	if($.src == window.location.origin) return true
-	return $.src.startsWith(`${window.location.origin}/`)
-})
 live.link($.$status, () => {
 	if(!$.online) return 'offline'
 	if($.loading) return 'loading'
@@ -45,60 +40,60 @@ live.link($.$status, () => {
 	return 'complete'
 })
 
-$.navigate = purify(async src => {
-	$.online = navigator.onLine
-	const originalSrc = src
-	$.loading = true
-	$.unreachable = false
-	$.valid = true
+when($.$status).changes()
+	.then(() => this.dispatchEvent(new CustomEvent('statuschange')))
+
+function normalizeURL(src){
 	src = src.trim()
-	if(!src) throw Error(`"${originalSrc}" is not a valid URL`)
 	const isBlank = src == 'about:blank'
 	if(src.startsWith('/')) src = `${window.location.origin}${src}`
 	if(!src.match(/^https?:\/\//)) src = `https://${src}`
 	try {
 		const url = new URL(src)
 		url.username = url.password = ''
-		src = url.href
+		return {url, valid: true}
+	} catch {
+		return {url: new URL('about:blank'), valid: false}
 	}
-	catch { src = 'about:blank' }
-	if(!isBlank && src == 'about:blank')
-		throw Error(`"${originalSrc}" is not a valid URL`)
-	const success = await until(when(iframe).loads().or(timeout(5000)).after(() => {
-		iframe.src = src
-		$.src = src
-		this.dispatchEvent(new CustomEvent('navigate'))
-	}).once())
-	if(!success){
-		const method = 'HEAD'
-		const mode = 'no-cors'
-		const controller = new AbortController
-		const {signal} = controller
-		new Flow().cleanup(() => controller.abort())
-		const options = {method, mode, signal}
-		await until(fetch($.src, options).catch(() => $.unreachable = true))
-	}
-	this.dispatchEvent(new CustomEvent('complete'))
+}
+
+async function isUnreachable(url){
+	const method = 'HEAD'
+	const mode = 'no-cors'
+	const controller = new AbortController
+	const {signal} = controller
+	track.add('undo', () => controller.abort())
+	const options = {method, mode, signal}
+	const response = await until(fetch(url, options).catch(() => null))
+	return !response
+}
+
+$.navigate = purify(async src => {
+	$.online = navigator.onLine
+	$.loading = false
+	$.unreachable = false
+	$.messenger = null
+	const {url, valid} = normalizeURL(src)
+	if(!valid) throw Error(`"${src}" is not a valid URL`)
+	$.loading = true
+	const success = await until(when(iframe).loads().or(timeout(5000))
+		.after(() => iframe.src = $.src = url.href)
+		.once())
+	const sameOrigin = url.origin == window.location.origin
+	const isSandbox = sameOrigin && url.pathname.startsWith('/file/')
+	const {ContextMessenger} = await until(import('/-/js/context-messenger/index.js'))
+	if(!success) $.unreachable = await until(isUnreachable(url))
+	else if(isSandbox) $.messenger = new ContextMessenger(iframe.contentWindow)
 	$.loading = false
 })
 
 $.cancel = () => {
 	if(!$.loading) return
 	iframe.src = 'about:blank'
-	this.dispatchEvent(new CustomEvent('complete'))
 	$.loading = false
 }
 
 $.reload = async () => $.navigate($.src)
-
-$.inject = async (html, selector = 'head') => {
-	if(!$.sameOrigin) return
-	if($.loading) await when(this).completes().once()
-	const target = iframe.contentDocument?.querySelector(selector)
-	console.log(target)
-	if(!target) return
-	target.insertAdjacentHTML('afterbegin', html)
-}
 </script>
 
 <style>
@@ -109,33 +104,32 @@ $.inject = async (html, selector = 'head') => {
 	display: grid; width: 100%; height: 100%;
 	place-items: stretch;
 	overflow: hidden;
+	& > div {
+		display: flex;
+		flex-direction: column; align-items: center; justify-content: center;
+	}
 }
 iframe {
-	border: none;
 	background-color: white;
-	transition: background-color 0s .05s;
+	border: none;
 }
 p { margin: 0; }
-#offline { color: var(--comment-color); }
-#offline ui-icon { width: 3rem; height: 3rem; }
-#container > div {
-	display: flex;
-	flex-direction: column; align-items: center; justify-content: center;
+#offline, #interrupted {
+	color: var(--comment-color);
+	& ui-icon { width: 3rem; height: 3rem; }
 }
 #unreachable {
 	background: no-repeat center / 100% 100% url("/-/svg/img/play-unreachable.svg");
+	& p {
+		padding: 1rem 2rem;
+		color: var(--text-color); background-color: black;
+		font-weight: 900;
+		text-transform: uppercase;
+	}
 }
-#unreachable p {
-	padding: 1rem 2rem;
-	color: var(--text-color); background-color: black;
-	font-weight: 900;
-	text-transform: uppercase;
-}
-iframe.same-origin {
-	background-color: var(--sub-background-color);
-	transition: background-color 0s 0s;
-}
-:is(iframe, #loading, #unreachable, #offline)[hidden]{
+:is(iframe, #loading, #unreachable, #offline)[hidden],
+iframe[src="about:blank"],
+iframe:not([src="about:blank"]) + #interrupted {
 	display: none;
 }
 </style>

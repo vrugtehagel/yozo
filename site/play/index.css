@@ -1,26 +1,26 @@
 body {
-	display: grid; height: 100vh; padding: 5.5rem 1rem 1rem 0; box-sizing: border-box;
-	grid-template: auto 1fr / auto 1fr; gap: 1rem;
+	display: grid; height: 100vh; padding: 5.5rem 1rem 1rem; box-sizing: border-box;
+	grid-template: auto 1fr / 1fr; gap: 1rem;
 	transition: padding-top .3s;
 	overflow: hidden;
+	&:has(navigation-menu[hidden]){ padding-top: .875rem; }
 }
-body:has(navigation-menu[hidden]){ padding-top: .875rem; }
 navigation-menu {
 	transition: top .3s;
 	box-shadow: none;
+	&[hidden]{ top: -4.5rem; }
 }
-navigation-menu[hidden]{ top: -4.5rem; }
 #main-menu {
-	grid-area: 1 / 2 / 2 / 3;
+	grid-area: 1 / 1 / 2 / -1;
 	list-style: none;
 	display: flex; padding: 0; margin: 0;
 	gap: 1rem;
 	z-index: 900;
+	& li.separator { flex: 1; }
+	& site-settings {
+		&::part(button):hover, &[open]::part(button) {
+			background-color: var(--background-color);
+		}
+		&::part(dropdown){ inset: 3.5rem -4rem auto auto; }
+	}
 }
-#main-menu li.separator { flex: 1; }
-#main-menu site-settings::part(button):hover,
-#main-menu site-settings[open]::part(button) {
-	background-color: var(--background-color);
-}
-#main-menu site-settings::part(dropdown){ inset: 3.5rem -4rem auto auto; }
-play-creations { grid-area: 1 / 1 / -1 / 2; }

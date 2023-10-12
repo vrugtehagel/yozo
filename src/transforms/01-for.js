@@ -16,8 +16,10 @@ define.transform(1, (node, scopes, meta, context) => {
 	const getter = meta.__function(arrayExpression, ...scopes)
 	meta.x.connected(() => effect(() => {
 		const array = getter(element, ...scopes)
+		if(typeof array?.[Symbol.iterator] != 'function') //
+			error`transform-for-${arrayExpression}-not-iterable` //
+		while(cache.length > array.length) cache.pop()[1].map(node => node.remove())
 		let index = -1
-		while(cache.length > array.length) cache.pop()
 		for(const item of array){
 			index++
 			if(cache[index] && cache[index][0] === item) continue

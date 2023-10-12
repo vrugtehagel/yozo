@@ -1,0 +1,46 @@
+<title>play-session</title>
+
+<template mode=closed>
+	<div
+		id=layout
+		:class="window.$site.$play.$current.layout"
+	>
+		<play-space
+			#for="index of [0, 1, 2, 3]"
+			:index="index"
+		></play-space>
+	</div>
+</template>
+
+<style>
+:host {
+	display: grid;
+	grid: 1fr / 1fr; place-items: stretch;
+}
+#layout {
+	grid-area: 1 / 1;
+	display: grid;
+	grid-template: 1fr / 1fr; gap: 1rem;
+	transition: opacity .2s .1s, visibility 0s .1s;
+}
+#layout[hidden]{
+	opacity: 0; visibility: hidden;
+	transition: opacity .2s, visibility 0s .2s;
+}
+#session {
+	place-self: stretch;
+	display: grid;
+	grid: 1fr / 1fr; place-items: stretch;
+}
+
+#layout.side-by-side { grid-template: 1fr / 1fr 1fr; }
+#layout.triple-split { grid-template: 1fr / 1fr 1fr 1fr; }
+#layout.stack { grid-template: 1fr 1fr / 1fr; }
+#layout.quartiles { grid-template: 1fr 1fr / 1fr 1fr; }
+#layout:is(.single) > :nth-last-child(-n + 3){ display: none; }
+#layout:is(.side-by-side, .stack) > :nth-last-child(-n + 2){ display: none; }
+#layout:is(.triple-split) > :nth-last-child(-n + 1){ display: none; }
+#layout:not(.single, .side-by-side, .triple-split, .stack, .quartiles) > * {
+	display: none;
+}
+</style>
