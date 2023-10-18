@@ -1,14 +1,11 @@
 <title>ui-switch</title>
 <meta attribute=on type=boolean>
-<meta attribute=value type=boolean>
 <meta attribute=name type=string>
+<meta property=value>
 <meta form-associated>
 
 <template mode=closed>
-	<ui-icon
-		type=switch
-		:state="$.value ? 'on' : 'off'"
-	></ui-icon>
+	<ui-icon type=switch :state="$.on ? 'on' : 'off'"></ui-icon>
 </template>
 
 <script>
@@ -23,22 +20,19 @@ connected(() => {
 	let isFaultyTrigger = false
 	when(this).clicks().then(async () => {
 		if(isFaultyTrigger) return
-		$.value = !$.value
+		$.on = !$.on
+		this.dispatchEvent(new CustomEvent('input'))
+		this.dispatchEvent(new CustomEvent('change'))
 		isFaultyTrigger = true
 		await frame()
 		isFaultyTrigger = false
 	})
-
 })
 
-live.link($.$on, {
-	get: () => $.value,
-	set: value => $.value = value
-})
-
-when($.$on).changes().then(() => {
-	this.dispatchEvent(new CustomEvent('input'))
-	this.dispatchEvent(new CustomEvent('change'))
+live.link($.$value, {
+	get: () => $.on,
+	set: value => $.on = value,
+	changes: when($.$on).changes()
 })
 </script>
 

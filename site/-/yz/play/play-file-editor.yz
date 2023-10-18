@@ -14,7 +14,7 @@
 		<ui-button icon=close @click="$.close()"></ui-button>
 	</div>
 	<ui-code-editor :language="$.webServer?.extension($.playManager?.file($.uuid).src)"
-	></ui-code-editor>
+		.show-line-numbers="$.siteSettings?.$settings.lineNumbers"></ui-code-editor>
 </template>
 
 <script>
@@ -22,6 +22,9 @@ import('/-/js/play-manager/index.js')
 	.then(playManager => $.playManager = playManager)
 import('/-/js/web-server/index.js')
 	.then(webServer => $.webServer = webServer)
+import('/-/js/site-settings/index.js')
+	.then(siteSettings => $.siteSettings = siteSettings)
+const {uiCodeEditor} = elements
 
 $.close = () => this.dispatchEvent(new CustomEvent('close'))
 
@@ -29,7 +32,6 @@ connected(() => effect(() => {
 	if(!$.playManager) return
 	if(!$.uuid) return
 	const $file = $.playManager.file($.uuid)
-	const {uiCodeEditor} = elements
 	uiCodeEditor.value = $file.body ?? ''
 	live.link($file.$body, uiCodeEditor)
 }))

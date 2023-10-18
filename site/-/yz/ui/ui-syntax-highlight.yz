@@ -11,12 +11,14 @@ import('/-/js/libraries/prism.js').then(() => $.loaded = true)
 const {code} = elements
 
 effect(() => {
-	if(!$.loaded) return code.textContent = $.value
+	const zeroWidthSpace = '\u200B'
+	const value = $.value + zeroWidthSpace
+	if(!$.loaded) return code.textContent = value
 	const grammar = window.Prism.languages[$.language]
 	const language = grammar ? $.language : 'txt'
 	code.className = `language-${language}`
-	if(language == 'txt') return code.textContent = $.value
-	code.innerHTML = window.Prism.highlight($.value, grammar, language)
+	if(language == 'txt') return code.textContent = value
+	code.innerHTML = window.Prism.highlight(value, grammar, language)
 })
 </script>
 
@@ -41,7 +43,10 @@ code { color: var(--text-color); }
 .tag .tag { color: var(--keyword-color); }
 .punctuation { color: var(--text-color); }
 .attr-name { color: var(--primary-color); }
-.attr-value, .attr-value .punctuation:not(.attr-equals) { color: var(--string-color); }
+.attr-value,
+.attr-value > .attr-equals + .punctuation,
+.attr-value > .attr-equals ~ .punctuation:last-child { color: var(--string-color); }
+.attr-value > .value[class*=language-] { color: var(--text-color); }
 .comment { color: var(--comment-color); }
 
 /* css */

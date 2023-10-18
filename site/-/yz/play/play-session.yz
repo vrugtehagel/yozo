@@ -16,6 +16,8 @@
 				@click="$.playManager?.open(uuid)"
 			>{{ name }}</ui-button>
 		</div>
+		<ui-button icon=repeat @click="$.playManager?.reset()"
+			>Reset to default</ui-button>
 	</div>
 	<div #if="$.playManager" id=layout :class="$.playManager.current().layout"
 		.hidden="$.playManager.$play.mode != 'editing'">
@@ -45,8 +47,13 @@ import('/-/js/play-manager/index.js')
 #creation-picker {
 	width: min(90vw, 20rem); padding: .75rem;
 	border-radius: 1.5rem;
+	position: relative;
 	background-color: var(--background-color);
-	& p { margin: 0.75rem 0 1.25rem; text-align: center; }
+	& p {
+		margin: 0.75rem 0 1.25rem;
+		text-align: center;
+		white-space: nowrap;
+	}
 	#creations-list {
   		display: flex; max-height: calc(40vh - 3rem); padding: .5rem;
 		flex-direction: column;
@@ -62,11 +69,22 @@ import('/-/js/play-manager/index.js')
 				text-align: center;
 			}
 		}
+		&::before {
+			content: "";
+			position: absolute; inset: 4.5rem .75rem; z-index: 1;
+			border-radius: 1rem;
+			box-shadow: 0 0 .75rem inset var(--sub-background-color);
+			pointer-events: none;
+		}
 	}
 	& ui-button:hover { background-color: var(--background-color); }
 	& ui-button[icon=plus] {
 		margin-bottom: .5rem;
 		background-color: var(--background-color);
+		&:hover { background-color: var(--highlight-color); }
+	}
+	& > ui-button {
+		width: 100%; margin: .75rem 0 0;
 		&:hover { background-color: var(--highlight-color); }
 	}
 }

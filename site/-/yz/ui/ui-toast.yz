@@ -12,17 +12,32 @@
 </template>
 
 <script>
+this.constructor.removeQueue ??= new Set
+this.constructor.closeQueue ??= new Set
+const {removeQueue, closeQueue} = this.constructor
+
 $.action = () => {
 	this.dispatchEvent(new CustomEvent('action'))
 }
 
 $.show = async (duration = 5000) => {
+	closeQueue.forEach(uiToast => uiToast.open = false)
+	closeQueue.clear()
+	removeQueue.forEach(uiToast => uiToast.remove())
+	removeQueue.clear()
 	const appendAndRemove = !this.isConnected
-	if(appendAndRemove) document.body.append(this)
+	if(appendAndRemove){
+		document.body.append(this)
+		removeQueue.add(this)
+	}
+	closeQueue.add(this)
 	$.open = false
 	await until(paint())
 	$.open = true
 	await until(when(this).actions().or(timeout(duration)))
+	if(!closeQueue.has(this)) return
+	removeQueue.delete(this)
+	closeQueue.delete(this)
 	$.open = false
 	await until(when(this).transitionends()
 		.if(({target}) => target == this).once())

@@ -14,6 +14,7 @@ const fromStorage = ($live, name, fallback, parse) => {
 fromStorage($settings.$semicolons, 'settings:semicolons', true, parseBoolean)
 fromStorage($settings.$useTabs, 'settings:use-tabs', true, parseBoolean)
 fromStorage($settings.$tabSize, 'settings:tab-size', 4, Number)
+fromStorage($settings.$lineNumbers, 'settings:line-numbers', true, parseBoolean)
 
 live.link($settings.$indent, () => {
 	if($settings.useTabs) return '\t'

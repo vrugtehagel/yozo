@@ -57,7 +57,7 @@ effect(async () => {
 		return
 	}
 	other.forEach(child => child.remove())
-	if(child) when(child).transitionends().once()
+	if(child) when(child).transitionends().or(timeout(500)).once()
 		.then(() => child.remove())
 		.after(() => child.hidden = true)
 	if(!type) return
@@ -98,19 +98,28 @@ $.add = async () => {
 #file-picker {
 	place-self: center;
 	width: min(100% - 4rem, 26rem); padding: .75rem;
+	position: relative;
 	background-color: var(--background-color);
 	border-radius: 1.5rem;
 	& > ui-button { width: 100%; }
 }
 #file-list {
-	display: flex; padding: .5rem; margin: 0 0 .75rem;
+	display: flex; max-height: calc(50vh - 3rem); padding: .5rem; margin: 0 0 .75rem;
 	flex-direction: column; gap: .5rem;
 	background-color: var(--sub-background-color);
 	border-radius: 1rem;
+	overflow: auto;
 	& ui-button[icon=plus] { background-color: var(--background-color); }
 	& ui-button[icon=plus]:hover { background-color: var(--highlight-color); }
 	& ui-button:hover { background-color: var(--background-color); }
 	& ui-button:last-of-type { margin-bottom: -.5rem; }
+	&::before {
+		content: "";
+		position: absolute; inset: .75rem .75rem 4.5rem; z-index: 1;
+		border-radius: 1rem;
+		box-shadow: 0 0 .75rem inset var(--sub-background-color);
+		pointer-events: none;
+	}
 }
 #new-file {
 	display: flex; height: 3rem; margin-top: .5rem;

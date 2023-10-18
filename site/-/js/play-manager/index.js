@@ -1,4 +1,5 @@
 import * as webServer from '/-/js/web-server/index.js'
+import { htmlInclude } from '/-/js/html-include/index.js'
 
 import { creations as defaultCreations } from './default-creations.js'
 
@@ -9,18 +10,18 @@ export const $play = live({})
 if(!location.pathname.startsWith('/file/')) webServer.claim('/file/')
 
 $play.storage = JSON.parse(localStorage.getItem('play-manager:storage'))
-	?? defaultCreations
 when($play.$storage).deepchanges().then(() => {
 	const json = JSON.stringify($play.storage)
 	localStorage.setItem('play-manager:storage', json)
 })
+$play.storage ??= defaultCreations
 
 $play.creations = JSON.parse(sessionStorage.getItem('play-manager:creations'))
-	?? $play.storage
 when($play.$creations).deepchanges().throttle(500).then(() => {
 	const json = JSON.stringify($play.creations)
 	sessionStorage.setItem('play-manager:creations', json)
 })
+$play.creations ??= $play.storage
 
 live.link($play.$connected, () => webServer.claimed('/file/'))
 live.link($play.$mode, () => {
@@ -37,24 +38,39 @@ live.link($play.$uuid, {
 open($play.uuid)
 
 effect(() => {
-	when(current().$files).deepchange().then(() => {
-		$play.saved = false
-	}).throttle(500).then(() => {
+	when(current().$files).deepchange().then(() => $play.saved = false)
+	when(current().$files).deepchange().throttle(500).then(() => {
 		webServer.clear('/file/')
 		const files = {...current().files}
 		webServer.upload(...Object.values(files).map(({src, body}) => {
 			if(webServer.extension(src) != 'html') return {src, body}
-			const parser = new DOMParser
-			const doc = parser.parseFromString(body, 'text/html')
-			doc.head.insertAdjacentHTML('afterbegin', `
+			const modified = htmlInclude(body, `
 				<script src="/-/js/play-console/index.js"></script>
 			`)
-			const serializer = new XMLSerializer
-			const string = serializer.serializeToString(doc)
-			return {src, body: string}
+			return {src, body: modified}
 		}))
 	}).now()
 })
+
+
+export async function reset(){
+	if(reset.inProgress) return
+	reset.inProgress = true
+	await customElements.whenDefined('ui-toast')
+	const {storage, creations} = $play
+	const uiToast = document.createElement('ui-toast')
+	uiToast.type = 'info'
+	uiToast.actionText = 'Undo'
+	uiToast.textContent = `Presets reset to default.`
+	const showPromise = uiToast.show()
+	when(uiToast).does('action').then(() => {
+		Object.assign($play, {storage, creations})
+	}).until(showPromise)
+	$play.storage = defaultCreations
+	$play.creations = defaultCreations
+	await showPromise
+	reset.inProgress = false
+}
 
 export function current(){
 	return $play.$creations[`$${$play.uuid}`]
@@ -72,16 +88,20 @@ export function list(){
 
 export function create(){
 	const uuid = crypto.randomUUID()
-	const creation = Object.values(defaultCreations)
-		.find(creation => creation.name == 'Boilerplate')
-	$play.$creations[uuid] = {...creation, name: 'Untitled'}
+	const fileUuid = crypto.randomUUID()
+	const name = 'Untitled'
+	const file = {src: '/file/index.html', body: ''}
+	const files = {[fileUuid]: file}
+	const spaces = [`file:${fileUuid}`, '', '', '']
+	const layout = 'side-by-side'
+	$play.$creations[uuid] = {name, files, spaces, layout}
 	$play.uuid = uuid
 }
 
 export function open(uuid){
 	$play.uuid = uuid
 	const stored = JSON.stringify($play.$storage[`$${uuid}`].files)
-	const session = JSON.stringify($play.$creations[`$${uuid}`].files)
+	const session = JSON.stringify(current().files)
 	$play.saved = stored == session
 }
 
@@ -97,7 +117,7 @@ export function rename(name){
 
 export function save(){
 	$play.saved = true
-	$play.$storage[$play.uuid] = $play.$creations[$play.uuid]
+	$play.$storage[$play.uuid] = {...live.get(current())}
 }
 
 export function duplicate(){
@@ -166,5 +186,30 @@ export async function removeFile(uuid){
 	await showPromise
 }
 
+export function visibleSpaces(){
+	const {layout} = current()
+	if(layout == 'single') return 1
+	if(layout == 'side-by-side') return 2
+	if(layout == 'stack') return 2
+	if(layout == 'triple-split') return 3
+	if(layout == 'quartiles') return 4
+	return 0
+}
 
+export function reveal(src){
+	const match = filelist()
+		.find(([uuid, pathname]) => pathname == src)
+	if(!match){
+		const uiToast = document.createElement('ui-toast')
+		uiToast.type = 'info'
+		uiToast.textContent = 'File does not exist.'
+		uiToast.show()
+		return
+	}
+	const [uuid] = match
+	const index = current().spaces.indexOf(`file:${uuid}`)
+	const visible = visibleSpaces()
+	if(index < 0 || index >= visibleSpaces()) return
+	current().$spaces[0] = `file:${uuid}`
+}
 

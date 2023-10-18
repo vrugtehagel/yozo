@@ -1,5 +1,6 @@
 <title>play-preview</title>
 <meta attribute=src type=string>
+<meta attribute=consoleopen type=boolean as=consoleOpen>
 
 <template mode=closed>
 	<div id=titlebar>
@@ -8,14 +9,25 @@
 		<ui-input .class-list.invalid="$.invalid" @enter="$.go()"></ui-input>
 		<ui-button icon=close aria-label="Close" @click="$.close()"></ui-button>
 	</div>
-	<ui-browser></ui-browser>
-	<div id=ping-lights>
-		<ui-icon id=ping type=ping></ui-icon>
-		<ui-icon id=pong type=ping></ui-icon>
+	<div id=view>
+		<div id=page>
+			<ui-browser></ui-browser>
+			<div id=console-toggle .hidden="$.consoleDisabled">
+				<ui-button icon="console" :iconstate="$.consoleOpen ? 'down' : null"
+					@click="$.consoleOpen = !$.consoleOpen"></ui-button>
+			</div>
+			<div id=ping-lights .hidden="$.consoleDisabled">
+				<div id=ping title="ping()"></div>
+				<div id=pong title="pong()"></div>
+			</div>
+		</div>
+		<div id=console></div>
 	</div>
 </template>
 
 <script>
+import('/-/js/play-manager/index.js')
+	.then(playManager => $.playManager = playManager)
 const {iframe, uiInput, uiBrowser} = elements
 
 live.link($.$src, uiInput)
@@ -24,30 +36,51 @@ live.link($.$loading, {
 	changes: when(uiBrowser).statuschanges()
 })
 
+$.blink = async element => {
+	element.classList.add('on')
+	await until(paint())
+	element.classList.remove('on')
+}
+$.message = (severity, {message, line, column, src}) => {
+	if(!$.consoleAutoOpened && !$.consoleOpen)
+		$.consoleAutoOpened = $.consoleOpen = true
+	const div = document.createElement('div')
+	div.textContent = message.match(/[.,!?]$/) ? message : `${message}.`
+	div.classList.add('message', severity)
+	elements.console.append(div)
+	if(!src) return
+	const filename = src.split('/').at(-1)
+	const button = document.createElement('button')
+	button.textContent = `${filename}:${line}:${column}`
+	div.append(button)
+	when(button).clicks().then(() => $.playManager.reveal(src))
+}
 $.close = () => this.dispatchEvent(new CustomEvent('close'))
 $.cancel = () => uiBrowser.cancel?.()
 $.go = purify(async () => {
+	elements.console.replaceChildren()
+	$.consoleDisabled = true
+	$.consoleAutoOpened = false
+	if(!$.playManager) await until(when($.$playManager).changes())
 	await until(customElements.whenDefined('ui-browser'))
-	try {
-		await until(uiBrowser.navigate($.src))
-	} catch {
+	const [{status}] = await until(Promise.allSettled([uiBrowser.navigate($.src)]))
+	if(status == 'rejected'){
 		const keyframes = [{backgroundColor: 'var(--error-color)', offset: 0}]
-		uiInput.animate(keyframes, {duration: 1000})
+		uiInput.animate(keyframes, {duration: 500})
 		return
 	}
 	$.src = uiBrowser.status == 'complete'
 		? uiBrowser.src.replace(/^https:\/\/(?:www\.)?/, '')
 		: uiBrowser.src
-	uiBrowser.focus()
+	// uiBrowser.focus()
 	this.dispatchEvent(new CustomEvent('srcchange'))
 	if(!uiBrowser.messenger) return
-	const {ping, pong} = elements
-	when(uiBrowser.messenger).pings().then(() => {
-		ping.animate([{color: 'var(--keyword-color)', offset: 0}], {duration: 1000})
-	})
-	when(uiBrowser.messenger).pongs().then(() => {
-		pong.animate([{color: 'var(--name-color)', offset: 0}], {duration: 1000})
-	})
+	when(uiBrowser).messengerloads().then(() => $.consoleDisabled = false)
+	when(uiBrowser.messenger).pings().then(() => $.blink(elements.ping))
+	when(uiBrowser.messenger).pongs().then(() => $.blink(elements.pong))
+	when(uiBrowser.messenger).errors().or(
+	when(uiBrowser.messenger).logs())
+		.then(({type, detail}) => $.message(type, detail.payload))
 })
 
 connected(() => {
@@ -61,13 +94,7 @@ connected(() => {
 	display: grid; padding: .75rem; box-sizing: border-box;
 	grid: auto 1fr / 1fr; gap: .75rem;
 	background-color: var(--background-color);
-	border-radius: 1.5rem;
-	transition: opacity .2s, scale .2s, visibility 0s 0s;
-}
-:host([hidden]){
-	scale: .95;
-	opacity: 0; visibility: hidden;
-	transition: opacity .2s, scale .2s, visibility 0s .2s;
+	border-radius: 1.5rem 1.5rem 1.25rem 1.25rem;
 }
 #titlebar {
 	display: flex; padding: 0; margin: 0;
@@ -82,21 +109,76 @@ ui-input {
 	margin: 0 .75rem 0 .5rem;
 }
 ui-browser {
-	grid-area: 2 / 1;
-	place-self: stretch;
+	width: 100%; height: 100%;
 	border-radius: 1rem;
 	overflow: clip;
 }
+#page {
+	flex: 1 0 0;
+	position: relative;
+}
+#view {
+	display: flex; height: 100%; width: 100%;
+	flex-direction: column; gap: .75rem;
+}
+#console-toggle {
+	padding: .75rem .75rem 0 0;
+	position: absolute; inset: auto auto 0 0; z-index: 1;
+	background-color: var(--background-color);
+	border-radius: 0 1.25rem 0 0;
+	&[hidden]{ display: none; }
+}
 #ping-lights {
-	grid-area: 2 / 1; place-self: end;
-	display: flex; padding: .5rem 0 0 .5rem;
-	flex-direction: row-reverse; gap: .25rem;
-	z-index: 1;
+	display: flex; padding: .75rem 0 0 .75rem;
+	gap: .75rem;
+	position: absolute; inset: auto 0 0 auto; z-index: 1;
 	background-color: var(--background-color);
 	border-radius: 1.25rem 0 0 0;
-	& ui-icon {
-		width: 3rem; height: 3rem; padding: 0;
-		color: transparent;
+	&[hidden]{ display: none; }
+	& div {
+		width: 1.5rem; height: 1.5rem;
+		position: relative;
+		border-radius: 50%;
+		background-color: var(--comment-color);
+		transition: .5s ease-out;
+		&.on {
+			transition: none;
+			background-color: var(--light-color);
+			box-shadow: 0 0 .75rem var(--light-color),
+				0 0 .25rem var(--light-color);
+		}
+	}
+}
+#ping { --light-color: var(--keyword-color); }
+#pong { --light-color: var(--name-color); }
+#console {
+	flex: 1 0 0;
+	background-color: var(--sub-background-color);
+	border-radius: .75rem;
+	overflow: auto;
+	transition: margin-top .2s, flex .3s;
+	:host(:not([consoleopen])) & { flex: 0 0 0; margin-top: -.75rem; }
+	.message {
+		margin: .5rem; padding: .5rem 1rem;
+		background-color: var(--background-color);
+		border-radius: 3px .5rem .5rem 3px;
+		box-shadow: 53px 0 0 -50px inset var(--message-color);
+		&.error { --message-color: var(--error-color); }
+		&.log { --message-color: var(--name-color); }
+		&:not(.log){ color: var(--message-color); }
+		&:first-child { border-top-left-radius: .5rem; }
+		&:last-child { border-bottom-left-radius: .5rem; }
+		& button {
+			float: right;
+			padding: 0 .5rem;
+			color: inherit; background: none;
+			font-size: inherit; line-height: inherit; font-family: inherit;
+			border: none;
+			&:not([disabled]){
+				cursor: pointer;
+				text-decoration: underline;
+			}
+		}
 	}
 }
 </style>

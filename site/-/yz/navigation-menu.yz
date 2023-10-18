@@ -28,6 +28,6 @@ ui-icon[type=wordmark]{
 	@media (width < 670px){ display: none; }
 }
 ui-button {
-	font-size: clamp(1rem, 4vw + .25rem, 1.25rem);
+	font-size: clamp(1rem, 4vw + .25rem, 1.25rem); line-height: 1.5rem;
 }
 </style>

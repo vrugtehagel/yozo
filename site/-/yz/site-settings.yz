@@ -4,12 +4,10 @@
 <meta attribute=open type=boolean>
 
 <template mode=closed>
-	<ui-dropdown
-		icon=settings :iconstate="$.open ? 'turned' : null" .open="$.open"
+	<ui-dropdown icon=settings :iconstate="this.open ? 'turned' : null"
 		:label="$.label || null" :aria-label="$.label ? null : 'Site settings'"
 		exportparts="button, dropdown"
-		.disabled="!$.siteSettings"
-		@open="$.open = true" @close="$.open = false">
+		.disabled="!$.siteSettings">
 		<label #if="$.show('visual')">
 			Semicolons
 			<ui-switch .on="$.siteSettings?.$settings.semicolons"
@@ -22,8 +20,16 @@
 		</label>
 		<label #if="$.show('visual', 'functional')">
 			Tab size
-			<ui-number-input :value="$.siteSettings?.$settings.tabSize" min=2 max=8
-				@change="$.siteSettings.$settings.tabSize = this.value"></ui-number-input>
+			<ui-dropdown id=tab-size-select
+				:label="$.siteSettings?.$settings.tabSize" autoclose>
+				<ui-button #for="size of [2, 3, 4, 8]"
+					@click="$.siteSettings.$settings.tabSize = size">{{ size }}</ui-button>
+			</ui-dropdown>
+		</label>
+		<label #if="$.show('visual', 'functional')">
+			Line numbers
+			<ui-switch .on="$.siteSettings?.$settings.lineNumbers"
+				@change="$.siteSettings.$settings.lineNumbers = this.value"></ui-switch>
 		</label>
 	</ui-dropdown>
 </template>
@@ -31,14 +37,6 @@
 <script>
 import('/-/js/site-settings/index.js')
 	.then(siteSettings => $.siteSettings = siteSettings)
-const {uiDropdown} = elements
-
-live.link($.$open, {
-	get: () => uiDropdown.open,
-	set: value => uiDropdown.open = value,
-	changes: when(uiDropdown).opens()
-		.or(when(uiDropdown).closes())
-})
 
 $.show = (...purposes) =>
 	!purposes.every(purpose => $.exclude.split(/, */).includes(purpose))
@@ -51,7 +49,7 @@ $.show = (...purposes) =>
 	border-radius: .5rem;
 }
 ui-dropdown:not(:defined){ display: none; }
-::part(dropdown){
+ui-dropdown[icon=settings]::part(dropdown){
 	width: 20rem; padding: 1rem;
 	gap: .5rem;
 }
@@ -61,4 +59,14 @@ label {
 }
 label > :last-child { margin-left: auto; }
 label > ui-switch { margin-right: .5rem; }
+#tab-size-select[open]::part(button){
+	background-color: var(--highlight-color);
+}
+#tab-size-select::part(button),
+#tab-size-select ui-button { text-align: center; }
+#tab-size-select::part(dropdown) {
+	display: grid;
+	grid: 3rem / repeat(4, 3rem); gap: 0;
+	inset: 3.5rem -.5rem auto auto;
+}
 </style>

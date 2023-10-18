@@ -22,10 +22,8 @@
 	ui-code:not(:defined){ white-space: pre; }
 
 	ui-callout {
-		display: block; padding: 1.5rem 2rem 1.5rem 4rem; margin: 2rem 0;
+		display: block; padding: 1.5rem 2rem; margin: 2rem 0;
 		background-color: var(--background-color);
-		border-left: medium solid var(--callout-color, var(--text-color));
-		border-radius: 0 1rem 1rem 0;
 	}
 	ui-callout > :first-child { margin-top: 0; }
 	ui-callout > :last-child { margin-bottom: 0; }

@@ -6,7 +6,7 @@
 <meta attribute=autoclose type=boolean>
 
 <template mode=closed>
-	<ui-button part=button :icon="$.icon" :iconstate="$.iconstate"
+	<ui-button part=button :icon="$.icon || null" :iconstate="$.iconstate || null"
 		@click="$.open = !$.open"
 	>{{ $.label }}</ui-button>
 	<div id=menu .hidden="!$.open" part=dropdown tabindex=-1>

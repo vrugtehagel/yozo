@@ -1,4 +1,5 @@
-const {when} = self.yozo
+// Cannot use when() here because this script needs to be able to exist
+// in "clean" contexts such as in the playground
 
 export class ContextMessenger extends EventTarget {
 	#isBroadcastChannel
@@ -12,18 +13,25 @@ export class ContextMessenger extends EventTarget {
 			sender = receiver = new BroadcastChannel(sender)
 		this.#sender = sender
 		this.#receiver = receiver
-		when(this.#receiver).messages().then(event => this.#respond(event))
+		this.#receiver
+			.addEventListener('message', event => this.#respond(event))
 	}
 
 	async send(type, payload = null){
 		const sender = this.#sender
 		const uuid = crypto.randomUUID()
 		const origin = location
-		const event = await when(this.#receiver).messages()
-			.if(event => event.data.uuid == uuid)
-			.once()
-			.after(() => sender.postMessage({type, uuid, payload}, origin))
-		return event.data.payload
+		const controller = new AbortController
+		const {signal} = controller
+		let done
+		const promise = new Promise(resolve => done = resolve)
+		this.#receiver.addEventListener('message', event => {
+			if(event.data.uuid != uuid) return
+			done(event.data.payload)
+			controller.abort()
+		}, {signal})
+		sender.postMessage({type, uuid, payload}, origin)
+		return promise
 	}
 
 	#respond(event){
