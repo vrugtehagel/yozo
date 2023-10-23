@@ -26,7 +26,6 @@ effect(() => {
 :host {
 	display: block;
 	width: max-content;
-	background: var(--background-color);
 	font-family: var(--font-monospace);
 }
 pre {

@@ -4,10 +4,10 @@
 <meta attribute=open type=boolean>
 
 <template mode=closed>
-	<ui-dropdown icon=settings :iconstate="this.open ? 'turned' : null"
+	<ui-dropdown icon=settings :iconstate="$.open ? 'turned' : null"
 		:label="$.label || null" :aria-label="$.label ? null : 'Site settings'"
-		exportparts="button, dropdown"
-		.disabled="!$.siteSettings">
+		exportparts="button, dropdown" .disabled="!$.siteSettings"
+		@open="$.open = true" @close="$.open = false">
 		<label #if="$.show('visual')">
 			Semicolons
 			<ui-switch .on="$.siteSettings?.$settings.semicolons"
@@ -49,9 +49,12 @@ $.show = (...purposes) =>
 	border-radius: .5rem;
 }
 ui-dropdown:not(:defined){ display: none; }
-ui-dropdown[icon=settings]::part(dropdown){
-	width: 20rem; padding: 1rem;
-	gap: .5rem;
+ui-dropdown[icon=settings] {
+	&::part(button):hover { background: none; }
+	&::part(dropdown){
+		width: 20rem; padding: 1rem;
+		gap: .5rem;
+	}
 }
 label {
 	display: flex; min-height: 3rem; padding: 0 1rem;

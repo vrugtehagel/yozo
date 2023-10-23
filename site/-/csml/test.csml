@@ -1,0 +1,21 @@
+@script
+	const {url} = csml.args
+	const directory = url.split('/').slice(0, -1).join('/')
+	const page = await csml.import(`${directory}/index.csml`)
+
+	export const exclude = ['css', 'js']
+	export const title = page.title
+
+link[rel=stylesheet][href=/-/css/test.css]
+script[type=module][src=/-/js/test-page/index.js]
+
+main
+	h1 Tests for {{ page.title }}
+	p {{ page.description }} See [the documentation](../) for details.
+
+	test-summary
+
+	p If you find any of the tests failing, I would be super thankful if you could [let me know](https://github.com/vrugtehagel/yozo/issues/new) (which one and on which browser).
+
+	div#test-container
+

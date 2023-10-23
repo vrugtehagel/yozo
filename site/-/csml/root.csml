@@ -1,6 +1,6 @@
 @script
-	const {url} = csml.args
-	const page = await csml.import(url)
+	const {url, layoutArgs} = csml.args
+	const page = await csml.import(url, layoutArgs)
 	const exclude = new Set(page.exclude ?? [])
 	const content = page.default
 	const isResolved = promise => promise.then(() => true, () => false)
@@ -19,7 +19,7 @@ html[lang=en]
 		script[src=/dev.js]
 	@if(!exclude.has('yozo-register'))
 		script
-			const namespaces = ['ui', 'play', 'docs', 'tour']
+			const namespaces = ['ui', 'play', 'test', 'docs', 'tour']
 			window.yozo.register.auto(name => {
 				const namespace = namespaces
 					.find(namespace => name.startsWith(`${namespace}-`))
@@ -33,9 +33,9 @@ html[lang=en]
 	@if(!exclude.has('global-assets'))
 		link[rel=stylesheet][href=/-/css/base.css]
 		link[rel=stylesheet][href=/-/css/custom-elements.css]
-	@if(hasCSS)
+	@if(hasCSS && !exclude.has('css'))
 		link[rel=stylesheet][href=./index.css]
-	@if(hasJS)
+	@if(hasJS && !exclude.has('js'))
 		script[type=module][src=./index.js]
 
 	@if(!exclude.has('navigation-menu'))

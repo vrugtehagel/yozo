@@ -4,6 +4,8 @@
 <meta attribute=iconstate type=string>
 <meta attribute=label type=string>
 <meta attribute=autoclose type=boolean>
+<meta event=open>
+<meta event=close>
 
 <template mode=closed>
 	<ui-button part=button :icon="$.icon || null" :iconstate="$.iconstate || null"

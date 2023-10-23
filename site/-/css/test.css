@@ -2,4 +2,13 @@
 	main {
 		width: min(90vw, 45rem); margin: 0 auto;
 	}
+	test-summary {
+		margin: 3rem auto 3rem;
+	}
+	test-case {
+		margin: 2rem 0;
+	}
+	#test-container {
+		margin-top: 5rem;
+	}
 }

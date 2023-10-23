@@ -1,0 +1,62 @@
+<title>test-case</title>
+<meta attribute=description type=string>
+<meta attribute=value type=string>
+<meta attribute=status type=string>
+
+<template mode=closed>
+	<div id=details>
+		<div id=summary tabindex=-1 @click="event.preventDefault()">
+			<test-status :status="$.status"></test-status>
+			<p>Test {{ $.description }}</p>
+			<ui-button icon=pointer :iconstate="$.open ? 'up' : 'down'"
+				@click="$.open = !$.open"></ui-button>
+		</div>
+		<div id=content .hidden="!$.open">
+			<ui-code language=js>{{ $.value }}</ui-code>
+		</div>
+	</div>
+</template>
+
+<script>
+when($.$open).changes().if(() => $.open).then(() => {
+	const {content} = elements
+	content.style.setProperty('--height', content.scrollHeight)
+})
+</script>
+
+<style>
+:host {
+	display: block;
+}
+
+#details {
+	padding: 1rem;
+	background-color: var(--background-color);
+	border-radius: 1.5rem;
+}
+
+#summary {
+	list-style: none;
+	display: flex;
+	align-items: center; gap: .5rem;
+	& p {
+		flex: 1;
+		margin: 0;
+	}
+}
+
+#content {
+	display: block;
+	height: calc(var(--height) * 1px);
+	border-radius: 1rem;
+	overflow: hidden;
+	transition: height .3s;
+	&[hidden]{ height: 0; }
+}
+
+ui-code {
+	margin: 1rem 0 0;
+	background-color: var(--sub-background-color);
+	&:not(:defined){ display: none; }
+}
+</style>

@@ -31,12 +31,15 @@
 		clip-path: inset(50%);
 	}
 	h1 {
+		margin: 2em 0 1em;
 		font-size: 3rem;
 	}
 	h2 {
+		margin: 2em 0 1em;
 		font-size: 2rem;
 	}
 	h3 {
+		margin: 1em 0 .5em;
 		font-size: 1.75rem;
 	}
 	code {
@@ -44,6 +47,7 @@
 		background-color: var(--background-color);
 	    border-radius: 0.5em;
 		font-family: var(--font-monospace);
+		ui-callout & { padding: .125em .25em; }
 	}
 	a {
 		color: var(--name-color);

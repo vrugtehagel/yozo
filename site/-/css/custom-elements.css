@@ -22,7 +22,7 @@
 	ui-code:not(:defined){ white-space: pre; }
 
 	ui-callout {
-		display: block; padding: 1.5rem 2rem; margin: 2rem 0;
+		display: flex; padding: 1.5rem 2rem 1.5rem 1rem; margin: 2rem 0;
 		background-color: var(--background-color);
 	}
 	ui-callout > :first-child { margin-top: 0; }

@@ -10,6 +10,7 @@ addTransform('badge', text => {
 })
 
 const root = new URL('./dist/-/csml/root.csml', import.meta.url)
+const test = new URL('./dist/-/csml/test.csml', import.meta.url)
 
 for await(const {path} of expandGlob('./dist/**/*.csml')){
 	if(path.includes('/-/')) continue
@@ -18,3 +19,12 @@ for await(const {path} of expandGlob('./dist/**/*.csml')){
 		.then(html => Deno.writeTextFile(`${path.slice(0, -5)}.html`, html))
 }
 
+for await(const {path} of expandGlob('./dist/**/*.tks')){
+	if(path.includes('/-/')) continue
+	const layoutArgs = {url: path}
+	csml.render(root, {url: test, layoutArgs}).then(async html => {
+		const directory = path.split('/').slice(0, -1).join('/')
+		await Deno.mkdir(`${directory}/test`).catch(() => null)
+		Deno.writeTextFile(`${directory}/test/index.html`, html)
+	})
+}

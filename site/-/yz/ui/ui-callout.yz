@@ -12,8 +12,8 @@
 :host([type=danger]){ --callout-color: var(--error-color); }
 
 :host {
-	display: flex; padding: 1.5rem 2rem; margin: 2rem 0;
-	gap: .5rem; align-items: center;
+	display: flex; padding: 1.5rem 2rem 1.5rem 1rem; margin: 2rem 0;
+	gap: .75rem; align-items: center;
 	background-color: var(--background-color);
 	position: relative;
 	box-shadow: 3px 0 0 inset var(--callout-color, var(--text-color));

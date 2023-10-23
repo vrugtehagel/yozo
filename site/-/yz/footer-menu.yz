@@ -4,22 +4,22 @@
 	<footer>
 		<nav>
 			<site-settings label="Settings"></site-settings>
-			<a href=https://github.com/vrugtehagel/yozo>
-				<ui-icon type=github></ui-icon>
+			<ui-button icon=github href=https://github.com/vrugtehagel/yozo>
 				Source code
-			</a>
-			<a href=https://github.com/vrugtehagel/yozo/issues/new>
-				<ui-icon type=github-issue></ui-icon>
+			</ui-button>
+			<ui-button icon=github-issue
+				href=https://github.com/vrugtehagel/yozo/issues/new>
 				File an issue
-			</a>
-			<a href=https://vrugtehagel.nl/>
-				<ui-icon type=vrugtehagel></ui-icon>
+			</ui-button>
+			<ui-button icon=vrugtehagel href=https://vrugtehagel.nl/>
 				vrugtehagel
-			</a>
+			</ui-button>
 			<ui-button #if="document.documentElement.scrollHeight > 3000"
-				@click="window.scroll({top: 0, behavior: 'smooth'})">
-				Back to top
-				<ui-icon type=pointer state=up></ui-icon>
+				id=back-to-top @click="window.scroll({top: 0, behavior: 'smooth'})">
+				<span>
+					Back to top
+					<ui-icon type=pointer state=up></ui-icon>
+				</span>
 			</ui-button>
 		</nav>
 		<small>&copy; {{ (new Date).getFullYear() }} vrugtehagel,
@@ -46,16 +46,23 @@ site-settings::part(dropdown){
 	--appear-from: 0 .5rem;
 	inset: auto auto calc(100% + 1rem) 0;
 }
-ui-button, a, site-settings {
-	transition: background-color .2s;
-	&:hover { background-color: var(--background-color); }
+ui-button:hover, site-settings:hover, site-settings[open] {
+	background-color: var(--background-color);
 }
 ui-icon:not(:defined){
 	width: 3rem;
 	height: 3rem;
 }
-ui-button { margin-left: auto; }
-ui-button ui-icon { margin: 0 -1rem 0 0; }
+#back-to-top {
+	margin-left: auto;
+	& span {
+		display: flex;
+		align-items: center;
+	}
+	& ui-icon {
+		padding: 0; margin: 0 -.5rem 0 .5rem;
+	}
+}
 small {
 	display: block; margin-top: 1.5rem;
 	color: var(--comment-color);

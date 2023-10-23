@@ -2,16 +2,30 @@
 <meta attribute=language type=string default="js">
 
 <template mode=closed>
-	<ui-syntax-highlight
-		:language="$.language"
-		:value="$.siteSettings?.format($.content ?? '', $.language) ?? ''"
-		.style.tab-size="$.siteSettings?.$settings.tabSize ?? 4"
-	>{{ $.content }}</ui-syntax-highlight>
+	<div id=container .style.tab-size="$.siteSettings?.$settings.tabSize ?? 4">
+		<div id=line-numbers .hidden="!$.siteSettings?.$settings.lineNumbers">
+			<span #for="$number of $.$numbers">{{ yozo.live.get($number) }}</span>
+		</div>
+		<ui-syntax-highlight
+			:language="$.language"
+			:value="$.value"
+		>{{ $.content }}</ui-syntax-highlight>
+	</div>
 </template>
 
 <script>
 import('/-/js/site-settings/index.js')
 	.then(siteSettings => $.siteSettings = siteSettings)
+const {container, uiSyntaxHighlight} = elements
+
+live.link($.$value, () => {
+	const content = $.content?.trim() ?? ''
+	return $.siteSettings?.format(content, $.language) ?? content
+})
+live.link($.$numbers, () => {
+	if(!$.siteSettings?.$settings.lineNumbers) return []
+	return $.value.split('\n').map((line, index) => index + 1)
+})
 
 connected(() => {
 	when(this).observes('mutation', {childList: true, characterData: true})
@@ -21,6 +35,23 @@ connected(() => {
 </script>
 
 <style>
+:host {
+	display: block; padding: 1rem 2rem;
+	background: var(--background-color);
+	font-family: var(--font-monospace); line-height: 1.5;
+	border-radius: 1rem;
+	overflow: auto;
+}
+#container {
+	display: flex;
+}
+#line-numbers {
+	padding: 0 1.5rem 0 0;
+	color: var(--comment-color);
+	line-height: 1.5;
+	text-align: right;
+	& span { display: block; }
+}
 ui-syntax-highlight:not(:defined) {
 	white-space: pre;
 }

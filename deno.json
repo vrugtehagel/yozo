@@ -3,6 +3,7 @@
 		"csml/": "https://deno.land/x/csml@0.1.12/",
 		"std/": "https://deno.land/std@0.185.0/",
 		"src/": "./src/",
+		"site/": "./site/"
 	},
 	"lock": false
 }

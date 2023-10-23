@@ -1,0 +1,43 @@
+<title>test-summary</title>
+<meta attribute=total type=number>
+<meta attribute=success type=number>
+<meta attribute=failed type=number>
+<meta attribute=invalid type=number>
+
+<template mode=closed>
+	<test-status :status="$.status"></test-status>
+	<p>{{ $.summary }}</p>
+</template>
+
+<script>
+live.link($.$summary, () => {
+	const failed = $.failed + $.invalid
+	if(failed == 1) return 'Uh oh. One of the tests failed!'
+	if(failed > 1) return `Something's wrong, ${ failed } tests failed!`
+	if($.success == $.total) return `All ${ $.total } tests passed.`
+	return `Running tests. So far, ${ $.success } out of ${ $.total } tests passed.`
+})
+live.link($.$status, () => {
+	if($.failed || $.invalid) return 'failed'
+	if($.success == $.total) return 'success'
+	return 'running'
+})
+</script>
+
+<style>
+:host {
+	display: flex; width: max-content; max-width: 70vw;
+	padding: .5rem 1.5rem .5rem .5rem; box-sizing: border-box;
+	align-items: center;
+	background-color: var(--background-color);
+	border-radius: 1rem;
+}
+
+test-status:not(:defined){
+	display: block; width: 3rem; height: 3rem;
+}
+
+p {
+	margin: 0;
+}
+</style>
