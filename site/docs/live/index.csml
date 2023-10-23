@@ -14,10 +14,10 @@ ui-code
 h3 Parameters
 dl
 	dt ``value``
-	dd > p Any primitive or object to create a live (reactive) variable for.
+	dl > p Any primitive value, array or object to create a live (reactive) variable for.
 
 h3 Return value
-p A live variable. It is technically a proxy but behaves like an instance of ``EventTarget``. It fires a ``change`` event whenever its underlying value changes. Some contexts, like inside an [``effect()``](/docs/effect/) or in an [``{{'{'}}{ inlineExpression }}``](/docs/components/template/inline-expression/) in a component's template, react to changes in their live dependencies.
+p A live variable. Live variables are objects that "wrap" an underlying value, and fire certain events whenever properties (or nested properties) are modified. Some contexts, such as inside an [``effect()``](/docs/effect/) or in an [``{{'{'}}{ inlineExpression }}``](/docs/components/template/inline/) in a component's template, react to changes in their live dependencies.
 
 h3 Methods
 dl
@@ -30,13 +30,22 @@ dl
 	dt [``live.link()``](/docs/live/link/)
 	dd > p Link a live variable to other live variables, or a non-live source of dynamic data such as an ``<input>`` element.
 
+h3 Events
+dl
+	dt [``change``](/docs/live/change/)
+	dd > p An event that fires whenever the underlying value of a live variable directly changes.
+	dt [``deepchange``](/docs/live/deepchange/)
+	dd > p An event that is dispatched whenever any nested property of a live variable changes, including the variable itself.
+	dt [``keychange``](/docs/live/deepchange/)
+	dd > p An event that fires any time a property gets added or deleted on the underlying value of a live variable.
+
 ui-callout[type=warning]
-	p **Warning:** It is strongly recommended to start the names of live variables, and live variables only, with a "$". Not only is this helpful in distinguishing live variables from plain (non-live) values, but live variables also respond to accessing a $-prefixed key by returning a live variable for that key. This means that data structures that already have $-prefixed keys may cause nasty bugs if not handled carefully.
+	p **Warning:** It is strongly recommended to start the names of live variables, and live variables only, with a "$". Not only is this helpful in distinguishing live variables from plain (non-live) values, but live variables also respond to accessing a $-prefixed key by returning a live variable for that key. Live, non-dollar-prefixed variable names, as well as dollar-prefixed non-live variables or properties, may lead to nasty and confusing bugs.
 
 h2 Examples
 
-h3 .key versus .$key
-p When accessing properties on a live variable, the presence or lack of the dollar symbol determines whether a live variable is returned or the value. Specifically, prefixing a key with the dollar symbol results in a live variable around the value at that key. On the other hand, leaving it out simply acts like a regular property access.
+h3 .key and .$key
+p When accessing properties on a live variable, the presence or lack of the dollar symbol determines whether a live variable is returned or the value. Specifically, prefixing a key with the dollar symbol results in a live variable around the value at that key. Leaving it out simply acts like a regular property access. In code,
 
 ui-code
 	const $data = live({ foo: 23 });
@@ -60,102 +69,15 @@ ui-code
 	console.log($data.$$bar); // Live<"baz">
 	console.log(live.get($data, '$baz')); // "baz"
 
-p When setting a nested property of a live variable, it is necessary to keep the access chain live (dollar-prefixing all intermediate keys), with the exception of the last key.
+p When setting a nested property of a live variable, it is strongly recommended to keep the access chain live (dollar-prefixing all intermediate keys), with the exception of the last key. This is because contexts reacting to changes in live variables can only see changes as far as the first non-live access. For example:
 
 ui-code
 	const $data = live({ foo: { bar: { baz: 'qux' } } });
 	$data.$foo.$bar.baz = 'quux'; // correct
 
-	$data.$foo.$bar.$baz = 'quux'; // incorrect; sets the "$baz" key
-	$data.foo.bar.baz = 'quux'; // incorract; loses reactivity
+	$data.$foo.$bar.$baz = 'quux'; // sets the "$baz" key
+	$data.foo.bar.baz = 'quux'; // loses reactivity
 
-p The first is correct since each intermediate live variable is created, and the last ``.baz`` can be seen by the live variable around the ``$bar`` property. The second simply sets the ``$baz`` key instead of the ``baz`` key. The last one is a bit more subtle. It first retrieves ``$data.foo`` (and that becomes a dependency if it is in a tracking context) but after that they are simple property accesses on plain objects, which ``live()`` cannot see. It then also has no idea the ``baz`` property was set, so it cannot trigger a change event. On the other hand, the correct version to set ``baz`` does __not__ add a dependency to tracking contexts, because it is setting a value, rather than using one.
+p The first is correct since each intermediate live variable is created, and the last ``.baz`` can be seen by any contexts watching. The second simply sets the ``$baz`` key instead of the ``baz`` key (probably a mistake). The last one is a bit more subtle. It first retrieves ``$data.foo`` (and that becomes a dependency if it is in a tracking context) but after that they are simple property accesses on plain objects, which ``live()`` cannot see. It then also has no idea the ``baz`` property was set, so it cannot trigger a change event. On the other hand, the first (correct) version to set the ``baz`` property does __not__ add a dependency to tracking contexts, because it is setting a value, rather than using one.
 
 p Lastly, it is not recommended to use symbols as keys on live objects. While symbol keys remain reactive, it is not possible to retrieve the live variable around a value at symbol, since symbols cannot be prefixed with a "$".
-
-h3 Event listeners
-p The main feature of live variables is being able to listen to changes. This works like any other ``EventTarget``; through the use of ``.addEventListener``, or equivalently through [``when()``](/docs/when/). The events dispatched are custom ``change`` events. The events bubble up through nested data structures, so it is possible to listen not only to changes in one property, but any sub-property by attaching the listener to an "ancestor" object. For example:
-
-ui-code
-	const $data = live({ bar: { baz: 'qux' } });
-	when($data).changes().then(() => {
-		console.log('$data changed!');
-	});
-
-	$data.$bar.baz = 'quux'; // $data changed!
-
-p The event also exposes some information about the change through ``event.detail``. Specifically, it exposes the old and new value of the live variable the listener was attached to through ``detail.oldValue`` and ``detail.value`` respectively. Note that in the case of event bubbling, this means that the old and new value are equal; they are both references to the same object that experienced a nested change. Since the reference itself did not change, the old and new value are the same.
-
-p To listen to changes in __any__ key, while also being able to retrieve their old value, a manual cache will be necessary:
-
-ui-code
-	const $data = live({ foo: 23 });
-	let cache = { ...$data };
-	when($data).changes().then(() => {
-		const changedKeys = Object.keys($data)
-			.filter(key => $data[key] != cache[key]);
-		for(const key of changedKeys){
-			const oldValue = cache[key];
-			const value = $data[key];
-			// React to changes using key, value, oldValue
-		}
-		cache = { ...$data };
-	});
-
-p Note that the above assumes the object is not receiving any dollar-prefixed keys for simplicity's sake; in order to support that, we'll need to be a bit more careful with spreading the object (that is, we would need ``{...live.get($data)})`` instead of ``{...$data}``) as well as with accessing arbitrary keys (i.e. we'll need ``live.get($data, key)`` rather than ``$data[key]``).
-
-h3 Tracking contexts
-p Some contexts, such as inside the [``effect()``](/docs/effect/) callback, track live dependencies. Because of this, it is often not necessary to manually attach event listeners to live variables. 
-
-p In fact, in components, there is even no need for using ``live()`` itself; each component instance gets [``$``](/docs/components/$/), a live variable for internal component state (including instance properties and attributes). To demonstrate the reactivity, here is a simple click counter component:
-
-ui-code[language=yz]
-	<title>click-counter</title>
-	<meta attribute="count" type="number">
-	<template>
-		<button @click="$.count++">
-			Click count: {{'{'}}{ $.count }}
-		</button>
-	</template>
-
-p The [``{{'{'}}{ inlineExpression }}``](/docs/components/template/inline-expression/) inside the template creates a tracking context, which means it tracks its live dependencies. As it is watching for changes, the template updates whenever ``$.count`` is altered, with no additional work required. The ``$.count`` property is linked to the custom element's "count" attribute, so we both reactively update the component state when the user clicks the button (through ``$.count++``) as well as when the "count" attribute changes.
-
-h3 Detached live variables
-p When creating a live variable using ``live()``, this variable acts as the "root" of all its descendants. In a way, (nested) property accesses act as a "window" into that chain of keys, relative to the root, but it doesn't actually matter if that key is accessible in the first place. Perhaps it's a bit easier to understand with code:
-
-ui-code
-	const $data = live({ foo: 23 });
-
-	console.log($data.$bar); // Live<undefined>
-	console.log($data.$bar.$baz); // Live<undefined> (not an error!)
-
-p In a way, ``$data.$bar.$baz`` is simply "waiting" for this particular chain of keys to come into existance. It doesn't really care that ``$data.$bar`` is a live variable around ``undefined``. Even accessing it through ``$data.$bar.baz`` evaluates to ``undefined``. This feature makes it a lot easier to listen to large nested state, because we don't even have to worry about setting up the data structure before listening for changes. We could do:
-
-ui-code
-	const $data = live({ foo: 23 });
-
-	when($data.$bar.$baz).changes().then(() => {
-		console.log('baz changed!');
-	});
-	$data.bar = { baz: 'qux' }; // "baz changed!"
-
-h3 Live arrays
-p So far, we've only discussed changes to live variables by, well, directly setting them to something else. When working with arrays, this is not usually the case; arrays are altered through e.g. ``.push()``, ``.pop()``, ``.splice()``, setting ``.length``, etcetera. Of course, we'd like our live variables to react to these changes as well. Luckily, array methods are all implemented generically, meaning that even if the thing they are being called on is not __technically__ an array, they will work as long as it has the necessary properties. Live variable around arrays are not themselves arrays (they are proxies) but do have all the properties that the array has. Thus, if we treat the live variable like an array, it triggers a change as expected:
-
-ui-code
-	const $data = live({ drinks: ['tea', 'coffee', 'milk'] });
-
-	when($data.$drinks).changes().then(() => {
-		console.log('drinks changed!');
-	});
-
-	$data.$drinks[2] = 'lemonade'; // drinks changed!
-	$data.$drinks.push('water'); // drinks changed!
-	$data.$drinks.length = 0; // drinks changed!
-
-p However, JavaScript ``Map`` and ``Set`` objects don't have this property that arrays do; their methods really rely on the internal slots of the ``Map`` or ``Set`` objects, and that's something proxies cannot handle. It is therefore not possible to use live variables for reactive sets or maps.
-
-h2 Usage notes
-p A few notes about the bavior of live variables. Live variables generally avoid being double-live, meaning that if a live variable is being set to another live variable, the latter is unwrapped and the former is set to the non-live value directly. Passing a live variable to ``live()`` itself does the same; it is unwrapped first, and then a new live variable is created for that value.
-
-p When passing the same object reference to ``live()`` multiple times, new live variables are created for each call. This can lead to confusion, as multiple different live variables are then looking at the same objects. It is therefore not recommended; re-use a single live variable instead.
