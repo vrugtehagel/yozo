@@ -85,6 +85,7 @@ class LiveCore {
 		if(diff.size)
 			this.__$value.dispatchEvent(new CustomEvent('keychange', {detail: {keys: [...diff]}}))
 		let core = this.__parent
+		deepChanges.add(this)
 		while(!deepChanges.has(core) && core.__parent){
 			core.__alter(null, deepChanges)
 			deepChanges.add(core)
