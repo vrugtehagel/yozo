@@ -1,0 +1,59 @@
+@script
+	export const layout = 'docs'
+	export const title = 'Versions'
+	export const description = 'Download Yozo\'s development or production bundle, new or old, and see how the more recent versions differ from past ones.'
+	const versionsURL = new URL('../../archive/versions.json', import.meta.url)
+	const versions = await fetch(versionsURL).then(response => response.json())
+
+	const year = 'numeric'
+	const month = 'long'
+	const day = 'numeric'
+	const options = {year, month, day}
+	const formatter = new Intl.DateTimeFormat('en-US', options)
+
+h2 Latest
+p Click the buttons below to download the latest Yozo bundles.
+
+div#download-latest
+	a[href=/lib-latest.js][download="lib.js"]
+		ui-icon[type=production]
+		:text-only Production
+	a[href=/dev-latest.js][download="dev.js"]
+		ui-icon[type=development]
+		:text-only Development
+
+p Note: development bundles have more thorough checks and error handling built-in than the production bundle. If the development bundle throws an error, it either will not work in production or is extremely fragile. Warnings may be ignored, though keep in mind that the production bundle has all warnings stripped out.
+
+h2 Compare
+p Compare an older version of Yozo to a newer one to see a summary of what's changed. A straight-forward answer as to what to expect when upgrading.
+
+download-compare
+
+h2 Archive
+p Here you'll find all versions Yozo has been through since its release, in reverse-chronological order (i.e. newest first).
+
+@for(const version of versions)
+	div.version
+		h3 Version {{ version.number }}
+		a.download-lib[href=/lib-{{ version.number }}.js]
+		&[download="lib-{{ version.number }}.js"]
+		&[aria-label="Download version {{ version.number }}'s production bundle"]
+			ui-icon[type=production]
+		a.download-dev[href=/dev-{{ version.number }}.js]
+		&[download="dev-{{ version.number }}.js"]
+		&[aria-label="Download version {{ version.number }}'s development bundle"]
+			ui-icon[type=development]
+		span.timestamp {{ formatter.format(version.timestamp) }}
+		span.hash {{ version.hash }}
+		@if(version.changelog.breaking.length > 0)
+			p Breaking changes
+			ul @for(const change of version.changelog.breaking)
+				li {{ change }}
+		@if(version.changelog.improvements.length > 0)
+			p Improvements
+			ul @for(const change of version.changelog.improvements)
+				li {{ change }}
+		@if(version.changelog.bugs.length > 0)
+			p Bug fixes
+			ul @for(const change of version.changelog.bugs)
+				li {{ change }}

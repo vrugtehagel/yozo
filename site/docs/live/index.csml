@@ -4,7 +4,7 @@
 	export const description = 'The ``live()`` function creates a reactive wrapper around a value, to be used in effects, component templates or elsewhere.'
 
 ui-callout[type=info]
-	p **Note:** Each custom element already receives [``$``](/docs/component/$/), a live variable for state management in the component instance. As such, using ``live()`` inside component definitions is often not necessary; simply create keys under ``$`` instead. Use ``live()`` for creating external live data, such as a global state object.
+	p **Note:** Each custom element already receives [``$``](/docs/components/$/), a live variable for state management in the component instance. As such, using ``live()`` inside component definitions is often not necessary; simply create keys under ``$`` instead. Use ``live()`` for creating external live data, such as a global state object.
 
 h2 Syntax
 
@@ -14,7 +14,7 @@ ui-code
 h3 Parameters
 dl
 	dt ``value``
-	dl > p Any primitive value, array or object to create a live (reactive) variable for.
+	dd > p Any primitive value, array or object to create a live (reactive) variable for.
 
 h3 Return value
 p A live variable. Live variables are objects that "wrap" an underlying value, and fire certain events whenever properties (or nested properties) are modified. Some contexts, such as inside an [``effect()``](/docs/effect/) or in an [``{{'{'}}{ inlineExpression }}``](/docs/components/template/inline/) in a component's template, react to changes in their live dependencies.
@@ -39,13 +39,16 @@ dl
 	dt [``keychange``](/docs/live/deepchange/)
 	dd > p An event that fires any time a property gets added or deleted on the underlying value of a live variable.
 
-ui-callout[type=warning]
-	p **Warning:** It is strongly recommended to start the names of live variables, and live variables only, with a "$". Not only is this helpful in distinguishing live variables from plain (non-live) values, but live variables also respond to accessing a $-prefixed key by returning a live variable for that key. Live, non-dollar-prefixed variable names, as well as dollar-prefixed non-live variables or properties, may lead to nasty and confusing bugs.
 
 h2 Examples
 
 h3 .key and .$key
-p When accessing properties on a live variable, the presence or lack of the dollar symbol determines whether a live variable is returned or the value. Specifically, prefixing a key with the dollar symbol results in a live variable around the value at that key. Leaving it out simply acts like a regular property access. In code,
+p When accessing properties on a live variable, the presence or lack of the dollar symbol determines whether a live variable is returned or the value. Specifically, prefixing a key with the dollar symbol results in a live variable around the value at that key. Leaving it out simply acts like a regular property access.
+
+ui-callout[type=info]
+	p **Note:** Because of the way live variables respond to dollar-prefixed property accesses, it is strongly recommended to start the names of live variables (and live variables only) with a "$".
+
+p It is quite important to understand and distinguish live variables from from the value they wrap. For example, attaching an event listener requires using the live variable (dollar-prefixed) whereas property retrieval and assignment need the underlying value and therefore need the non-dollar-prefixed versions:
 
 ui-code
 	const $data = live({ foo: 23 });
@@ -78,6 +81,51 @@ ui-code
 	$data.$foo.$bar.$baz = 'quux'; // sets the "$baz" key
 	$data.foo.bar.baz = 'quux'; // loses reactivity
 
-p The first is correct since each intermediate live variable is created, and the last ``.baz`` can be seen by any contexts watching. The second simply sets the ``$baz`` key instead of the ``baz`` key (probably a mistake). The last one is a bit more subtle. It first retrieves ``$data.foo`` (and that becomes a dependency if it is in a tracking context) but after that they are simple property accesses on plain objects, which ``live()`` cannot see. It then also has no idea the ``baz`` property was set, so it cannot trigger a change event. On the other hand, the first (correct) version to set the ``baz`` property does __not__ add a dependency to tracking contexts, because it is setting a value, rather than using one.
+p The first is correct since each intermediate live variable is created, and the last ``.baz`` can be seen by any contexts watching. The second simply sets the ``$baz`` key instead of the ``baz`` key (probably a mistake). The last one is a bit more subtle. It first retrieves ``$data.foo`` (and that becomes a dependency if it is in a tracking context) but after that they are simple property accesses on plain objects, which tracking contexts cannot see. It then also has no idea the ``baz`` property was set, so it cannot trigger a change event. On the other hand, the first (correct) version to set the ``baz`` property does fire the change even and does __not__ add a dependency to tracking contexts, because it is setting a value, rather than using one.
 
-p Lastly, it is not recommended to use symbols as keys on live objects. While symbol keys remain reactive, it is not possible to retrieve the live variable around a value at symbol, since symbols cannot be prefixed with a "$".
+p Lastly, while possible, it is not recommended to use symbols as keys on live objects. Symbol keys themselves remain reactive, but it is not possible to retrieve the live variable around a value at symbol, since symbols cannot be prefixed with a "$".
+
+h3 Tracking contexts
+p Some contexts, such as inside the [``effect()``](/docs/effect/) callback, track live dependencies. Because of this, it's often not needed to manually attach the event listeners to live variables.
+
+p In fact, in components, there is even no need for using ``live()`` itself; each component instance gets [``$``](/docs/components/$/), a live variable for internal component state (including instance properties and attributes). To demonstrate the reactivity, here is a simple click counter component:
+
+ui-code[language=yz]
+	<title>click-counter</title>
+	<meta attribute="count" type="number">
+	<template>
+		<button @click="$.count++">
+			Click count: {{'{'}}{ $.count }}
+		</button>
+	</template>
+
+p The [``{{'{'}}{ inlineExpression }}``](/docs/components/template/inline-expression/) inside the template creates a tracking context, so that it tracks its live dependencies. As it is watching for changes, the template updates whenever ``$.count`` is altered, with no additional work required. The ``$.count`` property is linked to the custom element's "count" attribute, so we both reactively update the component state when the user clicks the button (through ``$.count++``) as well as when the "count" attribute changes.
+
+h3 Optional chaining
+p Live variables come with optional chaining built-in. In other words, accessing a property on a live variable will never throw an error, and simply return `undefined` if the live variable's value that the property was accessed on didn't exist. Live variables will still fire events as you'd expect. Here's an example:
+
+ui-code
+	const $data = live({ foo: 23 });
+
+	console.log($data.$bar.$baz); // Live<undefined>
+	console.log($data.$bar.baz); // undefined
+
+	when($data.$bar.$baz).changes().then(() => {
+		console.log('baz changed!');
+	});
+
+	$data.bar = { baz: 'qux' }; // "baz changed!"
+
+p Note that this also means it is safe to just assume a certain data structure, even before the data structure has been loaded. For example, code may rely on nested keys on a live global state object before the state object exists. This makes it very easy to write clean effects and template logic.
+
+h2 Usage notes
+p A few notes about the bavior of live variables. Live variables generally automatically avoid being double-live, meaning that if a live variable is being assigned to another live variable, it is unwrapped and the assignee is set to the non-live value directly. Passing a live variable to ``live()`` itself does the same; it is unwrapped first, and then a new live variable is created for that value.
+
+p When passing the same object reference to ``live()`` multiple times, new live variables are created for each call. This can lead to confusion, as multiple different live variables are then looking at the same object. When changing a value on one, the other live data structure does not see the change. It is therefore not recommended to do this; re-use a single live variable or data structure instead.
+
+h2 See also
+ul
+	li [``$``](/docs/components/$/) for more information on the live variable managing state for components.
+	li [``effect()``](/docs/effect/) to see how live variables interact with tracking contexts.
+	li For advanced use, see [``track.live()``](/docs/track/live/) for manually creating contexts able to track live variables.
+

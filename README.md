@@ -21,7 +21,7 @@ Here's a list of things that I would like if they fit within budget
 Below this, there's a more detailed breakdown of the site and what's needed.
 
  - [ ] Lock in modules by writing tests (in their respective page in /docs/)
-     - [ ] `watch` and related
+     - [ ] `live` and related
      - [ ] `track` and related
      - [ ] `flow` and related
      - [ ] `when` and related
@@ -80,7 +80,7 @@ The tour highlights each individual part of Yozo in a logical order, allowing th
     - Basics of when()
        - Outline .then()
        - Outline .throttle() and promise other goodies
-    - Basics of watch()
+    - Basics of live()
        - Outline $-convention
        - Outline $ in Yozo components
     - Basics of track() (and track.undo())
@@ -102,43 +102,62 @@ A section with a simple sandbox, allowing for multiple files and allowing the us
 ### Docs
 
 We need the following pages, in the same tree-like structure (~40 pages).
- - track()
-    - track.define()
-    - track.register()
-    - track.ignore()
-    - track.undo()
-    - track.watched()
-    - until()
- - watch()
-    - watch.get()
-    - watch.set()
-    - watch.delete()
-    - watch.bind()
- - Thenable
-    - thenable.pipe()
-    - thenable.now()
-    - thenable.then()
-    <!-- - thenable.await() -->
-    - thenable.if()
-    - thenable.or()
-    - thenable.after()
-    - thenable.cleanup()
-    - thenable.die()
-    - thenable.until()
-    - thenable.once()
-    - thenable.debounce()
-    - thenable.throttle()
- - when()
-    - when().observes()
- - purify()
- - fetch()
- - timeout()
- - interval()
- - frame()
- - register()
-    - register.auto()
- - define()
-    - define.register()
+ - [ ] track()
+    - [ ] track.define()
+    - [ ] track.register()
+    - [ ] track.ignore()
+    - [ ] track.undo()
+    - [ ] track.live()
+    - [ ] until()
+ - [x] live()
+    - [ ] live.get()
+    - [ ] live.set()
+    - [ ] live.delete()
+    - [ ] live.link()
+ - [ ] Flow
+    - [ ] flow.pipe()
+    - [ ] flow.now()
+    - [ ] flow.then()
+    - [ ] flow.if()
+    - [ ] flow.or()
+    - [ ] flow.after()
+    - [ ] flow.cleanup()
+    - [ ] flow.die()
+    - [ ] flow.until()
+    - [ ] flow.once()
+    - [ ] flow.debounce()
+    - [ ] flow.throttle()
+ - [ ] when()
+    - [ ] when().observes()
+ - [ ] timeout()
+ - [ ] interval()
+ - [ ] frame()
+ - [ ] paint()
+ - [ ] register()
+    - [ ] register.auto()
+ - [ ] purify()
+ - [ ] effect()
+ - [ ] components
+    - [ ] title
+    - [ ] template
+       - [ ] inline
+       - [ ] for...of
+       - [ ] if...else
+       - [ ] attributes
+    - [ ] meta
+       - [ ] @event
+       - [ ] :attribute
+       - [ ] .property
+       - [ ] form-associated
+       - [ ] property
+       - [ ] method
+       - [ ] hook
+    - [ ] script
+    - [ ] connected
+    - [ ] disconnected
+    - [ ] style
+    - [ ] $
+    - [ ] elements
 
 ## Also do
  - Generate sourcemaps for dev version

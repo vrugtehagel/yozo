@@ -16,15 +16,12 @@ html[lang=en]
 	title {{ page.title }} | YOZO
 
 	@if(!exclude.has('yozo'))
-		script[src=/dev.js]
+		script[src=/dev-latest.js]
 	@if(!exclude.has('yozo-register'))
 		script
-			const namespaces = ['ui', 'play', 'test', 'docs', 'tour']
-			window.yozo.register.auto(name => {
-				const namespace = namespaces
-					.find(namespace => name.startsWith(`${namespace}-`))
-				if(namespace) return `/-/yz/${namespace}/${name}.yz`
-				return `/-/yz/${name}.yz`
+			self.yozo.register.auto(name => {
+				const namespace = name.split('-', 1)[0]
+				return `/-/yz/${namespace}/${name}.yz`
 			})
 	style
 		@layer base, custom-elements, layout;
@@ -38,8 +35,8 @@ html[lang=en]
 	@if(hasJS && !exclude.has('js'))
 		script[type=module][src=./index.js]
 
-	@if(!exclude.has('navigation-menu'))
-		navigation-menu
+	@if(!exclude.has('site-nav'))
+		site-nav
 
 
 	@if(page.layout)
@@ -48,5 +45,5 @@ html[lang=en]
 		:html {{ content }}
 
 
-	@if(!exclude.has('footer-menu'))
-		footer-menu
+	@if(!exclude.has('site-footer'))
+		site-footer

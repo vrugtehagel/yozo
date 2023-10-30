@@ -3,9 +3,9 @@ body {
 	grid-template: auto 1fr / 1fr; gap: 1rem;
 	transition: padding-top .3s;
 	overflow: hidden;
-	&:has(navigation-menu[hidden]){ padding-top: .875rem; }
+	&:has(site-nav[hidden]){ padding-top: .875rem; }
 }
-navigation-menu {
+site-nav {
 	transition: top .3s;
 	box-shadow: none;
 	&[hidden]{ top: -4.5rem; }

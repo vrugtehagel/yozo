@@ -7,7 +7,7 @@
 	export const title = page.title
 
 link[rel=stylesheet][href=/-/css/test.css]
-script[type=module][src=/-/js/test-page/index.js]
+script[type=module][src=/-/js/page-test/index.js]
 
 main
 	h1 Tests for {{ page.title }}

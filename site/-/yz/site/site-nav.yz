@@ -1,4 +1,4 @@
-<title>navigation-menu</title>
+<title>site-nav</title>
 
 <template mode=closed>
 	<nav>
@@ -8,7 +8,9 @@
 		</ui-button>
 		<ui-button href=/tour/ disabled>Tour</ui-button>
 		<ui-button href=/play/>Play</ui-button>
-		<ui-button href=/docs/ disabled>Docs</ui-button>
+		<ui-button href=/docs/>Docs</ui-button>
+		<!-- search -->
+		<ui-button icon=download href=/download/></ui-button>
 	</nav>
 </template>
 
@@ -29,5 +31,11 @@ ui-icon[type=wordmark]{
 }
 ui-button {
 	font-size: clamp(1rem, 4vw + .25rem, 1.25rem); line-height: 1.5rem;
+	&[icon=download]{
+		margin-left: auto;
+	}
+}
+@media (width < 800px){
+	ui-button[icon=download]{ display: none; }
 }
 </style>

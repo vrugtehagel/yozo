@@ -40,7 +40,7 @@ import('/-/js/play-manager/index.js')
 
 effect(() => {
 	const hidden = $.navigationMenuHidden
-	const navigationMenu = document.querySelector('navigation-menu')
+	const navigationMenu = document.querySelector('site-nav')
 	if(!navigationMenu) return
 	navigationMenu.hidden = hidden
 })

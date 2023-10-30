@@ -1,11 +1,8 @@
 // a live variable __name__ gets created with value __value__
 const __name__ = yozo.live(__value__);
 
-// listeners are attached to __live__
-let changes = 0, keychanges = 0, deepchanges = 0;
-__live__.addEventListener('change', () => changes++);
-__live__.addEventListener('keychange', () => keychanges++);
-__live__.addEventListener('deepchange', () => deepchanges++);
+// a variable __name__ gets created with value __value__
+let __name__ = __value__;
 
 // __live__ gets set to __value__
 __live__ = __value__;
@@ -16,86 +13,59 @@ delete __live__;
 // __left__ is equal to __right__
 __left__ == __right__
 
-// the __event__ event was not fired
-__event__s == 0
+// __left__ is different from __right__
+__left__ != __right__
 
-// the __event__ event was fired once
-__event__s == 1
+// an effect gets set up that reads __value__
+let effectCount = 0
+self.yozo.effect(() => {
+	__value__;
+	effectCount++;
+});
 
+// the effect ran __amount__ times
+effectCount == __amount__
 
-// TEST: modifying a live variable dispatches the right events
-// Given a live variable $ gets created with value {foo: 23}
-// and listeners are attached to $.$foo
-// When $.foo gets set to 24
-// Then the change event was fired once
-// and the deepchange event was fired once
-// Verify the keychange event was not fired
+// one microtask elapses
+await 'microtask';
 
-// TEST: modifying a live variable's child key fires the right events
-// Given a live variable $ gets created with value {foo: {bar: 23}}
-// and listeners are attached to $.$foo
-// When $.$foo.bar gets set to 24
-// Then the deepchange event was fired once
-// Verify the change event was not fired
-// and the keychange event was not fired
+// a __event__ event listener gets attached to __value__
+let __event__s = 0;
+__value__.addEventListener('__event__', () => __event__s++);
 
-// TEST: removing a live variable's child key fires the right events
-// Given a live variable $ gets created with value {foo: {bar: 23}}
-// and listeners are attached to $.$foo
-// When $.$foo.bar gets deleted
-// Then the deepchange event was fired once
-// and the keychange event was fired once
-// Verify the change event was not fired
+// the __event__ event was fired __amount__ times
+__event__s == __amount__
 
-// TEST: adding a child key to a live variable fires the right events
-// Given a live variable $ gets created with value {foo: {}}
-// and listeners are attached to $.$foo
-// When $.$foo.bar gets set to 23
-// Then the deepchange event was fired once
-// and the keychange event was fired once
-// Verify the change event was not fired
-
-// TEST: deleting a live variable fires the right events
-// Given a live variable $ gets created with value {foo: 23}
-// and listeners are attached to $.$foo
-// When $.foo gets deleted
-// Then the deepchange event was fired once
-// and the change event was fired once
-// Verify the keychange event was not fired
-
-// TEST: deleting a live variable's parent fires the right events
-// Given a live variable $ gets created with value {foo: {bar: 23}}
-// and listeners are attached to $.$foo.$bar
-// When $.foo gets deleted
-// Then the deepchange event was fired once
-// and the change event was fired once
-// Verify the keychange event was not fired
-
-// TEST: modifying a live variable's parent fires the right events
-// Given a live variable $ gets created with value {foo: {bar: 23}}
-// and listeners are attached to $.$foo.$bar
-// When $.foo gets set to {bar: 24}
-// Then the deepchange event was fired once
-// and the change event was fired once
-// Verify the keychange event was not fired
-
-// TEST: setting a live variable to itself fires the right events
-// Given a live variable $ gets created with value {foo: 23}
-// and listeners are attached to $.$foo
-// When $.foo gets set to 23
-// Verify the change event was not fired
-// and the keychange event was not fired
-// and the deepchange event was not fired
 
 // TEST: setting a live variable to another unwraps the other variable
-// Given a live variable $ gets created with value {foo: 23}
+// Given a live variable $ gets created with value { foo: 23 }
 // and a live variable $number gets created with value 24
-// and listeners are attached to $.$foo
 // When $.foo gets set to $number
 // Then $.foo is equal to 24
-// and the change event was fired once
 
 // TEST: creating a live variable from another unwraps the other
-// Given a live variable $ gets created with value {foo: 23}
+// Given a live variable $ gets created with value { foo: 23 }
 // and a live variable $number gets created with value $.$foo
 // Verify yozo.live.get($number) is equal to 23
+
+// TEST: effects re-run when a live variable changes
+// Given a live variable $ gets created with value { foo: 23 }
+// and an effect gets set up that reads $.foo
+// and one microtask elapses
+// Verify the effect ran 1 times
+// When $.foo gets set to 24
+// and one microtask elapses
+// Then the effect ran 2 times
+
+// TEST: optional chaining is built into live variables
+// Given a live variable $ gets created with value { foo: 23 }
+// and a change event listener gets attached to $.$bar.$baz
+// Verify $.$bar.baz is equal to undefined
+// When $.bar gets set to { baz: 'qux' }
+// Then the change event was fired 1 times
+
+// TEST: live calls create new live variables
+// Given a variable data gets created with value { foo: 23 }
+// and a live variable $data1 gets created with value data
+// and a live variable $data2 gets created with value data
+// Verify $data1 is different from $data2

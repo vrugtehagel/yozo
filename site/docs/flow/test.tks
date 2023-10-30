@@ -1,0 +1,82 @@
+// a generic flow is created
+const flow = new self.yozo.Flow();
+
+// the flow is triggered with value __value__
+flow.now(__value__);
+
+// a complex flow pipeline gets set up
+let total = 0;
+let endReached = 0;
+flow.then(number => total += number)
+	.throttle(200)
+	.if(number => number == 1)
+	.once()
+	.then(() => endReached++);
+
+// a live variable gets set up with array and activeIndex
+const $data = self.yozo.live({
+	activeIndex: 0,
+	array: ['foo', 'bar', 'baz']
+});
+
+// an effect is set up listening for changes at the active index
+let changes = 0
+self.yozo.effect(() => {
+	const index = $data.activeIndex;
+	const $item = $data.$array['$' + index];
+	self.yozo.when($item).changes().then(() => changes++);
+});
+
+// the effect gets time to run
+await 'microtask'
+
+// the active index gets set to __index__
+$data.activeIndex = 1;
+
+// the item at index __index__ changes to __value__
+$data.$array[__index__] = __value__;
+
+// there were __amount__ changes
+changes == __amount__
+
+// __duration__ milliseconds elapse
+await self.yozo.timeout(__duration__);
+
+// the total amount is __amount__
+total == __amount__
+
+// the end has not been reached
+endReached == 0
+
+// the end has been reached once
+endReached == 1
+
+
+// TEST: Complex flow pipelines work properly
+// Given a generic flow is created
+// and a complex flow pipeline gets set up
+// When the flow is triggered with value 100
+// Then the total amount is 100
+// When 100 milliseconds elapse
+// and the flow is triggered with value 1
+// and the flow is triggered with value 1
+// Then the total amount is 102
+// Verify the end has not been reached
+// When 150 milliseconds elapse
+// Then the end has been reached once
+// When the flow is triggered with value 10
+// Then the total amount is 102
+
+// TEST: Flows get taken down after re-running an effect
+// Given a live variable gets set up with array and activeIndex
+// and an effect is set up listening for changes at the active index
+// and the effect gets time to run
+// When the item at index 0 changes to 'qux'
+// Then there were 1 changes
+// When the item at index 1 changes to 'quux'
+// and the active index gets set to 1
+// and the effect gets time to run
+// and the item at index 0 changes to 'foo again'
+// Then there were 1 changes
+// When the item at index 1 changes to 'bar again'
+// Then there were 2 changes

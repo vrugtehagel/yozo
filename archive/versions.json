@@ -1,0 +1,21 @@
+[{
+	"number": "1.0.1",
+	"hash": "00g3t4a3n8Nrr2Sn1+Akwg==",
+	"timestamp": 1698611528789,
+	"changelog": {
+		"breaking": [],
+		"improvements": [],
+		"bugs": [
+			"Fixed an issue where the deepchange event did not fire on the changed live variable itself."
+		]
+	}
+}, {
+	"number": "1.0.0",
+	"hash": "hJ0l/wHXR720iSeq0JXYcQ==",
+	"timestamp": 1698012000000,
+	"changelog": {
+		"breaking": [],
+		"improvements": [],
+		"bugs": []
+	}
+}]

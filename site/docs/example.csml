@@ -1,0 +1,23 @@
+@script
+	export const layout = 'docs'
+	export const title = '...'
+	export const description = '[[ description, 50-150 chars ]]'
+
+h2 Syntax
+
+ui-code
+	// code...
+
+h3 Parameters
+dl
+	dt ``value``
+	dd > p Description
+
+h3 Return value
+p Text...
+
+h2 Examples
+
+h2 Usage notes
+
+h2 See also

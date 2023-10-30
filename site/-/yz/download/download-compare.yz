@@ -1,0 +1,107 @@
+<title>download-compare</title>
+<meta attribute=from type=string>
+<meta attribute=to type=string>
+
+<template mode=closed>
+	<ui-loader #if="!$.versions"></ui-loader>
+	<div id=filters #else>
+		From
+		<ui-dropdown icon=pointer iconstate=down
+			:label="$.from" autoclose>
+			<ui-button #for="version of $.versions"
+				@click="$.from = version.number"
+			>{{ version.number }}</ui-button>
+		</ui-dropdown>
+		to
+		<ui-dropdown icon=pointer iconstate=down
+			:label="$.to" autoclose>
+			<ui-button #for="version of $.versions"
+				@click="$.to = version.number"
+			>{{ version.number }}</ui-button>
+		</ui-dropdown>
+	</div>
+	<output>
+		<p id=versions-same .hidden="!$.versions || $.from != $.to"
+		>The two chosen versions are the same.</p>
+		<div id=breaking .hidden="!$.$diff.$breaking.length">
+			<p>Breaking changes</p>
+			<ul>
+				<li #for="change of $.$diff.breaking ?? []">{{ change }}</li>
+			</ul>
+		</div>
+		<div id=improvements .hidden="!$.$diff.$improvements.length">
+			<p>Improvements</p>
+			<ul>
+				<li #for="change of $.$diff.improvements ?? []">{{ change }}</li>
+			</ul>
+		</div>
+		<div id=bugs .hidden="!$.$diff.$bugs.length">
+			<p>Bug fixes</p>
+			<ul>
+				<li #for="change of $.$diff.bugs ?? []">{{ change }}</li>
+			</ul>
+		</div>
+	</output>
+</template>
+
+<script>
+fetch('/versions.json').then(async response => {
+	const versions = await response.json()
+	$.from = versions[1].number
+	$.to = versions[0].number
+	$.versions = versions
+})
+
+live.link($.$diff, () => {
+	if(!$.versions) return null
+	const fromIndex = $.versions.findIndex(version => version.number == $.from)
+	const toIndex = $.versions.findIndex(version => version.number == $.to)
+	if(fromIndex == -1 || toIndex == -1) return null
+	if(fromIndex == toIndex) return null
+	const intermediateVersions = fromIndex < toIndex
+		? $.versions.slice(fromIndex, toIndex)
+		: $.versions.slice(toIndex, fromIndex)
+	const breaking = []
+	const improvements = []
+	const bugs = []
+	for(const {changelog} of intermediateVersions){
+		breaking.push(...changelog.breaking)
+		improvements.push(...changelog.improvements)
+		bugs.push(...changelog.bugs)
+	}
+	return {breaking, improvements, bugs}
+})
+</script>
+
+<style>
+:host {
+	display: block; margin: 2rem;
+}
+#filters {
+	display: flex;
+	justify-content: center; align-items: center; gap: 1rem;
+}
+ui-dropdown {
+	min-width: 7.5rem;
+	&::part(button){ background-color: var(--background-color); }
+	&::part(button):hover { background-color: var(--highlight-color); }
+	&::part(dropdown) {
+		max-height: 16rem;
+		inset: 3.5rem 0 auto 0;
+		overflow: auto;
+	}
+}
+ui-button { text-align: center; }
+output {
+	display: block;
+	& div p {
+		margin: 1em 0;
+		font-weight: 900; font-size: 1.25rem;
+	}
+}
+#versions-same {
+	margin: 3rem 0;
+	color: var(--comment-color);
+	text-align: center;
+}
+</style>

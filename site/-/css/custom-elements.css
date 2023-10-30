@@ -1,25 +1,22 @@
 @layer custom-elements {
-	navigation-menu {
+	site-nav {
 		display: block; height: 4.5rem;
 		position: fixed; inset: 0 0 auto 0;
 		background: var(--background-color);
 		box-shadow: 0 -10px 10px 20px var(--sub-background-color);
 		z-index: 1000;
 	}
-
-	footer-menu {
+	site-footer {
 		display: block; min-height: 6rem; margin-top: 6rem;
 		border-top: .5rem solid var(--background-color);
 	}
-
-	ui-code {
-		display: block; padding: 1rem 2rem;
+	ui-code:not(:defined){
+		display: block;
 		background: var(--background-color);
 		font-family: var(--font-monospace); line-height: 1.5;
 		border-radius: 1rem;
-		overflow: auto;
+		white-space: pre;
 	}
-	ui-code:not(:defined){ white-space: pre; }
 
 	ui-callout {
 		display: flex; padding: 1.5rem 2rem 1.5rem 1rem; margin: 2rem 0;

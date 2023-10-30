@@ -3,6 +3,7 @@
 # This build script builds the site.
 # In short, we just clone the whole site into dist/, and
 # then we run the CSML scripts, after which delete the .csml files.
+# Also, the older versions (in archive/) get dumped into dist/ as well.
 
 # First of all, move to project root
 cd "$(dirname "$0")/.."
@@ -23,10 +24,15 @@ fi
 
 # Now, delete all the csml files in dist/
 find dist -name "*.csml" -type f -delete
+
 # Also the tests
 find dist -name "*.test.js" -type f -delete
+
 # Lastly, the empty directories
 find dist -type d -empty -delete
+
+# Dump the older versions into dist/
+cp -R archive/ dist/
 
 # All good!
 echo "$(tput setaf 2)✓$(tput init)" \

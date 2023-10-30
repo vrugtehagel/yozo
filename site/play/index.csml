@@ -1,6 +1,6 @@
 @script
 	export const title = 'Play'
-	export const exclude = ['footer-menu']
+	export const exclude = ['site-footer']
 
 h1.sr-only Play around with Yozo 
 

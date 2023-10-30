@@ -11,10 +11,13 @@
 # First we move to project root for safety
 cd "$(dirname "$0")/.."
 
-# We clean up temp/
+# Make sure dist/ and dist/temp/ exists
+mkdir -p dist/temp
+
+# We clean up dist/temp/
 rm -rf dist/temp/*
 
-# We clone the whole source into temp/
+# We clone the whole source into dist/temp/
 cp -R src/ dist/temp/
 
 # Now, we find all JS files and remove lines with //-style comments
@@ -22,10 +25,16 @@ find dist/temp -type f -name "*.js" -exec sed -i "" 's/^.*\/\/$//g' {} \;
 
 # Now bundle both the production and development versions
 deno run -A https://deno.land/x/esbuild@v0.17.18/mod.js \
-	lib=./dist/temp/index.js \
-	dev=./src/index.js \
+	lib-latest=./dist/temp/index.js \
+	dev-latest=./src/index.js \
 	--outdir=dist --bundle --log-level=warning \
 	--minify --mangle-props=^__
+
+# Run versioning script
+deno run \
+	--allow-read="dist/lib-latest.js,dist/dev-latest.js,archive/versions.json" \
+	--allow-write="archive/lib-temp.js,archive/dev-temp.js" \
+	versioning.js
 
 # Save the exit status of the build
 SUCCESS=$?
@@ -42,8 +51,8 @@ then
 fi
 
 # Find out what size the build turned out to be
-GZIP_SIZE=$(gzip < ./dist/lib.js | wc -c | xargs)
-BROTLI_SIZE=$(brotli -c ./dist/lib.js | wc -c | xargs)
+GZIP_SIZE=$(gzip < ./dist/lib-latest.js | wc -c | xargs)
+BROTLI_SIZE=$(brotli -c ./dist/lib-latest.js | wc -c | xargs)
 
 # The threshold is 5000 bytes; above that, we're failing the build
 if [[ $GZIP_SIZE -ge 5000 ]]

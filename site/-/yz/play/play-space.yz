@@ -32,8 +32,8 @@ Promise.all([
 	customElements.whenDefined('play-file-editor'),
 	customElements.whenDefined('play-preview')
 ]).then(() => $.loaded = true)
-window.yozo.register('/-/yz/play/play-file-editor.yz'),
-window.yozo.register('/-/yz/play/play-preview.yz')
+self.yozo.register('/-/yz/play/play-file-editor.yz'),
+self.yozo.register('/-/yz/play/play-preview.yz')
 
 live.link($.$defaultPreviewUrl, () => {
 	const srcs = $.playManager?.filelist().map(([uuid, src]) => src)
