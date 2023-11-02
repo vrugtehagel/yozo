@@ -3,6 +3,9 @@ export class Snippet {
 	static #constructing = false
 	static #shape = /^\/\/ (.*)$\n((?:^(?!\/\/ ).*$\n)*)/m
 	static #paramShape = /__\w+__/g
+	static reset(){
+		this.#all = []
+	}
 	#regex
 	#params = []
 	#description = ''

@@ -1,11 +1,14 @@
 @script
-	const {url, layoutArgs} = csml.args
+	const cwd = await Deno.cwd()
+	const {layoutArgs} = csml.args
+	const url = `${cwd}/${csml.args.url}`
+	const directory = url.split('/').slice(0, -1).join('/')
 	const page = await csml.import(url, layoutArgs)
 	const exclude = new Set(page.exclude ?? [])
 	const content = page.default
 	const isResolved = promise => promise.then(() => true, () => false)
-	const hasCSS = await isResolved(Deno.lstat(new URL('./index.css', url)))
-	const hasJS = await isResolved(Deno.lstat(new URL('./index.js', url)))
+	const hasCSS = await isResolved(Deno.lstat(`${directory}/index.css`))
+	const hasJS = await isResolved(Deno.lstat(`${directory}/index.js`))
 
 !DOCTYPE html
 html[lang=en]

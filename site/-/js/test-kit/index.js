@@ -1,5 +1,5 @@
 import { Snippet } from './snippet.js'
-import { Test } from './test.js'
+import { Test } from './single.js'
 
 
 const parser = new RegExp([
@@ -8,11 +8,14 @@ const parser = new RegExp([
 ].join('|'), 'mig')
 
 async function readFile(src){
-	const url = new URL(src)
-	if(url.protocol == 'file:') return await Deno.readTextFile(url)
-	const response = await fetch(url)
-	if(!response.ok) throw Error(`Could not fetch ${url}`)
+	if(typeof Deno != 'undefined') return await Deno.readTextFile(src)
+	const response = await fetch(src)
+	if(!response.ok) throw Error(`Could not fetch ${src}`)
 	return await response.text()
+}
+
+export async function reset(){
+	Snippet.reset()
 }
 
 export async function register(...urls){

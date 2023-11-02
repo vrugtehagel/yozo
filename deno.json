@@ -1,7 +1,9 @@
 {
 	"imports": {
-		"csml/": "https://deno.land/x/csml@0.1.12/",
+		"csml/": "https://deno.land/x/csml@0.1.15/",
+		"esbuild/": "https://deno.land/x/esbuild@v0.17.18/",
 		"std/": "https://deno.land/std@0.204.0/",
+
 		"src/": "./src/",
 		"site/": "./site/"
 	},

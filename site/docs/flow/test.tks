@@ -13,7 +13,7 @@ flow.then(number => total += number)
 	.once()
 	.then(() => endReached++);
 
-// a live variable gets set up with array and activeIndex
+// a live variable gets set up with array and active index
 const $data = self.yozo.live({
 	activeIndex: 0,
 	array: ['foo', 'bar', 'baz']
@@ -68,7 +68,7 @@ endReached == 1
 // Then the total amount is 102
 
 // TEST: Flows get taken down after re-running an effect
-// Given a live variable gets set up with array and activeIndex
+// Given a live variable gets set up with array and active index
 // and an effect is set up listening for changes at the active index
 // and the effect gets time to run
 // When the item at index 0 changes to 'qux'
