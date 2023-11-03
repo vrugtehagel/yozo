@@ -15,10 +15,10 @@ h2 Latest
 p Click the buttons below to download the latest Yozo bundles.
 
 div#download-latest
-	a[href=/lib-latest.js][download="lib.js"]
+	a[href=/lib-latest.js][download="yozo-lib.js"]
 		ui-icon[type=production]
 		:text-only Production
-	a[href=/dev-latest.js][download="dev.js"]
+	a[href=/dev-latest.js][download="yozo-dev.js"]
 		ui-icon[type=development]
 		:text-only Development
 

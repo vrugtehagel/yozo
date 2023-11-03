@@ -19,7 +19,7 @@ p To verify that Yozo loads correctly, simply check that the ``yozo`` global (i.
 ui-code
 	window.yozo.register('/path/to/component.yz');
 
-p For automatically discovering and loading components on your page, there's [``register.auto()``](/docs/register/auto/), but for now, let's register it explicitly. Once our component is being loaded, let's come up with a name. Web components, which Yozo is based on, need a dash in their name, so let's go for "my-component". Our component file is still empty, so let's define the name. Yozo component files are much like HTML, and so to define its name, we use the [``<title>``](/docs/components/title/) element like below. Let's also include something simple to render, through the [``<template>``](/docs/components/template/) element:
+p For automatically discovering and loading components on your page, there's [``register.auto()``](/docs/register/auto/), but for now, let's register it explicitly. Once our component is being loaded, let's come up with a name. Web components, which Yozo is based on, need a hyphen in their name; let's go for "my-component". Our component file is still empty, so let's define the name. Yozo component files are much like HTML, and so to define its name, we use the [``<title>``](/docs/components/title/) element like below. Let's also include something simple to render, through the [``<template>``](/docs/components/template/) element:
 
 ui-code[language=yz]
 	<title>my-component</title>
@@ -34,7 +34,7 @@ ui-code[language=html]
 
 p Now, the text "Hello world" should show on the page. Congrats! Yozo has been set up successfully, and you've brought your first component to life. To learn more about how components are built, check out the [components](/docs/components/) page.
 
-p However, most of Yozo's functionality is also useful outside component files. For example, [``when()``](/docs/when/) is a very ergonomic and readable way to do event listeners, changing ``.addEventListener`` into something that reads like text:
+p Note that most of Yozo's functionality is useful both inside as well as outside component files. For example, [``when()``](/docs/when/) is a very ergonomic and readable way to do event listeners, changing ``.addEventListener`` into something that reads like text:
 
 ui-code
 	const { when } = window.yozo;

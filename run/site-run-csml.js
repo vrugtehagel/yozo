@@ -27,8 +27,9 @@ async function runPage(url){
 async function runPages(){
 	const exts = ['csml']
 	const skip = [/\/-\//]
+	const includeDirs = false
 	const promises = []
-	for await(const entry of walk('dist', {exts, skip}))
+	for await(const entry of walk('dist', {exts, skip, includeDirs}))
 		promises.push(runPage(entry.path))
 	await Promise.all(promises)
 }
@@ -44,14 +45,16 @@ async function createTestPage(url){
 async function createTestPages(){
 	const exts = ['tks']
 	const skip = [/\/-\//]
+	const includeDirs = false
 	const promises = []
-	for await(const entry of walk('dist', {exts, skip}))
+	for await(const entry of walk('dist', {exts, skip, includeDirs}))
 		promises.push(createTestPage(entry.path))
 	await Promise.all(promises)
 }
 
 async function removeCSMLFiles(){
 	const exts = ['csml']
-	for await(const entry of walk('dist', {exts}))
-		await Deno.remove(entry.path)
+	const includeDirs = false
+	for await(const entry of walk('dist', {exts, includeDirs}))
+		await Deno.remove(entry.path).catch(() => null)
 }

@@ -1,4 +1,10 @@
 {
+	"tasks": {
+		"serve": "deno run -A run/serve.js",
+		"build": "deno run -A run/build.js",
+		"build-site": "deno run -A run/build-site.js",
+		"build-yozo": "deno run -A run/build-yozo.js"
+	},
 	"imports": {
 		"csml/": "https://deno.land/x/csml@0.1.15/",
 		"esbuild/": "https://deno.land/x/esbuild@v0.17.18/",

@@ -17,6 +17,7 @@ Deno.serve({port, hostname, signal, onListen}, request => {
 Deno.addSignalListener('SIGINT', () => {
 	if(stopped) return
 	clearTimeout(timeoutId)
+	clearTimeout(updater)
 	serverController.abort()
 	watcher.close()
 	console.log('')
@@ -31,12 +32,14 @@ const updater = setInterval(async () => {
 	if(!queued) return
 	clearTimeout(timeoutId)
 	setTimeout(() => {
+		clearTimeout(updater)
 		serverController.abort()
 		watcher.close()
 		console.log(`${gray('?')} Stopped serving due to inactivity.`)
 		stopped = true
 		Deno.exit(1)
 	}, 3_600_000)
+	console.clear()
 	await build()
 	const now = new Date
 	const hour = now.getHours().toString()
