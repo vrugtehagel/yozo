@@ -1,4 +1,5 @@
 import { green, yellow, red, gray } from 'std/fmt/colors.ts'
+import { parse } from 'std/flags/mod.ts'
 
 import { getSizeInfo } from './yozo-get-size-info.js'
 import { bundle } from './yozo-bundle.js'
@@ -8,8 +9,11 @@ import { verifyVersion } from './yozo-verify-version.js'
 export async function buildYozo(){
 	try {
 		await bundle()
-		const ok = await verifyVersion()
-		if(!ok) throw Error('Version verification failed.')
+		const args = parse(Deno.args)
+		if(!args['no-verify']){
+			const ok = await verifyVersion()
+			if(!ok) throw Error('Version verification failed.')
+		}
 	} catch(e) {
 		console.log(`${red('✘')} Yozo build failed.`)
 		Deno.exit(1)

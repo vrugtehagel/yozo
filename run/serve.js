@@ -3,51 +3,36 @@ import { writeAll } from 'std/streams/mod.ts'
 import { serveDir } from 'std/http/file_server.ts'
 
 import { build } from './build.js'
+import '../archive/lib-1.0.0.js'
+
+
+const {Flow} = self.yozo
 
 const port = 8787
 const hostname = 'localhost'
 const serverController = new AbortController
 const {signal} = serverController
-const watcher = Deno.watchFs(['site', 'src'])
 const onListen = () => console.log(`${gray('?')} Serving at localhost:${port}.`)
 Deno.serve({port, hostname, signal, onListen}, request => {
 	return serveDir(request, {fsRoot: 'dist/', quiet: true, headers: []})
 })
 
-Deno.addSignalListener('SIGINT', () => {
-	if(stopped) return
-	clearTimeout(timeoutId)
-	clearTimeout(updater)
+// If changing below, check /docs/flow/constructor/
+const watcher = Deno.watchFs(['site', 'src'])
+const flow = new Flow(async trigger => {
+	for await(const change of watcher) trigger(change)
+}).cleanup(() => {
 	serverController.abort()
 	watcher.close()
 	console.log('')
 	console.log(`${gray('?')} Serving terminated.`)
 	Deno.exit(1)
-})
-
-let stopped = false
-let timeoutId
-let queued = true
-const updater = setInterval(async () => {
-	if(!queued) return
-	clearTimeout(timeoutId)
-	setTimeout(() => {
-		clearTimeout(updater)
-		serverController.abort()
-		watcher.close()
-		console.log(`${gray('?')} Stopped serving due to inactivity.`)
-		stopped = true
-		Deno.exit(1)
-	}, 3_600_000)
+}).throttle(1000).then(async () => {
 	console.clear()
 	await build()
-	const now = new Date
-	const hour = now.getHours().toString()
-	const minute = now.getMinutes().toString().padStart(2, '0')
-	const second = now.getSeconds().toString().padStart(2, '0')
-	console.log(`${gray('?')} Last updated ${hour}:${minute}:${second}.`)
+	const now = new Date()
+	console.log(`${gray('?')} Last updated ${now.toLocaleTimeString()}.`)
 	console.log('')
-	queued = false
-}, 1000)
+}).debounce(3_600_000).once().now()
 
-for await(const change of watcher) queued = true
+Deno.addSignalListener('SIGINT', () => flow.stop())
