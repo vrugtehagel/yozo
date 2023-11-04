@@ -1,4 +1,15 @@
 [{
+	"number": "1.1.0",
+	"hash": "oq7zDVgrRBFgCneubzzQUQ==",
+	"timestamp": 1699110000221,
+	"changelog": {
+		"breaking": [],
+		"improvements": [
+			"Added flow.await(), a method that waits for its callback before sending a trigger through to the next item in the pipline."
+		],
+		"bugs": []
+	}
+}, {
 	"number": "1.0.1",
 	"hash": "00g3t4a3n8Nrr2Sn1+Akwg==",
 	"timestamp": 1698611528789,

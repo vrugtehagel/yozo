@@ -42,6 +42,13 @@ export class Flow {
 		})
 	}
 
+	await(callback){
+		return this.flow(async (next, ...args) => {
+			await callback(...args)
+			next()
+		})
+	}
+
 	if(callback){
 		return this.flow((next, ...args) => {
 			if(callback(...args)) next()
