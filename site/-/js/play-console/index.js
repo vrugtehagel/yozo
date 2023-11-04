@@ -27,7 +27,7 @@ const controller = new AbortController
 const {signal} = controller
 loading.then(() => {
 	messenger.send('load').then(() => controller.abort())
-	messenger.addEventListener('load', event => {
+	messenger.addEventListener('load', () => {
 		messenger.send('load')
 	}, {signal, once: true})
 })

@@ -13,7 +13,6 @@ const openTag = /^<([a-z]+)\s*(?:[^>]*(["'])[^]*?\2)*[^"']*?>/i
 
 function consumeComments(string){
 	string = string.trimStart()
-	const match = string.match(comment)
 	for(let length = Infinity; length > string.length; length = string.length)
 		string = string.replace(comment, '').trimStart()
 	return string

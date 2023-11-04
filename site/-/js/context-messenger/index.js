@@ -31,7 +31,7 @@ export class ContextMessenger extends EventTarget {
 			controller.abort()
 		}, {signal})
 		sender.postMessage({type, uuid, payload}, origin)
-		return promise
+		return await promise
 	}
 
 	#respond(event){

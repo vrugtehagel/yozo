@@ -44,7 +44,6 @@ export const dedentSelection = {
 export const newline = {
 	action: 'insertLineBreak',
 	run: state => {
-		const {indent = '\t'} = $settings
 		const currentIndent = state.before
 			.slice(state.before.lastIndexOf('\n') + 1)
 			.match(/^[ \t]*/)[0]

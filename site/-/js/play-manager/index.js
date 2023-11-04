@@ -4,7 +4,7 @@ import { htmlInclude } from '/-/js/html-include/index.js'
 import { creations as defaultCreations } from './default-creations.js'
 
 self.yozo.register('/-/yz/ui/ui-toast.yz')
-const {live, when, effect, track} = self.yozo
+const {live, when, effect} = self.yozo
 
 export const $play = live({})
 if(!location.pathname.startsWith('/file/')) webServer.claim('/file/')
@@ -208,7 +208,6 @@ export function reveal(src){
 	}
 	const [uuid] = match
 	const index = current().spaces.indexOf(`file:${uuid}`)
-	const visible = visibleSpaces()
 	if(index < 0 || index >= visibleSpaces()) return
 	current().$spaces[0] = `file:${uuid}`
 }

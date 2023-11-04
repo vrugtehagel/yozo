@@ -31,8 +31,7 @@ export const removePair = {
 	run: state => {
 		const deleted = state.before.at(-1)
 		if(!lefties.has(deleted)) return
-		const [left, right] = [deleted, map.get(deleted)]
-		if(state.after[0] != right) return
+		if(state.after[0] != map.get(deleted)) return
 		state.before = state.before.slice(0, -1)
 		state.after = state.after.slice(1)
 		return true

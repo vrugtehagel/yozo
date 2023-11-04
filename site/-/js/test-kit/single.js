@@ -41,7 +41,6 @@ export class Test {
 		if(typeof success != 'boolean')
 			console.warn(`Test "${name}" does not assert a boolean`)
 		if(success) return
-		const capitalize = word => word[0].toUpperCase() + word.slice(1)
 		if(type == 'test') throw Error(`Test "${name}" failed.`)
 		else throw Error(`Verification for "${name}" failed.`)
 	}

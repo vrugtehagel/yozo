@@ -14,7 +14,7 @@ async function readFile(src){
 	return await response.text()
 }
 
-export async function reset(){
+export function reset(){
 	Snippet.reset()
 }
 
