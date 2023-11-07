@@ -1,5 +1,7 @@
 @script
-	export const title = 'home'
-
+	export const title = 'Home'
+	export const exclude = ['site-nav', 'site-footer']
 
 main
+	ui-icon[type=logo]
+	p Yozo is in development!
