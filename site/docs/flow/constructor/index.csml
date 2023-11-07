@@ -14,7 +14,7 @@ ui-code
 h3 Parameters
 dl
 	dt ``callback``
-	dd > p A function to be executed by the constructor. It receives a single argument; a ``trigger`` function. This is similar to the ``resolve`` argument in a callback to a ``Promise`` constructor, except ``trigger`` may be called any number of times, each call triggering the flow.
+	dd > p A function to be executed synchronously by the constructor. It receives a single argument; a ``trigger`` function. This is similar to the ``resolve`` argument in a callback to a ``Promise`` constructor, except ``trigger`` may be called any number of times, each call triggering the flow.
 
 h3 Return value
 p A new [``Flow``](/docs/flow/) object. It triggers whenever the ``trigger`` function given to the ``callback`` argument is called, or when the flow is manually triggered using [``flow.now()``](/docs/flow/now/).
@@ -25,7 +25,7 @@ h3 Yozo's interval()
 
 p Yozo provides the helper function [``interval()``](/docs/interval/), which is essentially a flowified version of ``setInterval``. Here's how it is implemented.
 
-p The first step is just to create a flow that triggers with the interval. That part is rather simple:
+p The first step is to create a flow that triggers with the interval. That part is rather simple:
 
 ui-code
 	function interval(duration){
@@ -47,7 +47,7 @@ ui-code
 		return new Flow(trigger => {
 			id = setInterval(trigger, duration);
 		}).cleanup(() => {
-			clearInterval(id)
+			clearInterval(id);
 		});
 	}
 
