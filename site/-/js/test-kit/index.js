@@ -1,37 +1,46 @@
-import { Snippet } from './snippet.js'
-import { Test } from './single.js'
+import { parse } from './parse.js'
 
 
-const parser = new RegExp([
-	'^// test: .*$\n(^// .*$\n)+',
-	'^// (?!test: ).*$\n(^(?!//).*$\n)+'
-].join('|'), 'mig')
-
-async function readFile(src){
-	if(typeof Deno != 'undefined') return await Deno.readTextFile(src)
-	const response = await fetch(src)
-	if(!response.ok) throw Error(`Could not fetch ${src}`)
-	return await response.text()
+export async function register(url){
+	if(typeof Deno != 'undefined') return await denoRegister(url)
+	return await browserRegister(url)
 }
 
-export function reset(){
-	Snippet.reset()
+async function denoRegister(url){
+	const source = await Deno.readTextFile(url)
+	const tests = parse(source)
+	const cleanup = () => {}
+	return {tests, cleanup}
 }
 
-export async function register(...urls){
-	const registrations = await Promise.allSettled(urls.map(async url => {
-		const source = await readFile(url)
-		const tests = (source.match(parser) ?? []).map(part => {
-			const test = Test.from(part)
-			if(test) return test
-			Snippet.from(part)
-		}).filter(test => test != null)
-		return tests
-	}))
-	const rejected = registrations.find(({status}) => status == 'rejected')
-	if(rejected) console.error(rejected.reason)
-	const tests = registrations
-		.flatMap(registration => registration.value ?? [])
-	tests.forEach(test => test.compile())
-	return tests
+async function browserRegister(url){
+	if(url instanceof URL) url = url.href
+	const iframe = document.createElement('iframe')
+	let onload
+	const loading = new Promise(resolve => onload = resolve)
+	iframe.addEventListener('load', onload)
+	iframe.src = '/-/js/test-kit/sandbox.html'
+	iframe.hidden = true
+	iframe.style.setProperty('display', 'none')
+	document.body.append(iframe)
+	await loading
+	const {ContextMessenger} = await import('/-/js/context-messenger/index.js')
+	const messenger = new ContextMessenger(iframe.contentWindow)
+	await messenger.ready()
+	const shells = await messenger.send('register', {url})
+	const requestTest = async (name, type) => {
+		const message = await messenger.send('run', {name, type})
+		if(message != null) throw Error(message);
+	}
+	const tests = shells.map(shell => {
+		const {name, code} = shell
+		const run = () => requestTest(name, 'test')
+		const verify = () => requestTest(name, 'verify')
+		return {name, code, run, verify}
+	})
+	const cleanup = () => {
+		iframe.src = 'about:blank'
+		iframe.remove()
+	}
+	return {cleanup, tests}
 }
