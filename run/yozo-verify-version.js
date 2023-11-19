@@ -24,7 +24,7 @@ async function verifyChecksum(version, {quiet}){
 	if(quiet) return false
 	console.log(red(`Checksum mismatch for version ${version.number}!`))
 	console.log('If this is a new version, run:')
-	console.log('\tdeno task build-version --version-number="…"')
+	console.log('\tdeno task build-version --no-verify --version-number="…"')
 	return false
 }
 
