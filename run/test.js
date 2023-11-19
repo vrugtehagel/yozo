@@ -1,7 +1,6 @@
 import { walk } from 'std/fs/mod.ts'
-import { toFileUrl } from 'std/path/mod.ts'
 
-import { register, reset } from 'site/-/js/test-kit/index.js'
+import { register } from 'site/-/js/test-kit/index.js'
 import 'src/index.js'
 
 
@@ -17,12 +16,12 @@ const exts = ['tks']
 const skip = [/\/-\//]
 for await(const entry of walk('site', {exts, skip})){
 	Deno.test(entry.path, async nest => {
-		const tests = await register(entry.path)
+		const {tests, cleanup} = await register(entry.path)
 		if(!tests?.length) console.warn(`No tests found for ${entry.path}`)
 		for(const test of tests){
 			await nest.step(`[run]    ${test.name}`, () => test.run())
 			await nest.step(`[verify] ${test.name}`, () => test.verify())
 		}
-		reset()
+		cleanup()
 	})
 }
