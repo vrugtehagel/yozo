@@ -1,0 +1,66 @@
+@script
+	import { walk } from 'std/fs/mod.ts'
+	import { register } from 'site/-/js/test-kit/index.js'
+
+	const exts = ['tks']
+	const testMap = new Map
+	let total = 0
+	for await(const entry of walk('dist', {exts})){
+		const {tests} = await register(entry.path)
+		testMap.set(entry.path, tests)
+		total += tests.length
+	}
+
+	export const exclude = ['css', 'js']
+	export const title = 'All tests'
+
+link[rel=stylesheet][href=/-/css/test.css]
+script[type=module]
+	import { register } from '/-/js/test-kit/index.js'
+
+	const sections = document.querySelectorAll('section')
+	const testSummary = document.querySelector('test-summary')
+	for(const section of sections){
+		const testCases = [...section.querySelectorAll('test-case')]
+		const {tests, cleanup} = await register(section.dataset.url)
+		for(const test of tests){
+			const testCase = testCases
+				.find(testCase => testCase.description == test.name)
+			if(!testCase) throw Error(`Cannot find test "${test.name}"`)
+			testCase.status = 'running'
+			const success = await test.run().then(() => true, () => false)
+			if(!success) testCase.status = 'failed'
+			else {
+				testCase.status = 'verifying'
+				const verified = await test.verify().then(() => true, () => false)
+				if(verified) testCase.status = 'success'
+				else testCase.status = 'invalid'
+			}
+			testSummary[testCase.status]++
+		}
+		cleanup()
+	}
+
+main
+	h1 All tests
+	p This page is a collection of all the tests for Yozo.
+
+	test-summary[{{ {total} }}]
+
+	p If you find any of the tests failing, I would be super thankful if you could [let me know](https://github.com/vrugtehagel/yozo/issues/new) (which one and in which browser).
+
+	@for(const [path, tests] of testMap)
+		@script
+			const cwd = await Deno.cwd()
+			const directory = path.split('/').slice(0, -1).join('/')
+			const page = await csml.import(`${cwd}/${directory}/index.csml`)
+			const liveTest = path.slice('dist'.length)
+			const livePage = liveTest.slice(0, -1 * 'test.tks'.length)
+
+		section[data-url={{ liveTest }}]
+			h2 {{ page.title }}
+			p {{ page.description }} See [the documentation]({{ livePage }}) for details on usage.
+
+			div.test-suite
+				@for(const test of tests)
+					test-case[description={{ test.name }}][value={{ test.code }}][status=pending]
