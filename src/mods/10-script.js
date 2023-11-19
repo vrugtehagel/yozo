@@ -1,5 +1,4 @@
 import { define } from '../define.js'
-import { uniqueName } from '../utils.js'
 
 
 define.register(10, 'script', (context, [args]) => {

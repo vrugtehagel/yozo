@@ -1,14 +1,11 @@
 import { define } from './define.js'
 import { when } from './when.js'
-import { camelCase, uniqueName, R } from './utils.js'
+import { camelCase, R } from './utils.js'
 
 export const register = async url => {
-	if(register[R].has(url)) return
-	register[R].add(url)
+	if(register[R].has(`${url}`)) return
+	register[R].add(`${url}`)
 	const response = await fetch(url)
-	if(!response.ok) return
-	const add = uniqueName()
-	const defineArg = uniqueName()
 	const template = document.createElement('template')
 	template.innerHTML = await response.text()
 	return define(add => {

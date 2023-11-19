@@ -1,12 +1,12 @@
 import { define } from '../define.js'
 import { monitor } from '../monitor.js'
-import { S, camelCase, uniqueName } from '../utils.js'
+import { S, camelCase } from '../utils.js'
 
 
 define.register(3, Symbol(), context => {
 	const constructor = function(meta){
 		meta.__function = (expression, ...scopes) => {
-			const variables = scopes.map(() => uniqueName())
+			const variables = scopes.map(() => `$${camelCase(crypto.randomUUID())}`)
 			const result = new Function(...variables,
 				`var ${scopes.map((scope, index) => `${scope[0]}=${variables[index]}`)}` +
 				`;return(${expression})`
