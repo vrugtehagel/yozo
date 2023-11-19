@@ -1,4 +1,15 @@
 [{
+	"number": "1.2.1",
+	"hash": "Yphb35XFanbhpJxyv24FuQ==",
+	"timestamp": 1700402995399,
+	"changelog": {
+		"breaking": [],
+		"improvements": [
+			"register() now accepts URL object as first argument"
+		],
+		"bugs": []
+	}
+}, {
 	"number": "1.2.0",
 	"hash": "2/T48h6QQC31IPiQHEyg9A==",
 	"timestamp": 1700395579154,
