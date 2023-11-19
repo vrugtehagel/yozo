@@ -6,7 +6,7 @@
 h2 Syntax
 
 ui-code
-	interval(duration)
+	interval(duration);
 
 h3 Parameters
 dl
