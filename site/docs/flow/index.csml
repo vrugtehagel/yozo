@@ -1,7 +1,7 @@
 @script
 	export const layout = 'docs'
 	export const title = 'Flow'
-	export const description = 'Flows represent one or more future events, like listeners or timers. Their methods and trackability make common patterns a walk in the park.'
+	export const description = 'Flows represent one or more future events, like listeners or timers. The monitoring and their methods make common patterns a walk in the park.'
 
 p The ``Flow`` class is primarily used to represent things happening at some point in the future. It can be hooked into with methods such as [``flow.then()``](/docs/flow/then/). To cover the most common use cases, there are some handy helper functions available, specifically:
 
@@ -12,7 +12,7 @@ ul
 	li [``frame()``](/docs/frame/) triggers every frame, like a nested ``requestAnimationFrame()``;
 	li The [``paint()``](/docs/paint/) function can be used to wait for the browser to paint a frame (mostly useful for manual animations);
 	li Observers, such as ``MutationObserver``, get [``when().observes()``](/docs/when/observes/);
-	li Lastly, many hook-like functions, such as [``effect()``](/docs/effect/), [``connected()``](/docs/components/connected/), or [``register.auto()``](/docs/register/auto/), return a flow both to facilitate trackability, as well as making it easy to terminate or hook into them.
+	li Lastly, many hook-like functions, such as [``effect()``](/docs/effect/), [``connected()``](/docs/components/connected/), or [``register.auto()``](/docs/register/auto/), return a flow both to facilitate monitoring, as well as making it easy to terminate or hook into them.
 
 p Flows actually represent not only the triggers that may occur in the future, but the entire pipeline they run through when those triggers happen. Most commonly, ``flow.then()`` is used to add a single synchronous callback to the pipeline. However, is is also possible to filter out certain triggers using [``flow.if()``](/docs/flow/if/), or even rate-limit them using [``flow.throttle()``](/docs/flow/throttle/) or [``flow.debouce()``](/docs/flow/debounce/).
 
@@ -66,7 +66,7 @@ ui-code
 p This pipeline is actually much more complex than is common, but it is a good example to help understand how flows work. The flow in question is one that triggers whenever a user presses a key into a certain input. Let's now look at the first keypress a user might do (and let's say it's the 'y' key). Then, the first step in the pipeline is the ``.then()`` call, and so "y pressed" is logged. The trigger moves on to the next step, the ``.throttle(2000)`` call. Since this is the first trigger to reach this step, there's nothing yet to throttle; the trigger gets let through immediately to reach the ``.if()``. Here, the trigger fails the condition and this is where its journey ends. Note that since it hasn't yet reached the ``.once()``, the flow remains active. Let's now say one second elapsed, and we mash 'Enter' 5 times. Each trigger gets sent through the pipeline, logging "Enter pressed" 5 times. Then, they reach the throttle step. Here, they all come to a halt because a trigger was let through one second ago. The throttle therefore patiently waits another second, until the 2 seconds are up, then lets through one of the triggers to the next step, discarding the other 4. This time, the trigger passes the condition in the ``.if()`` step, and so hits the ``.once()`` call. This would halt all other triggers in the pipeline, but in this case there are none. The last trigger gets to finish the pipeline though, and so "Done!" gets logged in the last ``.then()`` call.
 
 h3 Tracking contexts
-p Flows can be tracked in some contexts, such as inside an ``effect()`` or the ``connected()`` hook. When the callbacks re-run, they can kill of all the flows that were created in the previous run of the callback, to make sure there are no memory leaks. In practice, this means there's rarely a need to manually remove event listeners, stop timeouts, or other similar operations. Let's have a look at an example; we create some live data, specifically an array and an "active" index. We want to listen to changes to the array element at the active index. To do this, we set up an effect that finds the live variable for the item in question, and sets up the event listener:
+p Flows are monitored in some contexts, such as inside an ``effect()`` or the ``connected()`` hook. When the callbacks re-run, they can kill of all the flows that were created in the previous run of the callback, to make sure there are no memory leaks. In practice, this means there's rarely a need to manually remove event listeners, stop timeouts, or other similar operations. Let's have a look at an example; we create some live data, specifically an array and an "active" index. We want to listen to changes to the array element at the active index. To do this, we set up an effect that finds the live variable for the item in question, and sets up the event listener:
 
 ui-code
 	const $data = live({
@@ -102,5 +102,5 @@ p In the example above, the ``effect`` saw that there was an event listener set 
 h2 See also
 ul
 	li See [``when()``](/docs/when/) for creating event-related or observer-related flows. It is by far the most common way flows are utilized.
-	li [``effect()``](/docs/effect/) both tracks flows, and returns one.
-	li For more advance use-cases, see [``track.flows()``](/docs/track/flows) to manually create contexts able to track flows.
+	li [``effect()``](/docs/effect/) both monitors flows, as well as returns one.
+	li For more advance use-cases, see [``monitor.flows()``](/docs/monitor/flows) to manually create contexts able to monitor flows.

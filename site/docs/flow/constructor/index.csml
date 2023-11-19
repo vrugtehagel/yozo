@@ -51,7 +51,7 @@ ui-code
 		});
 	}
 
-p Now, we can use the interval function safely, and not only is it cancelable by calling ``flow.stop()``, it also automatically participates in tracking contexts. For example, when using it inside a [``connected()``](/docs/components/connected/) hook, it will cancel and clean up the ``setInterval`` whenever the component disconnects.
+p Now, we can use the interval function safely, and not only is it cancelable by calling ``flow.stop()``, it also automatically participates in monitored contexts. For example, when using it inside a [``connected()``](/docs/components/connected/) hook, it will cancel and clean up the ``setInterval`` whenever the component disconnects.
 
 h3 Deno's watchFs
 
@@ -84,10 +84,10 @@ p To stop the watcher, we can simply call ``flow.stop()``.
 
 h2 Usage notes
 
-p All flows automatically participate in [``track.undo()``](/docs/track/undo/) contexts. The tracking is done synchronously inside the constructor, so to prevent tracking, ignore the constructor itself using [``track.ignore``](/docs/track/ignore/):
+p All flows automatically participate in [``monitored``](/docs/monitor/undo/) contexts. The monitoring is done synchronously inside the constructor, so to prevent monitoring, ignore the constructor itself using [``monitor.ignore``](/docs/monitor/ignore/):
 
 ui-code
-	const flow = track.ignore(() => {
+	const flow = monitor.ignore(() => {
 		return new Flow(trigger => { /* … */ });
 	});
 

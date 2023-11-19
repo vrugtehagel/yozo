@@ -3,7 +3,7 @@
 	const {ContextMessenger} = self
 
 	const messenger = new ContextMessenger('web-server')
-	const servable = ['/file/']
+	const servable = ['/file/', '/test/']
 	const contentTypes = {
 		html: 'text/html',
 		css: 'text/css',

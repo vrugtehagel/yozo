@@ -1,5 +1,8 @@
+// Yozo helpers are in scope
+const { live, effect } = self.yozo;
+
 // a live variable __name__ gets created with value __value__
-const __name__ = yozo.live(__value__);
+const __name__ = live(__value__);
 
 // a variable __name__ gets created with value __value__
 let __name__ = __value__;
@@ -18,7 +21,7 @@ __left__ != __right__
 
 // an effect gets set up that reads __value__
 let effectCount = 0
-self.yozo.effect(() => {
+effect(() => {
 	__value__;
 	effectCount++;
 });
@@ -37,19 +40,22 @@ __value__.addEventListener('__event__', () => __event__s++);
 __event__s == __amount__
 
 
-// TEST: setting a live variable to another unwraps the other variable
-// Given a live variable $ gets created with value { foo: 23 }
+// TEST: Setting a live variable to another unwraps the other variable
+// Given Yozo helpers are in scope
+// and a live variable $ gets created with value { foo: 23 }
 // and a live variable $number gets created with value 24
 // When $.foo gets set to $number
 // Then $.foo is equal to 24
 
-// TEST: creating a live variable from another unwraps the other
-// Given a live variable $ gets created with value { foo: 23 }
+// TEST: Creating a live variable from another unwraps the other
+// Given Yozo helpers are in scope
+// and a live variable $ gets created with value { foo: 23 }
 // and a live variable $number gets created with value $.$foo
 // Verify yozo.live.get($number) is equal to 23
 
-// TEST: effects re-run when a live variable changes
-// Given a live variable $ gets created with value { foo: 23 }
+// TEST: Effects re-run when a live variable changes
+// Given Yozo helpers are in scope
+// and a live variable $ gets created with value { foo: 23 }
 // and an effect gets set up that reads $.foo
 // and one microtask elapses
 // Verify the effect ran 1 times
@@ -57,15 +63,17 @@ __event__s == __amount__
 // and one microtask elapses
 // Then the effect ran 2 times
 
-// TEST: optional chaining is built into live variables
-// Given a live variable $ gets created with value { foo: 23 }
+// TEST: Optional chaining is built into live variables
+// Given Yozo helpers are in scope
+// and a live variable $ gets created with value { foo: 23 }
 // and a change event listener gets attached to $.$bar.$baz
 // Verify $.$bar.baz is equal to undefined
 // When $.bar gets set to { baz: 'qux' }
 // Then the change event was fired 1 times
 
-// TEST: live calls create new live variables
-// Given a variable data gets created with value { foo: 23 }
+// TEST: Live calls create new live variables
+// Given Yozo helpers are in scope
+// and a variable data gets created with value { foo: 23 }
 // and a live variable $data1 gets created with value data
 // and a live variable $data2 gets created with value data
 // Verify $data1 is different from $data2

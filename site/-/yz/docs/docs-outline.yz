@@ -25,17 +25,20 @@ for(const header of headers){
 	const rootMargin = '-90px 0px -50%' // scroll-padding is 6rem (96px)
 	const threshold = 1
 	const options = {rootMargin, threshold}
+	let firstTrigger = true
 	when(header).observes('intersection', options).then(([entry]) => {
 		const {isIntersecting} = entry
 		const {y} = entry.boundingClientRect
-		const isAtTop = y < 100
+		const intersectsAtTop = y < 100
 		if(isIntersecting) inView.add(a)
 		else inView.delete(a)
-		if(isIntersecting && !isAtTop && inView.size != 1) return
-		if(!isIntersecting && !isAtTop && inView.size > 0) return
+		if(firstTrigger) return firstTrigger = false
+		if(isIntersecting && !intersectsAtTop && inView.size != 1) return
+		if(!isIntersecting && !intersectsAtTop && inView.size > 0) return
 		nav.querySelector('.current')?.classList.remove('current')
 		if(isIntersecting) return a.classList.add('current')
-		if(!isAtTop) return a.previousElementSibling.classList.add('current')
+		if(!intersectsAtTop)
+			return a.previousElementSibling?.classList.add('current')
 		if(inView.size == 0) return a.classList.add('current')
 		return a.nextElementSibling.classList.add('current')
 	})

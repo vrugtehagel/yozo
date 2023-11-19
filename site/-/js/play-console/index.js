@@ -9,11 +9,15 @@ window.onerror = (event, source, line, column, error) => {
 
 console.log = Object.assign((...args) => {
 	console.log.original.apply(console, args)
-	loading.then(() => messenger.send('log', {message: args.join(' ')}))
+	loading.then(async () => {
+		await messenger.ready()
+		messenger.send('log', {message: args.join(' ')})
+	})
 }, {original: console.log})
 
 async function sendError(source, line, column, error){
 	await loading
+	await messenger.ready()
 	const {message} = error
 	const url = new URL(source, location.origin)
 	const src = url.pathname
@@ -22,12 +26,3 @@ async function sendError(source, line, column, error){
 
 window.ping = () => void loading.then(() => messenger.send('ping'))
 window.pong = () => void loading.then(() => messenger.send('pong'))
-
-const controller = new AbortController
-const {signal} = controller
-loading.then(() => {
-	messenger.send('load').then(() => controller.abort())
-	messenger.addEventListener('load', () => {
-		messenger.send('load')
-	}, {signal, once: true})
-})

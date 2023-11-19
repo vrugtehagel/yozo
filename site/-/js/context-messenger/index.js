@@ -5,6 +5,7 @@ export class ContextMessenger extends EventTarget {
 	#isBroadcastChannel
 	#receiver
 	#sender
+	#ready
 
 	constructor(sender, receiver = self){
 		super()
@@ -44,4 +45,21 @@ export class ContextMessenger extends EventTarget {
 		const detail = {payload, respond}
 		this.dispatchEvent(new CustomEvent(type, {detail}))
 	}
+
+	async ready(){
+		if(this.#ready) return
+		let resolve
+		const ready = new Promise(resolver => resolve = resolver)
+		const controller = new AbortController
+		const {signal} = controller
+		this.addEventListener('ready', event => {
+			event.detail.respond()
+			resolve()
+		}, {signal})
+		const answer = this.send('ready')
+		await Promise.any([answer, ready])
+		controller.abort()
+		this.#ready = true
+	}
+
 }

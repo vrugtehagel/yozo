@@ -12,7 +12,7 @@ ui-code[language=html]
 ui-callout[type=warning]
 	p For real projects, avoid directly linking to the packages on yozo.ooo, __especially__ the "-latest"-suffixed packages (since they will change over time). Instead, [download](/download/) the versioned bundles and put them up on your own domain. This helps speed up your site, since it avoids the need for a connection to another domain.
 
-p To follow along, without setting up a new project locally, use Yozo's [playground](/play/)!
+p To follow along without setting up a new project locally, use Yozo's [playground](/play/)!
 
 p To verify that Yozo loads correctly, simply check that the ``yozo`` global (i.e. ``window.yozo``) is available. With that out of the way, we're ready to register our first component. Create a new file, and let's just name it ``component.yz``. Then, let's make sure it actually gets loaded. We'll need to run:
 
@@ -67,7 +67,7 @@ ul
 		li For advanced cases, manually creating flows with the [``Flow``](/docs/flow/constructor) constructor;
 	li State-dependent effects through [``effect()``](/docs/effect/);
 	li Purifying functions with side effects through [``purify``](/docs/purify/);
-	li Creating your own tracking mechanisms with [``track``](/docs/track/).
+	li Creating your own monitoring mechanisms with [``monitor``](/docs/monitor/).
 
 h2 Tests
 

@@ -1,18 +1,21 @@
+// Yozo helpers are in scope
+const { Flow, monitor } = self.yozo;
+
 // a flow is constructed with trigger
 let trigger;
-const flow = new self.yozo.Flow(triggerer => {
-	trigger = triggerer
+const flow = new Flow(triggerer => {
+	trigger = triggerer;
 });
 
-// a tracked flow is being created with trigger
+// a monitored flow is created with trigger
 let trigger, flow;
-const call = self.yozo.track.undo(() => {
-	flow = new self.yozo.Flow(triggerer => {
+const call = monitor(['undo'], () => {
+	flow = new Flow(triggerer => {
 		trigger = triggerer;
 	});
 });
 
-// the tracked flow is undone
+// the monitored flow is undone
 call.undo();
 
 // triggers are monitored
@@ -42,25 +45,29 @@ triggers[0] == __value__
 
 
 // TEST: The constructor fires the callback synchronously
-// Given a flow is constructed with trigger
+// Given Yozo helpers are in scope
+// and a flow is constructed with trigger
 // Verify trigger exists
 
 // TEST: The trigger function triggers the flow
-// Given a flow is constructed with trigger
+// Given Yozo helpers are in scope
+// and a flow is constructed with trigger
 // and triggers are monitored
 // When the trigger is called with value 23
 // Then the flow triggered with value 23
 
 // TEST: The trigger functions does not trigger a stopped flow
-// Given a flow is constructed with trigger
+// Given Yozo helpers are in scope
+// and a flow is constructed with trigger
 // and triggers are monitored
 // When the flow is stopped
 // Given the trigger is called
 // Then the flow did not trigger
 
-// TEST: The flow constructor is being tracked
-// Given a tracked flow is being created with trigger
+// TEST: The flow constructor is being monitored
+// Given Yozo helpers are in scope
+// and a monitored flow is created with trigger
 // and triggers are monitored
-// When the tracked flow is undone
+// When the monitored flow is undone
 // Given the trigger is called
 // Then the flow did not trigger

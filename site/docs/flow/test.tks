@@ -1,5 +1,8 @@
+// Yozo helpers are in scope
+const { Flow, live, effect, when, timeout } = self.yozo;
+
 // a generic flow is created
-const flow = new self.yozo.Flow();
+const flow = new Flow();
 
 // the flow is triggered with value __value__
 flow.now(__value__);
@@ -14,17 +17,17 @@ flow.then(number => total += number)
 	.then(() => endReached++);
 
 // a live variable gets set up with array and active index
-const $data = self.yozo.live({
+const $data = live({
 	activeIndex: 0,
 	array: ['foo', 'bar', 'baz']
 });
 
 // an effect is set up listening for changes at the active index
 let changes = 0
-self.yozo.effect(() => {
+effect(() => {
 	const index = $data.activeIndex;
 	const $item = $data.$array['$' + index];
-	self.yozo.when($item).changes().then(() => changes++);
+	when($item).changes().then(() => changes++);
 });
 
 // the effect gets time to run
@@ -40,7 +43,7 @@ $data.$array[__index__] = __value__;
 changes == __amount__
 
 // __duration__ milliseconds elapse
-await self.yozo.timeout(__duration__);
+await timeout(__duration__);
 
 // the total amount is __amount__
 total == __amount__
@@ -53,7 +56,8 @@ endReached == 1
 
 
 // TEST: Complex flow pipelines work properly
-// Given a generic flow is created
+// Given Yozo helpers are in scope
+// and a generic flow is created
 // and a complex flow pipeline gets set up
 // When the flow is triggered with value 100
 // Then the total amount is 100
@@ -68,7 +72,8 @@ endReached == 1
 // Then the total amount is 102
 
 // TEST: Flows get taken down after re-running an effect
-// Given a live variable gets set up with array and active index
+// Given Yozo helpers are in scope
+// and a live variable gets set up with array and active index
 // and an effect is set up listening for changes at the active index
 // and the effect gets time to run
 // When the item at index 0 changes to 'qux'

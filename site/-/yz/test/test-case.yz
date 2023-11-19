@@ -7,7 +7,7 @@
 	<div id=details>
 		<div id=summary tabindex=-1 @click="event.preventDefault()">
 			<test-status :status="$.status"></test-status>
-			<p>Test {{ $.description }}</p>
+			<p>{{ $.title }}</p>
 			<ui-button icon=pointer :iconstate="$.open ? 'up' : 'down'"
 				@click="$.open = !$.open"></ui-button>
 		</div>
@@ -18,6 +18,10 @@
 </template>
 
 <script>
+live.link($.$title, () => {
+	if(!$.description) return 'Test'
+	return 'Test ' + $.description[0].toLowerCase() + $.description.slice(1)
+})
 when($.$open).changes().if(() => $.open).then(() => {
 	const {content} = elements
 	content.style.setProperty('--height', content.scrollHeight)

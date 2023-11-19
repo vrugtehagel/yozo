@@ -63,7 +63,7 @@ async function isUnreachable(url){
 	const mode = 'no-cors'
 	const controller = new AbortController
 	const {signal} = controller
-	track.add('undo', () => controller.abort())
+	monitor.add('undo', () => controller.abort())
 	const options = {method, mode, signal}
 	const response = await until(fetch(url, options).catch(() => null))
 	return !response
@@ -96,13 +96,10 @@ $.cancel = () => {
 
 $.reload = async () => $.navigate($.src)
 
-effect(() => {
+effect(async () => {
 	if(!$.messenger) return
-	when($.messenger).loads().then(event => {
-		event.detail.respond()
-		this.dispatchEvent(new CustomEvent('messengerload'))
-	}).once()
-	$.messenger.send('load')
+	await until($.messenger.ready())
+	this.dispatchEvent(new CustomEvent('messengerload'))
 })
 </script>
 
