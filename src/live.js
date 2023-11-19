@@ -2,7 +2,7 @@ import { error, warn, warnOnce } from './help.js' //
 import { Flow } from './flow.js'
 import { when } from './when.js'
 import { effect } from './effect.js'
-import { track } from './track.js'
+import { monitor } from './monitor.js'
 import { R } from './utils.js'
 
 
@@ -28,14 +28,14 @@ class LiveCore {
 				if(key == Symbol.iterator){
 					access(key) //
 					return () => {
-						track.add('live', this.__$value, 'keychange')
+						monitor.add('live', this.__$value, 'keychange')
 						return [...this.__value].map((thing, index) => this.__cached(index).__$value)[Symbol.iterator]()
 					}
 				}
 				if(key[0] == '$') return this.__cached(key.slice(1)).__$value
 				access(key) //
 				if(target[key]) return target[key].bind(target)
-				track.add('live', this.__cached(key).__$value, 'deepchange')
+				monitor.add('live', this.__cached(key).__$value, 'deepchange')
 				return this.__value?.[key]
 			},
 			set: (target, key, value) => {
@@ -47,11 +47,11 @@ class LiveCore {
 				return live.delete(this.__cached(key).__$value)
 			},
 			has: (target, key) => {
-				track.add('live', this.__$value, 'keychange')
+				monitor.add('live', this.__$value, 'keychange')
 				return this.__value != null && target[key] || key in this.__value
 			},
 			ownKeys: () => {
-				track.add('live', this.__$value, 'keychange')
+				monitor.add('live', this.__$value, 'keychange')
 				return Object.keys(this.__value ?? {}).map(key => `$${key}`)
 			},
 			getOwnPropertyDescriptor: () =>
@@ -106,7 +106,7 @@ live.get = ($live, key) => {
 	if(!core) return key == null ? $live : $live[key]
 	access(key == null ? core.__key : key) //
 	if(key != null) return core.__cached(key).__value
-	track.add('live', $live, 'deepchange')
+	monitor.add('live', $live, 'deepchange')
 	return core.__value
 }
 
@@ -156,12 +156,12 @@ live.link = ($live, thing) => {
 	const listener = when($live).deepchange().then(() => {
 		if(changing) return
 		if(!options.set) return change(cache)
-		options.set(track.ignore(() => live.get($live)))
-		change(track.ignore(options.get))
+		options.set(monitor.ignore(() => live.get($live)))
+		change(monitor.ignore(options.get))
 	})
-	change(track.ignore(options.get))
+	change(monitor.ignore(options.get))
 	return (options.changes ?? new Flow)
-		.then(() => change(track.ignore(options.get)))
+		.then(() => change(monitor.ignore(options.get)))
 		.if(() => null)
 		.cleanup(() => listener.stop())
 }

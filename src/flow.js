@@ -1,5 +1,5 @@
 import { warn } from './help.js' //
-import { track } from './track.js'
+import { monitor } from './monitor.js'
 
 export class Flow {
 	#steps = []
@@ -9,7 +9,7 @@ export class Flow {
 	#stopIndex
 
 	constructor(callback){
-		track.add('undo', () => this.stop())
+		monitor.add('undo', () => this.stop())
 		callback?.((...args) => {
 			if(this.#stopped) warn`flow-stopped-but-triggered` //
 			this.now(...args)

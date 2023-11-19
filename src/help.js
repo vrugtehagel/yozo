@@ -25,21 +25,21 @@ const messages = {
 	'when-$1-instead-of-$2-mistake': (property, type) => `
 		when(…).{property}() may be a mistake, as it listens to the "${type}" event.
 		If you want to listen to the "${property}" event, use .does('${property}').`,
-	'track-add-$1-not-in-registry': name => `
+	'monitor-add-$1-not-in-registry': name => `
 		An item was added to "${name}", but "${name}" was not registered.
-		Register it first using track.register('${name}', class { … }).`,
-	'track-cannot-register-result': () => `
-		"result" cannot be registered as a trackable.
+		Register it first using monitor.register('${name}', class { … }).`,
+	'monitor-cannot-register-result': () => `
+		"result" cannot be registered as a monitorable.
 		Tracked calls already store their result under this key.`,
-	'track-registry-already-has-$1': name => `
-		track.register('${name}', …) was called, but "${name}" was already registerd.
+	'monitor-registry-already-has-$1': name => `
+		monitor.register('${name}', …) was called, but "${name}" was already registerd.
 		You cannot overwrite an existing registration; re-registrations are ignored.`,
-	'track-shorthand-$1-not-created': name => `
-		Registered the trackable "${name}", but could not create the shorthand.
-		track.${name} already exists; instead, use track(['${name}'], () => …).`,
-	'track-$1-definition-must-be-class': name => `
+	// 'monitor-shorthand-$1-not-created': name => `
+	// 	Registered the monitorable "${name}", but could not create the shorthand.
+	// 	monitor.${name} already exists; instead, use monitor(['${name}'], () => …).`,
+	'monitor-$1-definition-must-be-class': name => `
 		Registering "${name}", but its definition was not a class.
-		Register it using track.register('${name}', class { … }).`,
+		Register it using monitor.register('${name}', class { … }).`,
 	'flow-stopped-but-triggered': () => `
 		A flow was triggered after it stopped. Often, this indicates a memory leak.
 		Make sure you use .cleanup(…) to undo everything triggering the flow.`,

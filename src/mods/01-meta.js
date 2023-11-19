@@ -1,7 +1,7 @@
 import { error } from '../help.js' //
 import { define } from '../define.js'
 import { camelCase } from '../utils.js'
-import { track } from '../track.js'
+import { monitor } from '../monitor.js'
 import { live } from '../live.js'
 import { when } from '../when.js'
 
@@ -16,10 +16,10 @@ define.register(1, 'meta', (context, argslist) => {
 	]
 	for(const [options] of properties){
 		const get = function(){
-			return track.ignore(() => live.get(context.__meta.get(this).x.$, options.property))
+			return monitor.ignore(() => live.get(context.__meta.get(this).x.$, options.property))
 		}
 		const set = function(value){
-			track.ignore(() => context.__meta.get(this).x.$[options.property] = value)
+			monitor.ignore(() => context.__meta.get(this).x.$[options.property] = value)
 		}
 		Object.defineProperty(context.__body.prototype, options.property,
 			'readonly' in options ? {get} : {get, set})

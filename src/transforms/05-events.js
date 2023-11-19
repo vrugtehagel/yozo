@@ -1,7 +1,7 @@
 import { define } from '../define.js'
 import { effect } from '../effect.js'
 import { when } from '../when.js'
-import { track } from '../track.js'
+import { monitor } from '../monitor.js'
 
 
 define.transform(5, (node, scopes, meta, context) => {
@@ -13,7 +13,7 @@ define.transform(5, (node, scopes, meta, context) => {
 	const handler = meta.__function(node.value, ...scopes, ['event'])
 	meta.x.connected(() => {
 		when(element).does(type).then(event => {
-			track.ignore(() => handler(element, ...scopes, ['event', event]))
+			monitor.ignore(() => handler(element, ...scopes, ['event', event]))
 		})
 	})
 })

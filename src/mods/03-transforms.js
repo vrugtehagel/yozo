@@ -1,5 +1,5 @@
 import { define } from '../define.js'
-import { track } from '../track.js'
+import { monitor } from '../monitor.js'
 import { S, camelCase, uniqueName } from '../utils.js'
 
 
@@ -14,7 +14,7 @@ define.register(3, Symbol(), context => {
 			return (thisArg, ...scopes) =>
 				result.call(thisArg, ...scopes.map(scope => scope[1]))
 		}
-		meta.__render = (node, ...scopes) => track.ignore(() => {
+		meta.__render = (node, ...scopes) => monitor.ignore(() => {
 			const root = node.cloneNode(true)
 			const iterator = document.createNodeIterator(root, 5)
 			let current

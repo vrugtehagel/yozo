@@ -1,4 +1,4 @@
-import { track, until } from './track.js'
+import { monitor, until } from './monitor.js'
 import { Flow } from './flow.js'
 import { live } from './live.js'
 import { when } from './when.js'
@@ -25,7 +25,7 @@ import './transforms/04-properties.js'
 import './transforms/05-events.js'
 
 self.yozo = {
-	track, until,
+	monitor, until,
 	Flow,
 	live,
 	when,

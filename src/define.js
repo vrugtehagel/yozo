@@ -1,6 +1,6 @@
 import { error } from './help.js' //
 import { R, S, compose } from './utils.js'
-import { track } from './track.js'
+import { monitor } from './monitor.js'
 
 export const define = definer => {
 	const context = {
@@ -10,7 +10,7 @@ export const define = definer => {
 			constructor(){
 				super()
 				context.__meta.set(this, {x: {}})
-				track.ignore(() => composed.constructor.call(this, context.__meta.get(this)))
+				monitor.ignore(() => composed.constructor.call(this, context.__meta.get(this)))
 			}
 		}
 	}
@@ -22,7 +22,7 @@ export const define = definer => {
 	const composed = compose(mixins)
 	for(const key of Object.keys(composed))
 		context.__body.prototype[key] ??= function(...args){
-			track.ignore(() => composed[key].call(this, context.__meta.get(this), ...args))
+			monitor.ignore(() => composed[key].call(this, context.__meta.get(this), ...args))
 		}
 	if(!context.__title) error`define-missing-title` //
 	customElements.define(context.__title, context.__body)
