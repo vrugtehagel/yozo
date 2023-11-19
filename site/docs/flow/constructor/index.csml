@@ -9,7 +9,7 @@ ui-callout[type=warning]
 h2 Syntax
 
 ui-code
-	new Flow(callback)
+	new Flow(callback);
 
 h3 Parameters
 dl
