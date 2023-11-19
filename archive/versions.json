@@ -1,4 +1,16 @@
 [{
+	"number": "1.2.0",
+	"hash": "2/T48h6QQC31IPiQHEyg9A==",
+	"timestamp": 1700395579154,
+	"changelog": {
+		"breaking": [
+			"track() has been renamed to monitor()",
+			"Tracking shorthands like track.undo() and track.live() have been removed in favor of the more general monitor(['undo'], () => { … }) and likewise for other types. Registering new types will also no longer create shorthands."
+		],
+		"improvements": [],
+		"bugs": []
+	}
+}, {
 	"number": "1.1.0",
 	"hash": "oq7zDVgrRBFgCneubzzQUQ==",
 	"timestamp": 1699110000221,
