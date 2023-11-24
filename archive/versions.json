@@ -5,7 +5,7 @@
 	"changelog": {
 		"breaking": [],
 		"improvements": [
-			"register() now accepts URL object as first argument"
+			"register() now accepts URL objects as first argument"
 		],
 		"bugs": []
 	}
