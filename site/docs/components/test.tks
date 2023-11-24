@@ -2,8 +2,9 @@
 if(self.Deno) return;
 
 // the recommended click-counter source code is defined
+const name = `click-counter-${ crypto.randomUUID() }`;
 const clickCounterSource = `
-	<title>click-counter</title>
+	<title>${ name }</title>
 	<meta attribute="amount" type="number">
 	<meta method="reset">
 
@@ -18,12 +19,13 @@ const clickCounterSource = `
 `;
 
 // the manual updates click-counter source code is defined
+const name = `click-counter-${ crypto.randomUUID() }`;
 const clickCounterSource = `
-	<title>click-counter</title>
+	<title>${ name }</title>
 	<meta attribute="amount" type="number">
 	<meta method="reset">
 
-	<template mode="closed">
+	<template mode="open">
 		<button>0 clicks</button>
 	</template>
 	<script>
@@ -47,16 +49,16 @@ const clickCounterSource = `
 
 // the source is uploaded to a fake server
 const webServer = await import('/-/js/web-server/index.js');
-webServer.claim('/test/')
-webServer.clear('/test/')
+webServer.claim('/test/');
+webServer.clear('/test/');
 webServer.upload({
-	src: '/test/click-counter.yz',
+	src: `/test/${ name }.yz`,
 	body: clickCounterSource
 });
 
 // the click counter is registered, created and connected
-await self.yozo.register('/test/click-counter.yz');
-const element = document.createElement('click-counter');
+await self.yozo.register(`/test/${ name }.yz`);
+const element = document.createElement(name);
 const button = element.shadowRoot.querySelector('button');
 document.body.append(element);
 
@@ -67,7 +69,7 @@ element.remove();
 button.click();
 
 // the element gets a microtask to update
-await 'microtask'
+await 'microtask';
 
 // the reset method is called
 element.reset();
