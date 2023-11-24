@@ -24,6 +24,8 @@ Below this, there's a more detailed breakdown of the site and what's needed.
      - Building full testing sandbox
      - Write all of the content
  - Create the homepage
+ - Check browsers
+     - play doesn't work (Safari can't top-level await some stuff)
  - NPM package?
  - Maybe  build a11y-friendly basic component package
  - Check site for occurances of certain words to improve inclusivity
@@ -44,7 +46,7 @@ The tour highlights each individual part of Yozo in a logical order, allowing th
  - Introduction
     - Using Yozo
        - Outline its size
-       - `<script src=https://yozo.ooo/dev.js>`
+       - `<script src=https://yozo.ooo/dev-latest.js>`
        - Outline its synchronousness
        - `const {...} = yozo`
     - Basics of when()
@@ -71,11 +73,13 @@ A section with a simple sandbox, allowing for multiple files and allowing the us
 ### Docs
 
 We need the following pages, in the same tree-like structure (~40 pages).
- - [x] monitor()
+ - [ ] monitor()
     - [ ] monitor.add()
     - [ ] monitor.ignore()
     - [ ] monitor.register()
     - [ ] until()
+    - [ ] type: 'undo'
+    - [ ] type: 'live'
  - [x] live()
     - [ ] live.get()
     - [ ] live.set()
@@ -95,13 +99,13 @@ We need the following pages, in the same tree-like structure (~40 pages).
     - [ ] flow.once()
     - [ ] flow.debounce()
     - [ ] flow.throttle()
- - [ ] when()
+ - [x] when()
     - [ ] when().observes()
  - [ ] timeout()
  - [x] interval()
  - [ ] frame()
  - [ ] paint()
- - [ ] register()
+ - [x] register()
     - [ ] register.auto()
  - [ ] purify()
  - [ ] effect()

@@ -1,0 +1,55 @@
+@script
+	export const layout = 'docs'
+	export const title = 'register()'
+	export const description = 'The ``register()`` function is used to explicitly load Yozo component files by their URL.'
+
+p It is, in some ways, similar to a ``<script src="…">`` or ``<link href="…">`` for JavaScript and CSS respectively.
+
+h2 Syntax
+
+ui-code
+	register(url);
+
+h3 Parameters
+dl
+	dt ``url``
+	dd > p A string or ``URL`` object to a Yozo component file.
+
+h3 Return value
+p A ``Promise`` that resolves whenever the component is defined, akin to ``customElements.whenDefined(…)``. When the component file contains syntactical errors, the return value is a rejected promise; otherwise, the registration will succeed. If the URL provided was already provided previously, ``register()`` immediately resolves (regardless of whether or not the first registration succeeded).
+
+h2 Examples
+
+h3 Readability
+p For better readability, it is advised not to destructure the ``register()`` function, instead using the full ``window.yozo.`` prefix, like so:
+
+ui-code
+	window.yozo.register('/path/to/component.yz');
+
+p Additionally, while component files "import" (i.e. implicitly destructure) Yozo's functionality by default, this is not the case for the ``register()`` function specifically. In practice, this means the prefix (or explicit destructuring) is necessary in all contexts.
+
+h3 Error handling
+p There are a few ways errors might occur during component registration. They are caused by syntactical errors in the component definition, including malformed HTML, invalid JavaScript, or a missing [``<title>``](/docs/components/title/) element. If an error is thrown, no custom element is defined, and the promise returned by ``register()`` is rejected. For example, let's say we have a component file as follows:
+
+ui-code[language=yz]
+	<title>uh-oh</title>
+	<script>
+	this is not JavaScript, it's a syntax error!
+	</script>
+
+p The above creates an invalid block of JavaScript, which simply cannot be parsed. Thus, if we attempt to register the above, the registration will fail, resulting in a rejected promise that we can catch:
+
+ui-code
+	try {
+		await window.yozo.register('/components/uh-oh.yz');
+	} catch (error) {
+		console.log(error.message); // "unexpected token"
+	}
+
+p We might also verify using ``customElements.get(…)`` (which is a native Web Components API) that the element was not defined. For defined elements, it returns the constructor for the registered custom element, and it returns ``undefined`` otherwise:
+
+ui-code
+	console.log(customElements.get('uh-oh')); // undefined
+
+h2 See also
+p To automatically detect used elements on the page, see [``register.auto()``](/docs/register/auto/).

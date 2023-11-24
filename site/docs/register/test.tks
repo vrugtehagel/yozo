@@ -1,0 +1,73 @@
+// we're in a browser
+if(self.Deno) return;
+
+// a unique component name is generated
+const name = `my-component-${ crypto.randomUUID() }`;
+
+// a valid component source is defined
+const source = `
+	<title>${ name }</title>
+`;
+
+// the source for a component with no title is defined
+const source = `
+	<meta attribute="foo" type="string">
+`;
+
+// the source is uploaded to a fake server
+const webServer = await import('/-/js/web-server/index.js');
+webServer.claim('/test/');
+webServer.clear('/test/');
+webServer.upload({
+	src: `/test/${ name }.yz`,
+	body: source
+});
+
+// the component is registered
+await window.yozo.register(`/test/${ name }.yz`);
+
+// we try to register the component
+let success = true;
+try {
+	await window.yozo.register(`/test/${ name }.yz`);
+} catch {
+	success = false;
+}
+
+// the custom element is defined
+customElements.get(name) != null
+
+// the custom element is not defined
+customElements.get(name) == null
+
+// the registration failed
+!success
+
+// the registration succeeds
+success
+
+
+// TEST: registering works for valid component files
+// Given we're in a browser
+// and a unique component name is generated
+// and a valid component source is defined
+// and the source is uploaded to a fake server
+// When the component is registered
+// Then the custom element is defined
+
+// TEST: registering a component with no title fails
+// Given we're in a browser
+// and a unique component name is generated
+// and the source for a component with no title is defined
+// and the source is uploaded to a fake server
+// and we try to register the component
+// Verify the registration failed
+
+// TEST: registering a component twice silently resolves the second time
+// Given we're in a browser
+// and a unique component name is generated
+// and a valid component source is defined
+// and the source is uploaded to a fake server
+// and the component is registered
+// and we try to register the component
+// Verify the registration succeeds
