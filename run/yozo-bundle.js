@@ -32,9 +32,16 @@ async function buildYozo(){
 	await esbuild.build({
 		bundle: true,
 		outdir: 'dist',
-		entryPoints: [lib, dev],
+		entryPoints: [lib],
 		minify: true,
 		mangleProps: /^__/,
+		logLevel: 'warning'
+	})
+	await esbuild.build({
+		bundle: true,
+		outdir: 'dist',
+		entryPoints: [dev],
+		minify: false,
 		logLevel: 'warning'
 	})
 	esbuild.stop()
