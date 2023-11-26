@@ -5,7 +5,7 @@ Yozo itself is written in the `src/` directory. The documentation (and rest of t
 
 ## Potential additions
 Here's a list of things that I would like if they fit within budget
- - Make `elements.foobar` work even for conditional (`#if`, `#else-if`, `#else`) elements. _I SHOULD DO THIS_ because the current implementation is wasteful. Elements should be reused whereever possible, and if they are reused, there is no reason not to have `elements` work as expected.
+ - Make `elements.foobar` work even for conditional (`#if`, `#else-if`, `#else`) elements.Elements should be reused whereever possible, and if they are reused, there is no reason not to have `elements` work as expected. Note: this might be difficult since
  - Easier imports (potentially using `<link>`). Not sure if this is actually useful enough; it is already possible to import things and the API for this would not fit into `$` very prettily (maybe it should just go into `imports`?).
  - Add warning for when you use a global effect (i.e. effect with non-local dependencies) inside a component definition.
 
@@ -24,6 +24,8 @@ Below this, there's a more detailed breakdown of the site and what's needed.
      - Building full testing sandbox
      - Write all of the content
  - Create the homepage
+ - Fix {{ inline }} expressions syntax highlighting
+ - Fix docs-outline component header detection
  - Check browsers
      - play doesn't work (Safari can't top-level await some stuff)
  - NPM package?
@@ -72,7 +74,7 @@ A section with a simple sandbox, allowing for multiple files and allowing the us
 
 ### Docs
 
-We need the following pages, in the same tree-like structure (~40 pages).
+We need the following pages, in the same tree-like structure (7/57 pages done).
  - [ ] monitor()
     - [ ] monitor.add()
     - [ ] monitor.ignore()
@@ -86,7 +88,7 @@ We need the following pages, in the same tree-like structure (~40 pages).
     - [ ] live.delete()
     - [ ] live.link()
  - [x] Flow
-    - [ ] constructor
+    - [x] constructor
     - [ ] flow.pipe()
     - [ ] flow.now()
     - [ ] flow.then()
@@ -111,11 +113,10 @@ We need the following pages, in the same tree-like structure (~40 pages).
  - [ ] effect()
  - [x] components
     - [ ] title
-    - [ ] template
+    - [x] template
        - [ ] inline
        - [ ] for...of
        - [ ] if...else
-       - [ ] attributes
        - [ ] @event
        - [ ] :attribute
        - [ ] .property
