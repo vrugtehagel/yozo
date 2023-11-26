@@ -59,42 +59,42 @@ __type__s == 0
 __type__s == 1
 
 
-// TEST: the longhand functions like .addEventListener()
+// TEST: The longhand functions like .addEventListener()
 // Given Yozo helpers are in scope
 // and a target is created
 // and we listen for the ping event using the longhand
 // When the target dispatches the ping event
 // Then one ping event was received
 
-// TEST: the longhand accepts options
+// TEST: The longhand accepts options
 // Given Yozo helpers are in scope
 // and a target is created
 // and a listener is created for ping using { once: true }
 // When the target dispatches the ping event twice
 // Then one ping event was received
 
-// TEST: the shorthand works with the "s" stuck on
+// TEST: The shorthand works with the "s" stuck on
 // Given Yozo helpers are in scope
 // and a target is created
 // and a listener is created for an event that pings, with an s
 // When the target dispatches the ping event
 // Then one ping event was received
 
-// TEST: the shorthand works without the extra "s"
+// TEST: The shorthand works without the extra "s"
 // Given Yozo helpers are in scope
 // and a target is created
 // and a listener is created for the ping event, without s
 // When the target dispatches the ping event
 // Then one ping event was received
 
-// TEST: the shorthand accepts options
+// TEST: The shorthand accepts options
 // Given Yozo helpers are in scope
 // and a target is created
 // and a shorthand listener is created for ping using { once: true }
 // When the target dispatches the ping event twice
 // Then one ping event was received
 
-// TEST: when expressions are monitored
+// TEST: When expressions are monitored
 // Given Yozo helpers are in scope
 // and a target is created
 // and a monitored listener is created for the ping event

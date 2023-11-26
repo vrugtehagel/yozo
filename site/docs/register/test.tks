@@ -47,7 +47,7 @@ customElements.get(name) == null
 success
 
 
-// TEST: registering works for valid component files
+// TEST: Registering works for valid component files
 // Given we're in a browser
 // and a unique component name is generated
 // and a valid component source is defined
@@ -55,7 +55,7 @@ success
 // When the component is registered
 // Then the custom element is defined
 
-// TEST: registering a component with no title fails
+// TEST: Registering a component with no title fails
 // Given we're in a browser
 // and a unique component name is generated
 // and the source for a component with no title is defined
@@ -63,7 +63,7 @@ success
 // and we try to register the component
 // Verify the registration failed
 
-// TEST: registering a component twice silently resolves the second time
+// TEST: Registering a component twice silently resolves the second time
 // Given we're in a browser
 // and a unique component name is generated
 // and a valid component source is defined
