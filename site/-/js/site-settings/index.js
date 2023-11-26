@@ -28,8 +28,8 @@ export function format(code, language){
 		code = code.replaceAll(/^\t+/gm, match => indent.repeat(match.length))
 	if($settings.semicolons) return code
 	if(language == 'js') return code.replaceAll(/;(?=\s*?(?:\/\/.*)?$)/gm, '')
-	if(!['yz', 'html'].includes($.language)) return code
+	if(!['yz', 'html'].includes(language)) return code
 	const semicolonsInsideScripts =
-		/;(?=\s*?(?:\/\/.*)?$)(?=(?:[^](?!<script>))*?<\/script>)/gm
+		/;(?=[^\S\n]*(?:\/\/.*)?$)(?=(?:[^](?!<script>))*<\/script>)/gm
 	return code.replaceAll(semicolonsInsideScripts, '')
 }
