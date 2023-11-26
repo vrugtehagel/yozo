@@ -1,4 +1,17 @@
 [{
+	"number": "1.2.2",
+	"hash": "fGtPI9RCNS8msDir+TkkEQ==",
+	"timestamp": 1700995275255,
+	"changelog": {
+		"breaking": [],
+		"improvements": [
+			"Dev builds are not longer minified"
+		],
+		"bugs": [
+			"Fixed an issue where shadowless components would break after connecting for a second time"
+		]
+	}
+}, {
 	"number": "1.2.1",
 	"hash": "Yphb35XFanbhpJxyv24FuQ==",
 	"timestamp": 1700402995399,

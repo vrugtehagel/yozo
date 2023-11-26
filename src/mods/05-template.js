@@ -24,6 +24,7 @@ define.register(5, 'template', (context, [args]) => {
 		customElements.upgrade(meta.root)
 	}
 	const connectedCallback = function(meta){
+		if(meta.root == this) return
 		this.replaceChildren(meta.root)
 		meta.root = this
 	}
