@@ -15,8 +15,8 @@ Here's a list of things that I would like if they fit within budget
 Below this, there's a more detailed breakdown of the site and what's needed.
 
  - Lock in modules by writing tests (in their respective page in /docs/)
- - Finish component core
-     - Add sourcemaps
+ - Add sourcemaps
+ - More byteshaving
  - Create /docs/ pages
  - Create tour
      - Define steps and sections
@@ -29,7 +29,7 @@ Below this, there's a more detailed breakdown of the site and what's needed.
  - Check browsers
      - play doesn't work (Safari can't top-level await some stuff)
  - NPM package?
- - Maybe  build a11y-friendly basic component package
+ - Maybe build a11y-friendly basic component package
  - Check site for occurances of certain words to improve inclusivity
 
 
@@ -74,7 +74,7 @@ A section with a simple sandbox, allowing for multiple files and allowing the us
 
 ### Docs
 
-We need the following pages, in the same tree-like structure (7/57 pages done).
+We need the following pages, in the same tree-like structure (8/57 pages done).
  - [ ] monitor()
     - [ ] monitor.add()
     - [ ] monitor.ignore()
