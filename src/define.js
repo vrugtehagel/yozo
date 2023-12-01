@@ -1,10 +1,9 @@
-import { error } from './help.js' //
 import { R, S, compose } from './utils.js'
 import { monitor } from './monitor.js'
 
 export const define = definer => {
 	const context = {
-		x: new Set,
+		x: new Set(['$', 'elements']),
 		__meta: new WeakMap,
 		__body: class extends HTMLElement {
 			constructor(){
@@ -24,7 +23,6 @@ export const define = definer => {
 		context.__body.prototype[key] ??= function(...args){
 			monitor.ignore(() => composed[key].call(this, context.__meta.get(this), ...args))
 		}
-	if(!context.__title) error`define-missing-title` //
 	customElements.define(context.__title, context.__body)
 	return customElements.whenDefined(context.__title)
 }

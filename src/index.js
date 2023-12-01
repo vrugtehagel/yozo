@@ -5,7 +5,6 @@ import { when } from './when.js'
 import { purify } from './purify.js'
 import { effect } from './effect.js'
 import { frame, interval, paint, timeout } from './timers.js'
-
 import { register } from './register.js'
 
 import './mods/00-title.js'

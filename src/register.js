@@ -20,14 +20,13 @@ export const register = async url => {
 }
 register[R] = new Set
 
-let initiated
 let cancelled
 register.auto = find => {
-	if(initiated) return
-	initiated = new Set
+	if(register.auto[R]) return
+	register.auto[R] = new Set
 	const autoDefine = name => {
-		if(initiated.has(name)) return
-		initiated.add(name)
+		if(register.auto[R].has(name)) return
+		register.auto[R].add(name)
 		const url = find(name)
 		if(url) register(url)
 	}
@@ -37,10 +36,9 @@ register.auto = find => {
 		for(const template of root.querySelectorAll('template'))
 			from(template.content)
 	}
-	define.register(6, null, context => {
+	define.register(6, Symbol(), context => {
 		if(cancelled) return {}
-		if(!context.__template) return {}
-		from(context.__template)
+		if(context.__template) from(context.__template)
 		return {}
 	}, {})
 	return when(document).observes('mutation', {childList: true, subtree: true})

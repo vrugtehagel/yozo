@@ -3,7 +3,6 @@ import { kebabCase } from '../utils.js'
 
 
 define.register(7, Symbol(), context => {
-	context.x.add('elements')
 	const constructor = function(meta){
 		const cache = {
 			all: selector => [...meta.root.querySelectorAll(selector)],

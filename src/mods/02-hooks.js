@@ -9,8 +9,9 @@ define.register(2, 'meta', (context, argslist) => {
 		...argslist,
 		[{hook: 'connected', unhook: 'disconnected'}],
 		[{hook: 'disconnected'}]
-	].filter(args => args[0].hook).map(args => {
+	].map(args => {
 		const {hook, unhook} = args[0]
+		if(!hook) return {}
 		context.x.add(hook)
 		const constructor = function(meta){
 			meta.x[hook] = callback => {

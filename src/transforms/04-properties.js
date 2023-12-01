@@ -17,8 +17,8 @@ define.transform(4, (node, scopes, meta, context) => {
 		const properties = [...chain]
 		const last = properties.pop()
 		for(const property of properties) current = current?.[property]
-		if(current instanceof DOMTokenList)
-			current.toggle(originalLast, value)
-		else if(current != null) current[last] = value
+		if(current == null) return
+		if(current instanceof DOMTokenList) current.toggle(originalLast, value)
+		else current[last] = value
 	}))
 })

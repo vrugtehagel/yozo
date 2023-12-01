@@ -1,5 +1,4 @@
 import { Flow } from './flow.js'
-import { until } from './monitor.js'
 
 export const interval = duration => {
 	let id

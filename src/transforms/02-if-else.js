@@ -15,7 +15,7 @@ define.transform(2, (node, scopes, meta, context) => {
 	const consume = statement => {
 		if(!logicNode.nextElementSibling?.hasAttribute(statement)) return
 		logicNode = logicNode.nextElementSibling
-		expressions.push(`()=>(${logicNode.getAttribute(statement)})`)
+		expressions.push(`()=>(${logicNode.getAttribute(statement) || true})`)
 		ifElseChain.push(logicNode.localName == 'template'
 			? logicNode.content
 			: logicNode)
@@ -24,12 +24,12 @@ define.transform(2, (node, scopes, meta, context) => {
 	}
 	consume('#if')
 	while(consume('#else-if'));
-	if(consume('#else')) expressions[expressions.length - 1] = `()=>1`
+	consume('#else')
 	while(anchor.nextSibling != logicNode) anchor.nextSibling.remove()
 	logicNode.remove()
 	let connectedIndex
 	const getter = meta.__function(`[${expressions}].findIndex(e=>e())`, ...scopes)
-	let connectedNodes = []
+	const connectedNodes = []
 	meta.x.connected(() => effect(() => {
 		const index = getter(null, ...scopes)
 		if(index == connectedIndex) return

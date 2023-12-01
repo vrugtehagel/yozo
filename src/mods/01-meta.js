@@ -7,7 +7,6 @@ import { when } from '../when.js'
 
 
 define.register(1, 'meta', (context, argslist) => {
-	context.x.add('$')
 	const attributes = argslist.filter(args => args[0].attribute)
 	const properties = [
 		...argslist.filter(args => args[0].property),
@@ -28,8 +27,7 @@ define.register(1, 'meta', (context, argslist) => {
 	context.__body.formAssociated = argslist.some(args => args[0].formAssociated != null)
 	const constructor = function(meta){
 		meta.x.$ = live({attributes: {}})
-		meta.x.$.attributes = {}
-		for(const [options] of attributes){
+		attributes.map(([options]) => {
 			const name = camelCase(options.attribute)
 			meta.x.$.$attributes[name] = null
 			when(meta.x.$.$attributes[`$${name}`]).change().then(() => {
@@ -52,13 +50,13 @@ define.register(1, 'meta', (context, argslist) => {
 					changes: when(meta.x.$.$attributes[`$${name}`]).change()
 				})
 			}
-		}
-		for(const [{property}] of properties){
-			if(!Object.hasOwn(this, property)) continue
+		})
+		properties.map(([{property}]) => {
+			if(!Object.hasOwn(this, property)) return
 			const oldValue = this[property]
 			delete this[property]
 			this[property] = oldValue
-		}
+		})
 	}
 	const attributeChangedCallback = function(meta, name, oldValue, value){
 		meta.x.$.$attributes[camelCase(name)] = value

@@ -11,9 +11,7 @@ define.transform(5, (node, scopes, meta, context) => {
 	const type = node.name.slice(1)
 	element.removeAttribute(node.name)
 	const handler = meta.__function(node.value, ...scopes, ['event'])
-	meta.x.connected(() => {
-		when(element).does(type).then(event => {
-			monitor.ignore(() => handler(element, ...scopes, ['event', event]))
-		})
-	})
+	meta.x.connected(() => when(element).does(type).then(event => {
+		monitor.ignore(() => handler(element, ...scopes, ['event', event]))
+	}))
 })

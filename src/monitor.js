@@ -1,4 +1,4 @@
-import { error, warn, warnOnce } from './help.js' //
+import { warn } from './help.js' //
 import { S, R } from './utils.js'
 import { when } from './when.js'
 import { Flow } from './flow.js'
@@ -9,8 +9,10 @@ export const monitor = (names, callback) => {
 	const before = monitor[S]
 	monitor[S] = {}
 	const call = {}
-	for(const name of names)
-		call[name] = (monitor[S][name] = new (monitor[R][name])).result
+	for(const name of names){
+		monitor[S][name] = new (monitor[R][name])
+		call[name] = monitor[S][name].result
+	}
 	call.result = callback()
 	monitor[S] = before
 	return call
@@ -35,38 +37,38 @@ monitor.add = (name, ...things) => {
 	monitor[S]?.[name]?.add(...things)
 }
 
-monitor[R] = {result: true}
 monitor.register = (name, registration) => {
 	if(name == 'result') warn`monitor-cannot-register-result` //
 	if(monitor[R][name]) warn`monitor-registry-already-has-${name}` //
-	if(monitor[R][name]) return
 	monitor[R][name] ??= registration
 }
 
-monitor.register('undo', class {
-	[R] = []
-	#stopped
-	result = () => {
-		if(this.#stopped) return
-		this[R].splice(0).map(callback => callback())
-		this.#stopped = true
+monitor[R] = {
+	result: true,
+	undo: class {
+		[R] = []
+		#stopped
+		result = () => {
+			if(this.#stopped) return
+			this[R].splice(0).map(callback => callback())
+			this.#stopped = true
+		}
+		add(callback){
+			if(this.#stopped) return callback()
+			this[R].push(callback)
+		}
+		until(){ return this.#stopped }
+	},
+	live: class {
+		[R] = new Map
+		result = new EventTarget
+		add($live, type){
+			const cache = this[R].get($live) ?? []
+			if(cache.includes(type)) return
+			cache.push(type)
+			this[R].set($live, cache)
+			monitor.ignore(() => when($live).does(type))
+				.then(() => this.result.dispatchEvent(new CustomEvent('change')))
+		}
 	}
-	add(callback){
-		if(this.#stopped) return callback()
-		this[R].push(callback)
-	}
-	until(){ return this.#stopped }
-})
-
-monitor.register('live', class {
-	[R] = new Map
-	result = new EventTarget
-	add($live, type){
-		const cache = this[R].get($live) ?? []
-		if(cache.includes(type)) return
-		cache.push(type)
-		this[R].set($live, cache)
-		monitor.ignore(() => when($live).does(type))
-			.then(() => this.result.dispatchEvent(new CustomEvent('change')))
-	}
-})
+}

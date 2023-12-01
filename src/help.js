@@ -34,9 +34,6 @@ const messages = {
 	'monitor-registry-already-has-$1': name => `
 		monitor.register('${name}', …) was called, but "${name}" was already registerd.
 		You cannot overwrite an existing registration; re-registrations are ignored.`,
-	// 'monitor-shorthand-$1-not-created': name => `
-	// 	Registered the monitorable "${name}", but could not create the shorthand.
-	// 	monitor.${name} already exists; instead, use monitor(['${name}'], () => …).`,
 	'monitor-$1-definition-must-be-class': name => `
 		Registering "${name}", but its definition was not a class.
 		Register it using monitor.register('${name}', class { … }).`,
@@ -46,9 +43,6 @@ const messages = {
 	'live-$1-on-non-live': method => `
 		live.${method}(…) was called, but its first argument wasn't live.
 		This was probably a mistake; it does nothing.`,
-	// 'live-linked-property-set-for-$1': key => `
-	// 	${key ? `The "${key}"` : `A live`} property created with live.link(…) was set, but it wasn't given a setter.
-	// 	If it should be set-able, provide a "set" function to its options argument.`,
 	'live-link-target-$1-not-live': guess => `
 		Something non-live was passed to live.link(…).
 		Probably, you missed the $ in .$${guess}.`,
