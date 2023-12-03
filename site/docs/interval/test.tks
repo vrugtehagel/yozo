@@ -34,11 +34,11 @@ triggers == __amount__
 
 // TEST: Intervals fire with fixed delays
 // Given Yozo helpers are in scope
-// and a 50ms interval is created that counts triggers
+// and a 100ms interval is created that counts triggers
 // Verify the interval fired 0 times
-// Given we wait for 80 milliseconds
+// Given we wait for 150 milliseconds
 // Verify the interval fired once
-// Given we wait for 100 milliseconds
+// Given we wait for 200 milliseconds
 // Verify the interval fired 3 times
 // Finally the interval stops
 
@@ -49,5 +49,4 @@ triggers == __amount__
 // Given we wait for 40 milliseconds
 // Then the interval fired 0 times
 // Finally the interval stops
-
 
