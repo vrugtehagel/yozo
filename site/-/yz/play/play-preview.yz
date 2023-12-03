@@ -45,7 +45,7 @@ $.message = (severity, {message, line, column, src}) => {
 	if(!$.consoleAutoOpened && !$.consoleOpen)
 		$.consoleAutoOpened = $.consoleOpen = true
 	const div = document.createElement('div')
-	div.textContent = message.match(/[.,!?]$/) ? message : `${message}.`
+	div.textContent = message
 	div.classList.add('message', severity)
 	elements.console.append(div)
 	if(!src) return

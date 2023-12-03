@@ -28,7 +28,8 @@ console.log = Object.assign((...args) => {
 	console.log.original.apply(console, args)
 	loading.then(async () => {
 		await messenger.ready()
-		messenger.send('log', {message: args.join(' ')})
+		const message = args.map(arg => `${arg}`).join(' ')
+		messenger.send('log', {message})
 	})
 }, {original: console.log})
 
