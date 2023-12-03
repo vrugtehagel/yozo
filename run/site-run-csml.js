@@ -1,4 +1,5 @@
 import { copy, walk } from 'std/fs/mod.ts'
+import { red } from 'std/fmt/colors.ts'
 import { csml, addFlagToTag, addTransform } from 'csml/mod.ts'
 
 
@@ -19,9 +20,13 @@ export async function runCSML(){
 }
 
 async function runPage(url){
-	const html = await csml.render('dist/-/csml/root.csml', {url})
-	const out = url.replace(/\.csml$/, '.html')
-	await Deno.writeTextFile(out, html)
+	try {
+		const html = await csml.render('dist/-/csml/root.csml', {url})
+		const out = url.replace(/\.csml$/, '.html')
+		await Deno.writeTextFile(out, html)
+	} catch(error) {
+		console.log(`${red('Error:')} ${error.message}`)
+	}
 }
 
 async function runPages(){
