@@ -74,8 +74,8 @@ A section with a simple sandbox, allowing for multiple files and allowing the us
 
 ### Docs
 
-We need the following pages, in the same tree-like structure (8/57 pages done).
- - [ ] monitor()
+We need the following pages, in the same tree-like structure (9/57 pages done).
+ - [x] monitor()
     - [ ] monitor.add()
     - [ ] monitor.ignore()
     - [ ] monitor.register()
@@ -115,11 +115,11 @@ We need the following pages, in the same tree-like structure (8/57 pages done).
     - [ ] title
     - [x] template
        - [ ] inline
-       - [ ] for...of
-       - [ ] if...else
-       - [ ] @event
-       - [ ] :attribute
-       - [ ] .property
+       - [ ] for...of (/for-of/)
+       - [ ] if...else (/if-else/)
+       - [ ] @event (/events/)
+       - [ ] :attribute (/attributes/)
+       - [ ] .property (/properties/)
     - [ ] meta
        - [ ] attribute
        - [ ] property
