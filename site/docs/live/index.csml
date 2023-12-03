@@ -99,7 +99,7 @@ ui-code[language=yz]
 		</button>
 	</template>
 
-p The [``{{'{'}}{ inlineExpression }}``](/docs/components/template/inline-expression/) inside the template creates a monitored context, so that it monitors its live dependencies. As it is watching for changes, the template updates whenever ``$.count`` is altered, with no additional work required. The ``$.count`` property is linked to the custom element's "count" attribute, so we both reactively update the component state when the user clicks the button (through ``$.count++``) as well as when the "count" attribute changes.
+p The [``{{'{'}}{ inlineExpression }}``](/docs/components/template/inline/) inside the template creates a monitored context, so that it monitors its live dependencies. As it is watching for changes, the template updates whenever ``$.count`` is altered, with no additional work required. The ``$.count`` property is linked to the custom element's "count" attribute, so we both reactively update the component state when the user clicks the button (through ``$.count++``) as well as when the "count" attribute changes.
 
 h3 Optional chaining
 p Live variables come with optional chaining built-in. In other words, accessing a property on a live variable will never throw an error, and simply return `undefined` if the live variable's value that the property was accessed on didn't exist. Live variables will still fire events as you'd expect. Here's an example:

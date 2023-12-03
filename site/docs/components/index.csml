@@ -32,7 +32,7 @@ ui-code[language=yz]
 		</button>
 	</template>
 
-p The shadow root's configuration is passed through the ``<template>``'s attributes, and the template's body is put into the shadow root. When using shadow-less components, leave out the ``<template>``'s attributes, and the template's content will be inserted once the component connects to the DOM. Inside the template, there are a variety of helpful shorthands to add some life to the components, ranging from basic things like an [``{{'{'}}{ inlineExpression }}``](/docs/components/template/inline/), to [conditions](/docs/components/template/if...else/), to [event listeners](/docs/components/template/@event/) and of course [reactive attributes](/docs/components/template/:attribute/) and [properties](/docs/components/template/.property/). For more detailed explanations on the template syntax, see [``<template>``](/docs/components/template/).
+p The shadow root's configuration is passed through the ``<template>``'s attributes, and the template's body is put into the shadow root. When using shadow-less components, leave out the ``<template>``'s attributes, and the template's content will be inserted once the component connects to the DOM. Inside the template, there are a variety of helpful shorthands to add some life to the components, ranging from basic things like an [``{{'{'}}{ inlineExpression }}``](/docs/components/template/inline/), to [conditions](/docs/components/template/if-else/), to [event listeners](/docs/components/template/events/) and of course [reactive attributes](/docs/components/template/attributes/) and [properties](/docs/components/template/properties/). For more detailed explanations on the template syntax, see [``<template>``](/docs/components/template/).
 
 h3 Logic
 

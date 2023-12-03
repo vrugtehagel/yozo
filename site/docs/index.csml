@@ -10,7 +10,7 @@ ui-code[language=html]
 	<script src="https://yozo.ooo/dev-latest.js"></script>
 
 ui-callout[type=warning]
-	p For real projects, avoid directly linking to the packages on yozo.ooo, __especially__ the "-latest"-suffixed packages (since they will change over time). Instead, [download](/download/) the versioned bundles and put them up on your own domain. This helps speed up your site, since it avoids the need for a connection to another domain.
+	p For real projects, avoid directly linking to the packages on yozo.ooo, __especially__ the "-latest"-suffixed packages (since they will change over time). Instead, [download](/download/) the versioned bundles and put them up on your own domain. This helps speed up your site, since it avoids the need for a connection to another domain, and avoids strain on Yozo's site, which is not built to be a CDN.
 
 p To follow along without setting up a new project locally, use Yozo's [playground](/play/)!
 
@@ -66,11 +66,11 @@ ul
 		li Waiting for the browser to paint with [``paint()``](/docs/paint/);
 		li For advanced cases, manually creating flows with the [``Flow``](/docs/flow/constructor) constructor;
 	li State-dependent effects through [``effect()``](/docs/effect/);
-	li Purifying functions with side effects through [``purify``](/docs/purify/);
-	li Creating your own monitoring mechanisms with [``monitor``](/docs/monitor/).
+	li Purifying functions with side effects through [``purify()``](/docs/purify/);
+	li Creating your own monitoring mechanisms with [``monitor()``](/docs/monitor/).
 
 h2 Tests
 
-p Yozo values a robust and trustworthy environment. Since a big part of Yozo's functionality (i.e. the custom element part) expects a browser environment, a simple custom testing framework was put in place so that tests can be written in a format easily digestable by both [Deno](https://deno.land/) as well as the browser.
+p Yozo values a robust and trustworthy environment. Since a big part of Yozo's functionality (i.e. the custom element part) expects a browser environment, a simple custom testing framework was put in place so that tests can be written in a format easily digestable by both [Deno](https://deno.land/) (for the non-browser specific tests) as well as the browser.
 
-p Almost every page in the documentation has associated tests. To avoid unnecessarily running tests in user's browsers, they are extracted to their own page. To view the tests for a specific page, simply add "/test/" to the end of the current URL. For example, to see the tests for ``live()``, whose URL is [yozo.ooo/docs/live/](/docs/live/), simply navigate to [yozo.ooo/docs/live/test/](/docs/live/test/). For this page (i.e. the one you're currently on), the test page ([yozo.ooo/docs/test/](/docs/test/)) is an accumulation of all other tests, making it easy to see if any of Yozo's tests are failing.
+p Every page in the documentation has associated tests. To avoid unnecessarily running tests in user's browsers, they are extracted to their own page. To view the tests for a specific page, simply add "/test/" to the end of the current URL. For example, to see the tests for ``live()``, whose URL is [yozo.ooo/docs/live/](/docs/live/), simply navigate to [yozo.ooo/docs/live/test/](/docs/live/test/). For this page (i.e. the one you're currently on), the test page ([yozo.ooo/docs/test/](/docs/test/)) is an accumulation of all other tests, making it easy to see if any of Yozo's tests are failing.

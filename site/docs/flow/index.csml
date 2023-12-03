@@ -97,7 +97,7 @@ ui-code
 	$data.$array[0] = 'foo again'; // * crickets *
 	$data.$array[1] = 'bar again'; // "Item number 1 changed!"
 
-p In the example above, the ``effect`` saw that there was an event listener set up and knew to take it down when the effect re-runs to avoid aggregating event listeners over time. Generally, contexts try to be smart about this; for example, the ``connected()`` hook takes down listeners when the component disconnects, and so do [``@event``](/docs/components/template/@event/) attributes in component template attributes. To take down event listeners (or other uses of flows) manually, use either [``flow.until()``](/docs/flow/until/) or use [``flow.stop()``](/docs/flow/stop/) directly.
+p In the example above, the ``effect`` saw that there was an event listener set up and knew to take it down when the effect re-runs to avoid aggregating event listeners over time. Generally, contexts try to be smart about this; for example, the ``connected()`` hook takes down listeners when the component disconnects, and so do [``@event``](/docs/components/template/events/) attributes in component template attributes. To take down event listeners (or other uses of flows) manually, use either [``flow.until()``](/docs/flow/until/) or use [``flow.stop()``](/docs/flow/stop/) directly.
 
 h2 See also
 ul
