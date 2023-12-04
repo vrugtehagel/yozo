@@ -18,8 +18,10 @@
 </template>
 
 <script>
-when($.$open).changes().if(() => $.open).then(() => {
-	const {content} = elements
+const content = query('#content')
+
+effect(() => {
+	if(!$.open) return
 	content.style.setProperty('--height', content.scrollHeight)
 })
 </script>

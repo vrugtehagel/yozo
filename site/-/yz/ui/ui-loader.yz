@@ -1,17 +1,12 @@
 <title>ui-loader</title>
-<meta attribute=ready type=boolean>
 
 <template mode=closed>
-	<ui-icon #if="!$.ready" type=spinner></ui-icon>
-	<slot #else></slot>
+	<ui-icon type=spinner></ui-icon>
 </template>
 
 <style>
 :host {
-	display: block; width: 100%; height: 100%;
-}
-:host(:not([ready])) {
-	display: grid;
+	display: grid; width: 100%; height: 100%;
 	grid: 100% / 100%; place-items: center;
 }
 </style>

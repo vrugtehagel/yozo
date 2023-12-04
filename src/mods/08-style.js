@@ -5,7 +5,7 @@ define.register(8, 'style', (context, [args]) => {
 	const sheet = new CSSStyleSheet
 	sheet.replace(args[1])
 	return {connectedCallback: function(meta){
-		const root = meta.x.elements.shadow ?? this.getRootNode()
+		const root = meta.root.mode ? meta.root : this.getRootNode()
 		const sheets = root.adoptedStyleSheets
 		if(sheets.includes(sheet)) return
 		root.adoptedStyleSheets = [...sheets, sheet]

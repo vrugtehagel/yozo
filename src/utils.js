@@ -4,9 +4,6 @@ export const R = Symbol()
 export const camelCase = string => string.replace(/-+(\w)?/g,
 	(full, character = '') => character.toUpperCase())
 
-export const kebabCase = string =>
-	string.replace(/[A-Z]/g, '-$&').toLowerCase()
-
 export const compose = objects => {
 	const result = {constructor: null}
 	for(const object of objects) for(const key of Object.keys(object))

@@ -10,7 +10,6 @@
 :host([type=info]){ --callout-color: var(--name-color); }
 :host([type=warning]){ --callout-color: var(--string-color); }
 :host([type=danger]){ --callout-color: var(--error-color); }
-
 :host {
 	display: flex; padding: 1.5rem 2rem 1.5rem 1rem; margin: 2rem 0;
 	gap: .75rem; align-items: center;

@@ -32,11 +32,9 @@ live.link($.$status, () => {
 	background-color: var(--background-color);
 	border-radius: 1rem;
 }
-
 test-status:not(:defined){
 	display: block; width: 3rem; height: 3rem;
 }
-
 p {
 	margin: 0;
 }

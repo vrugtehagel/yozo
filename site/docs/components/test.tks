@@ -29,7 +29,7 @@ const clickCounterSource = `
 		<button>0 clicks</button>
 	</template>
 	<script>
-	const { button } = elements;
+	const button = query('button');
 
 	$.reset = () => $.amount = 0;
 

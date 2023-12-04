@@ -10,7 +10,8 @@
 </template>
 
 <script>
-const {container} = elements
+const container = query('#container')
+
 this.constructor.cache ??= new Map
 const {cache} = this.constructor
 

@@ -3,7 +3,7 @@ import { monitor } from './monitor.js'
 
 export const define = definer => {
 	const context = {
-		x: new Set(['$', 'elements']),
+		x: new Set(['$', 'query']),
 		__meta: new WeakMap,
 		__body: class extends HTMLElement {
 			constructor(){

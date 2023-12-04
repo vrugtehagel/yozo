@@ -28,8 +28,7 @@
 </template>
 
 <script>
-import('/-/js/play-manager/index.js')
-	.then(playManager => $.playManager = playManager)
+import('/-/js/play-manager/index.js').then(mod => $.playManager = mod)
 </script>
 
 <style>

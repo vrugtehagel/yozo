@@ -25,19 +25,21 @@
 
 <script>
 Promise.all([
-	import('/-/js/web-server/index.js')
-		.then(webServer => $.webServer = webServer),
-	import('/-/js/play-manager/index.js')
-		.then(playManager => $.playManager = playManager),
+	import('/-/js/web-server/index.js').then(mod => $.webServer = mod),
+	import('/-/js/play-manager/index.js').then(mod => $.playManager = mod),
 	customElements.whenDefined('play-file-editor'),
 	customElements.whenDefined('play-preview')
 ]).then(() => $.loaded = true)
-self.yozo.register('/-/yz/play/play-file-editor.yz'),
+
+self.yozo.register('/-/yz/play/play-file-editor.yz')
 self.yozo.register('/-/yz/play/play-preview.yz')
+
+const uiInput = query('ui-input')
+const newFile = query('#new-file')
 
 live.link($.$defaultPreviewUrl, () => {
 	const srcs = $.playManager?.filelist().map(([uuid, src]) => src)
-	const src = srcs?.filter(src => src.endsWith('.html'))?.[0]
+	const src = srcs?.filter(src => src.endsWith('.html'))[0]
 	return `preview:${src ?? '/file/index.html'}`
 })
 
@@ -76,7 +78,6 @@ effect(async () => {
 })
 
 $.add = async () => {
-	const {uiInput, newFile} = elements
 	const src = uiInput.fullValue
 	const {fullValue} = uiInput
 	$.playManager?.createFile({src})

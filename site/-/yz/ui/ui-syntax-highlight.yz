@@ -8,7 +8,8 @@
 
 <script>
 import('/-/js/libraries/prism.js').then(() => $.loaded = true)
-const {code} = elements
+
+const code = query('code')
 
 effect(() => {
 	const zeroWidthSpace = '\u200B'

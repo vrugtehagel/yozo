@@ -21,14 +21,19 @@
 				<div id=pong title="pong()"></div>
 			</div>
 		</div>
-		<div id=console></div>
+		<div id=console-output></div>
 	</div>
 </template>
 
 <script>
-import('/-/js/play-manager/index.js')
-	.then(playManager => $.playManager = playManager)
-const {iframe, uiInput, uiBrowser} = elements
+import('/-/js/play-manager/index.js').then(mod => $.playManager = mod)
+
+const iframe = query('iframe')
+const uiInput = query('ui-input')
+const uiBrowser = query('ui-browser')
+const consoleOutput = query('#console-output')
+const ping = query('#ping')
+const pong = query('#pong')
 
 live.link($.$src, uiInput)
 live.link($.$loading, {
@@ -47,7 +52,7 @@ $.message = (severity, {message, line, column, src}) => {
 	const div = document.createElement('div')
 	div.textContent = message
 	div.classList.add('message', severity)
-	elements.console.append(div)
+	consoleOutput.append(div)
 	if(!src) return
 	const filename = src.split('/').at(-1)
 	const button = document.createElement('button')
@@ -58,7 +63,7 @@ $.message = (severity, {message, line, column, src}) => {
 $.close = () => this.dispatchEvent(new CustomEvent('close'))
 $.cancel = () => uiBrowser.cancel?.()
 $.go = purify(async () => {
-	elements.console.replaceChildren()
+	consoleOutput.replaceChildren()
 	$.consoleDisabled = true
 	$.consoleAutoOpened = false
 	if(!$.playManager) await until(when($.$playManager).changes())
@@ -69,17 +74,15 @@ $.go = purify(async () => {
 		uiInput.animate(keyframes, {duration: 500})
 		return
 	}
-	$.src = uiBrowser.status == 'complete'
-		? uiBrowser.src.replace(/^https:\/\/(?:www\.)?/, '')
-		: uiBrowser.src
-	// uiBrowser.focus()
+	if(uiBrowser.status != 'complete') $.src = uiBrowser.src
+	else $.src = uiBrowser.src.replace(/^https:\/\/(?:www\.)?/, '')
 	this.dispatchEvent(new CustomEvent('srcchange'))
 	if(!uiBrowser.messenger) return
 	when(uiBrowser).messengerloads().then(() => $.consoleDisabled = false)
-	when(uiBrowser.messenger).pings().then(() => $.blink(elements.ping))
-	when(uiBrowser.messenger).pongs().then(() => $.blink(elements.pong))
-	when(uiBrowser.messenger).errors().or(
-	when(uiBrowser.messenger).logs())
+	const {messenger} = uiBrowser
+	when(messenger).pings().then(() => $.blink(ping))
+	when(messenger).pongs().then(() => $.blink(pong))
+	when(messenger).errors().or(when(messenger).logs())
 		.then(({type, detail}) => $.message(type, detail.payload))
 })
 
@@ -151,7 +154,7 @@ ui-browser {
 }
 #ping { --light-color: var(--keyword-color); }
 #pong { --light-color: var(--name-color); }
-#console {
+#console-output {
 	flex: 1 0 0;
 	background-color: var(--sub-background-color);
 	border-radius: .75rem;

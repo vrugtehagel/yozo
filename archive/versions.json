@@ -1,4 +1,13 @@
 [{
+	"number": "1.3.0",
+	"hash": "QHNKIdG8kNmCgbPo7KQ3CQ==",
+	"timestamp": 1701717589632,
+	"changelog": {
+		"breaking": [],
+		"improvements": [],
+		"bugs": []
+	}
+}, {
 	"number": "1.2.2",
 	"hash": "fGtPI9RCNS8msDir+TkkEQ==",
 	"timestamp": 1700995275255,

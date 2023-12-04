@@ -6,7 +6,7 @@
 			@click="$.playManager?.close()"></ui-button>
 		<ui-dropdown icon=dots autoclose>
 			<ui-button icon=edit
-				@click="elements.uiDisplayName.editing = true">Rename</ui-button>
+				@click="$.edit()">Rename</ui-button>
 			<ui-button icon=save @click="$.playManager?.save()">Save</ui-button>
 			<ui-button icon=duplicate @click="$.playManager?.duplicate()">Duplicate</ui-button>
 			<ui-button icon=delete @click="$.playManager?.remove()">Delete</ui-button>
@@ -35,8 +35,11 @@
 </template>
 
 <script>
-import('/-/js/play-manager/index.js')
-	.then(playManager => $.playManager = playManager)
+import('/-/js/play-manager/index.js').then(mod => $.playManager = mod)
+
+const uiDisplayName = query('ui-display-name')
+
+$.edit = () => uiDisplayName.editing = true
 
 effect(() => {
 	const hidden = $.navigationMenuHidden

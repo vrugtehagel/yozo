@@ -36,7 +36,7 @@ p The shadow root's configuration is passed through the ``<template>``'s attribu
 
 h3 Logic
 
-p Component logic is written inside a [``<script>``](/docs/components/script/) tag. Inside this script tag, there are a few "magically" imported variables. First and foremost, most of Yozo's helpers (such as [``when``](/docs/when/), [``effect``](/docs/effect/), and more). The [``connected``](/docs/components/connected/) and [``disconnected``](/docs/components/disconnected/) hooks are also directly available, and align with the native ``connectedCallback`` and ``disconnectedCallback`` that custom elements might have. There is also a variable [``elements``](/docs/components/elements/) for a simpler way to access the elements in your template. Last, but not least, there is [``$``](/docs/components/$/); the state object tied to the component instance. Some of the properties on the ``$`` object are exposed by the custom element itself, but only if described so in the metadata. For example, defining a function ``$.doThing`` itself will allow it to be used inside the template, but not expose it to the "outside" (i.e. ``myComponent.doThing`` remains undefined). However, adding ``<meta method="doThing">`` subsequently exposes it, and ``myComponent.doThing`` suddenly is defined. For an in-depth look at what's possible in ``<script>`` sections, see [``<script>``](/docs/components/script/).
+p Component logic is written inside a [``<script>``](/docs/components/script/) tag. Inside this script tag, there are a few "magically" imported variables. First and foremost, most of Yozo's helpers (such as [``when``](/docs/when/), [``effect``](/docs/effect/), and more). The [``connected``](/docs/components/connected/) and [``disconnected``](/docs/components/disconnected/) hooks are also directly available, and align with the native ``connectedCallback`` and ``disconnectedCallback`` that custom elements might have. There is also a function [``query()``](/docs/components/query/) for a straight-foward way to access the elements in your template. Last, but not least, there is [``$``](/docs/components/$/); the state object tied to the component instance. Some of the properties on the ``$`` object are exposed by the custom element itself, but only if described so in the metadata. For example, defining a function ``$.doThing`` itself will allow it to be used inside the template, but not expose it to the "outside" (i.e. ``myComponent.doThing`` remains undefined). However, adding ``<meta method="doThing">`` subsequently exposes it, and ``myComponent.doThing`` suddenly is defined. For an in-depth look at what's possible in ``<script>`` sections, see [``<script>``](/docs/components/script/).
 
 h3 Styles
 
@@ -90,7 +90,7 @@ ui-code[language=yz]
 		<button>0 clicks</button>
 	</template>
 	<script>
-	const { button } = elements;
+	const button = query('button');
 
 	$.reset = () => $.amount = 0;
 
@@ -107,7 +107,7 @@ ui-code[language=yz]
 	});
 	</script>
 
-p The template has been simplified to its bare bones, only containing a simple button and some placeholder text. First, we get a reference to the button through the [``elements``](/docs/components/elements/) variable.
+p The template has been simplified to its bare bones, only containing a simple button and some placeholder text. First, we get a reference to the button through the [``query()``](/docs/components/query/) function.
 
 p Then, to replace the ``@click`` expression, we set up the first [``connected()``](/docs/components/connected/) hook. Only when the component is connected do we want this click handler set up (and this is what ``@click`` does, internally, too). To set up the handler, we use [``when()``](/docs/when/), since it is monitored and therefore is taken down by the ``connected()`` hook whenever the component disconnects. If we'd have used ``.addEventListener()``, then repeatedly connecting (and disconnecting) the custom element would set up additional listeners, without ever taking older ones down.
 

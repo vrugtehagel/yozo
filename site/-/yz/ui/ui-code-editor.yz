@@ -6,7 +6,7 @@
 <template mode=closed>
 	<div id=container .style.tab-size="$.siteSettings?.$settings.tabSize ?? 4">
 		<div id=line-numbers>
-			<span #for="$number of $.$numbers">{{ yozo.live.get($number) }}</span>
+			<span #for="number of $.numbers">{{ number }}</span>
 		</div>
 		<textarea spellcheck=false></textarea>
 		<ui-syntax-highlight :language="$.language" :value="$.value"></ui-syntax-highlight>
@@ -14,20 +14,23 @@
 </template>
 
 <script>
-import('/-/js/site-settings/index.js')
-	.then(siteSettings => $.siteSettings = siteSettings)
-const {container, textarea, uiSyntaxHighlight} = elements
+import('/-/js/site-settings/index.js').then(mod => $.siteSettings = mod)
 
-connected(async () => {
-	const {attach} = await until(import('/-/js/input-keybinds/index.js'))
-	effect(() => attach(textarea, $.language))
-})
+const container = query('#container')
+const textarea = query('textarea')
+const uiSyntaxHighlight = query('ui-syntax-highlight')
+const lineNumbers = query('#line-numbers')
 
 if($.value) textarea.value = $.value
 live.link($.$value, textarea)
 live.link($.$numbers, () => {
 	if(!$.showLineNumbers) return []
 	return $.value.split('\n').map((line, index) => index + 1)
+})
+
+connected(async () => {
+	const {attach} = await until(import('/-/js/input-keybinds/index.js'))
+	effect(() => attach(textarea, $.language))
 })
 
 connected(() => {
@@ -37,9 +40,10 @@ connected(() => {
 		container.style.setProperty('--height', height)
 	})
 })
+
 connected(() => effect(() => {
 	if(!$.showLineNumbers) return container.style.setProperty('--left', 0)
-	when(elements.lineNumbers).observes('resize').then(([entry]) => {
+	when(lineNumbers).observes('resize').then(([entry]) => {
 		const {inlineSize} = entry.borderBoxSize[0]
 		container.style.setProperty('--left', inlineSize)
 	})

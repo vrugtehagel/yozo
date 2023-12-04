@@ -12,7 +12,7 @@ import './mods/01-meta.js'
 import './mods/02-hooks.js'
 import './mods/03-transforms.js'
 import './mods/05-template.js'
-import './mods/07-elements.js'
+import './mods/07-query.js'
 import './mods/08-style.js'
 import './mods/10-script.js'
 

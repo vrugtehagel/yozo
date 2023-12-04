@@ -35,8 +35,7 @@
 </template>
 
 <script>
-import('/-/js/site-settings/index.js')
-	.then(siteSettings => $.siteSettings = siteSettings)
+import('/-/js/site-settings/index.js').then(mod => $.siteSettings = mod)
 
 $.show = (...purposes) =>
 	!purposes.every(purpose => $.exclude.split(/, */).includes(purpose))

@@ -14,17 +14,19 @@
 </template>
 
 <script>
+const uiInput = query('ui-input')
+
 $.cancel = () => $.editing = false
 $.submit = () => {
 	$.editing = false
-	const {value, fullValue} = elements.uiInput
+	const {value, fullValue} = uiInput
 	const detail = {value, fullValue}
 	this.dispatchEvent(new CustomEvent('rename', {detail}))
 }
 effect(async () => {
 	if(!$.editing) return
 	await until(paint())
-	elements.uiInput.focus()
+	uiInput.focus()
 })
 </script>
 

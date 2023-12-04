@@ -14,7 +14,8 @@
 </template>
 
 <script>
-const {input} = elements
+const input = query('input')
+const prefix = query('#prefix')
 
 input.value = $.value
 live.link($.$value, input)
@@ -44,7 +45,7 @@ connected(() => effect(() => {
 	})
 }))
 
-when(elements.prefix).observes('resize').then(([{borderBoxSize}]) => {
+when(prefix).observes('resize').then(([{borderBoxSize}]) => {
 	$.prefixWidth = borderBoxSize[0].inlineSize
 })
 </script>

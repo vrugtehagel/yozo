@@ -29,7 +29,8 @@
 </template>
 
 <script>
-const {iframe} = elements
+const iframe = query('iframe')
+
 $.src = 'about:blank'
 $.loading = false
 $.online = true

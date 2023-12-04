@@ -4,10 +4,8 @@
 <template mode=closed>
 	<div id=titlebar>
 		<ui-dropdown icon=menu autoclose>
-			<ui-button icon=edit @click="elements.uiDisplayName.editing = true"
-			>Rename</ui-button>
-			<ui-button icon=delete
-				@click="$.playManager?.removeFile($.uuid), $.close()">Delete</ui-button>
+			<ui-button icon=edit @click="$.edit()">Rename</ui-button>
+			<ui-button icon=delete @click="$.delete()">Delete</ui-button>
 		</ui-dropdown>
 		<ui-display-name prefix=/file/ :value="$.playManager?.file($.uuid).src"
 			@rename="$.playManager.file($.uuid).src = event.detail.fullValue"></ui-display-name>
@@ -18,15 +16,19 @@
 </template>
 
 <script>
-import('/-/js/play-manager/index.js')
-	.then(playManager => $.playManager = playManager)
-import('/-/js/web-server/index.js')
-	.then(webServer => $.webServer = webServer)
-import('/-/js/site-settings/index.js')
-	.then(siteSettings => $.siteSettings = siteSettings)
-const {uiCodeEditor} = elements
+import('/-/js/play-manager/index.js').then(mod => $.playManager = mod)
+import('/-/js/web-server/index.js').then(mod => $.webServer = mod)
+import('/-/js/site-settings/index.js').then(mod => $.siteSettings = mod)
+
+const uiCodeEditor = query('ui-code-editor')
+const uiDisplayName = query('ui-display-name')
 
 $.close = () => this.dispatchEvent(new CustomEvent('close'))
+$.edit = () => uiDisplayName.editing = true
+$.delete = () => {
+	$.playManager?.removeFile($.uuid)
+	$.close()
+}
 
 connected(() => effect(() => {
 	if(!$.playManager) return

@@ -20,11 +20,9 @@ $.iconMap = {
 :host {
 	display: inline-block;
 }
-
 ui-icon {
 	display: block;
 }
-
 :host([status=failed]),
 :host([status=invalid]){ color: var(--error-color); }
 :host([status=success]){ color: var(--primary-color); }
