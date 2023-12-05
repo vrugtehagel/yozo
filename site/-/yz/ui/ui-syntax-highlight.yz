@@ -64,7 +64,7 @@ code { color: var(--text-color); }
 .function { color: var(--primary-color); }
 .number, .meta, .boolean { color: var(--meta-color); }
 .parameter { color: var(--parameter-color); }
-.class-name, .window { color: var(--name-color); }
+.class-name, .native { color: var(--name-color); }
 .literal-property { color: var(--text-color); }
 
 /* regex  */

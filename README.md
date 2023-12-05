@@ -24,7 +24,6 @@ Below this, there's a more detailed breakdown of the site and what's needed.
      - Building full testing sandbox
      - Write all of the content
  - Create the homepage
- - Fix {{ inline }} expressions syntax highlighting
  - Fix docs-outline component header detection
  - Check browsers
      - play doesn't work (Safari can't top-level await some stuff)
