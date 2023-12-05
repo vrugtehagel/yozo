@@ -74,7 +74,7 @@ A section with a simple sandbox, allowing for multiple files and allowing the us
 
 ### Docs
 
-We need the following pages, in the same tree-like structure (9/57 pages done).
+We need the following pages, in the same tree-like structure (10/57 pages done).
  - [x] monitor()
     - [ ] monitor.add()
     - [ ] monitor.ignore()
@@ -131,4 +131,4 @@ We need the following pages, in the same tree-like structure (9/57 pages done).
     - [ ] disconnected
     - [ ] style
     - [ ] $
-    - [ ] query()
+    - [x] query()
