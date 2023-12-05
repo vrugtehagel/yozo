@@ -3,7 +3,9 @@
 	"hash": "QHNKIdG8kNmCgbPo7KQ3CQ==",
 	"timestamp": 1701717589632,
 	"changelog": {
-		"breaking": [],
+		"breaking": [
+			"The elements object has been renamed and restructured to query() and query.all()."
+		],
 		"improvements": [],
 		"bugs": []
 	}
