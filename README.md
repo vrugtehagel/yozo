@@ -131,4 +131,4 @@ We need the following pages, in the same tree-like structure (9/57 pages done).
     - [ ] disconnected
     - [ ] style
     - [ ] $
-    - [ ] elements
+    - [ ] query()
