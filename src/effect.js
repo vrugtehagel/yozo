@@ -5,7 +5,7 @@ import { when } from './when.js'
 export const effect = (callback, schedule = queueMicrotask) => {
 	let updater
 	const flow = (new Flow).then(() => {
-		const call = monitor(['live', 'undo'], callback)
+		const call = monitor(['undo', 'live'], callback)
 		updater = monitor.ignore(() => when(call.live).change()).once()
 			.then(() => schedule(() => flow.now()))
 			.cleanup(() => call.undo())

@@ -1,8 +1,8 @@
 export const S = Symbol()
 export const R = Symbol()
 
-export const camelCase = string => string.replace(/-+(\w)?/g,
-	(full, character = '') => character.toUpperCase())
+export const camelCase = string => string.replace(/-+(\w?)/g,
+	(full, character) => character.toUpperCase())
 
 export const compose = objects => {
 	const result = {constructor: null}
@@ -12,3 +12,6 @@ export const compose = objects => {
 		}
 	return result
 }
+
+
+

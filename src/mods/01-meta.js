@@ -11,18 +11,17 @@ define.register(1, 'meta', (context, argslist) => {
 	const properties = [
 		...argslist.filter(args => args[0].property),
 		...attributes.filter(args => args[0].type).map(args => [{property: args[0].as ?? camelCase(args[0].attribute)}]),
-		...argslist.filter(args => args[0].method).map(args => [{property: args[0].method, readonly: ''}])
+		...argslist.filter(args => args[0].method).map(args => [{property: args[0].method, readonly: true}])
 	]
-	for(const [options] of properties){
+	properties.map(([options]) => {
 		const get = function(){
 			return monitor.ignore(() => live.get(context.__meta.get(this).x.$, options.property))
 		}
-		const set = function(value){
-			monitor.ignore(() => context.__meta.get(this).x.$[options.property] = value)
-		}
-		Object.defineProperty(context.__body.prototype, options.property,
-			'readonly' in options ? {get} : {get, set})
-	}
+		Object.defineProperty(context.__body.prototype, options.property, 'readonly' in options
+			? {get}
+			: {get, set: function(value){ monitor.ignore(() => context.__meta.get(this).x.$[options.property] = value) }}
+		)
+	})
 	context.__body.observedAttributes = attributes.map(args => args[0].attribute)
 	context.__body.formAssociated = argslist.some(args => args[0].formAssociated != null)
 	const constructor = function(meta){

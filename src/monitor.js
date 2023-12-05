@@ -9,10 +9,10 @@ export const monitor = (names, callback) => {
 	const before = monitor[S]
 	monitor[S] = {}
 	const call = {}
-	for(const name of names){
+	names.map(name => {
 		monitor[S][name] = new (monitor[R][name])
 		call[name] = monitor[S][name].result
-	}
+	})
 	call.result = callback()
 	monitor[S] = before
 	return call

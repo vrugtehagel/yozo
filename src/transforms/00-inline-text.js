@@ -7,13 +7,14 @@ define.transform(0, (node, scopes, meta, context) => {
 	const parts = node.textContent.split(/{{([^]*?)}}/g)
 	node.before(...parts)
 	let current = node
-	for(let index = 1; index < parts.length; index += 2){
-		current = current.previousSibling.previousSibling
+	parts.map((part, index) => {
+		current = current.previousSibling
+		if(index % 2 == 0) return
 		const node = current
 		const getter = meta.__function(node.textContent, ...scopes)
-		meta.x.connected(() => effect(() => {
+		meta.x.connected(() => effect(() =>
 			node.textContent = getter(null, ...scopes)
-		}))
-	}
+		))
+	})
 	node.remove()
 })

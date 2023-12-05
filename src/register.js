@@ -28,7 +28,8 @@ register.auto = find => {
 		if(register.auto[R].has(name)) return
 		register.auto[R].add(name)
 		const url = find(name)
-		if(url) register(url)
+		if(!url) return
+		register(url)
 	}
 	const from = root => {
 		for(const element of root.querySelectorAll(':not(:defined)'))

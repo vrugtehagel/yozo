@@ -41,6 +41,5 @@ define.register(2, 'meta', (context, argslist) => {
 				for(const item of meta.x[hook][R]) item[1]?.undo()
 			}
 		}
-
 	}))
 })
