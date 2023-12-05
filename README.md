@@ -3,9 +3,17 @@
 Yozo itself is written in the `src/` directory. The documentation (and rest of the site) resides under `site/`. Assets are stored in `site/-/`. 
 
 
+## Site
+
+The site consists of three major sections:
+
+ - `tour/`: a gradual interactive experience teaching Yozo.
+ - `play/`: an interactive sandbox allowing users to play around with Yozo.
+ - `docs/`: this is where the formal documentention is written. Each feature is described in MDN-like fashion.
+
+
 ## Potential additions
 Here's a list of things that I would like if they fit within budget
- - Make `elements.foobar` work even for conditional (`#if`, `#else-if`, `#else`) elements.Elements should be reused whereever possible, and if they are reused, there is no reason not to have `elements` work as expected. Note: this might be difficult since
  - Easier imports (potentially using `<link>`). Not sure if this is actually useful enough; it is already possible to import things and the API for this would not fit into `$` very prettily (maybe it should just go into `imports`?).
  - Add warning for when you use a global effect (i.e. effect with non-local dependencies) inside a component definition.
 
@@ -28,17 +36,7 @@ Below this, there's a more detailed breakdown of the site and what's needed.
  - Check browsers
      - play doesn't work (Safari can't top-level await some stuff)
  - NPM package?
- - Maybe build a11y-friendly basic component package
  - Check site for occurances of certain words to improve inclusivity
-
-
-## Site
-
-The site consists of three major sections:
-
- - `tour/`: a gradual interactive experience teaching Yozo.
- - `play/`: an interactive sandbox allowing users to play around with Yozo.
- - `docs/`: this is where the formal documentention is written. Each feature is described in MDN-like fashion.
 
 
 ### Tour
