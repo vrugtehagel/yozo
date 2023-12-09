@@ -125,7 +125,6 @@ p When passing the same object reference to ``live()`` multiple times, new live 
 
 h2 See also
 ul
-	li [``$``](/docs/components/$/) for more information on the live variable managing state for components.
-	li [``effect()``](/docs/effect/) to see how live variables interact with monitored contexts.
-	li For advanced use, see [``monitor``](/docs/monitor/) for manually creating contexts able to monitor live variables.
-
+	li [``$``](/docs/components/$/)
+	li [``effect()``](/docs/effect/)
+	li [``monitor()``](/docs/monitor/)

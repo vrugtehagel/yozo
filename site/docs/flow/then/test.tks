@@ -1,0 +1,81 @@
+// Yozo helpers are in scope
+const { Flow } = self.yozo;
+
+// a flow is created
+const flow = new Flow();
+
+// a flow is created with a then callback
+let triggers = 0;
+const flow = new Flow();
+flow.then(() => {
+	triggers++
+});
+
+// a flow is created with a then callback accepting arguments
+let triggerArgs = [];
+const flow = new Flow();
+flow.then((...args) => {
+	triggerArgs = args;
+});
+
+// an async iife is created awaiting a flow
+let awaited = false;
+(async () => {
+	await flow;
+	awaited = true;
+})();
+
+// a microtask passes
+await 'microtask';
+
+// the flow triggers
+flow.now();
+
+// the flow triggers with arguments __args__
+flow.now(__args__);
+
+// the then method returns the flow itself
+flow.then(() => {}) == flow
+
+// the flow is stopped
+flow.stop();
+
+// the then method was called with arguments __arg1__ and __arg2__
+triggerArgs[0] == __arg1__ && triggerArgs[1] == __arg2__
+
+// the then callback fired once
+triggers == 1
+
+// the awaited flow continued the iife
+awaited == true
+
+
+// TEST: The then() callback runs when triggered
+// Given Yozo helpers are in scope
+// and a flow is created with a then callback
+// When the flow triggers
+// Then the then callback fired once
+// Finally the flow is stopped
+
+// TEST: The then() method returns the flow it is called on
+// Given Yozo helpers are in scope
+// and a flow is created
+// Verify the then method returns the flow itself
+// Finally the flow is stopped
+
+// TEST: The then() method passes trigger arguments to its callback
+// Given Yozo helpers are in scope
+// and a flow is created with a then callback accepting arguments
+// When the flow triggers with arguments 23, 'foo'
+// Then the then method was called with arguments 23 and 'foo'
+// Finally the flow is stopped
+
+// TEST: Flows are awaitable
+// Given Yozo helpers are in scope
+// and a flow is created
+// and an async iife is created awaiting a flow
+// When a microtask passes
+// and the flow triggers
+// Given a microtask passes
+// Then the awaited flow continued the iife
+// Finally the flow is stopped

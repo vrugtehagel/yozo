@@ -93,4 +93,5 @@ ui-code
 
 h2 See also
 
-p See the general [``Flow``](/docs/flow/) page for details on how flows are used in Yozo itself, as well as an exhaustive list of the helper functions provided.
+ul
+	li [``Flow``](/docs/flow/)

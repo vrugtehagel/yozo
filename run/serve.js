@@ -12,7 +12,7 @@ const port = 8787
 const hostname = 'localhost'
 const serverController = new AbortController
 const {signal} = serverController
-const onListen = () => console.log(`${gray('?')} Serving at localhost:${port}.`)
+const onListen = () => console.log(`${gray('?')} Serving at ${hostname}:${port}.`)
 Deno.serve({port, hostname, signal, onListen}, request => {
 	return serveDir(request, {fsRoot: 'dist/', quiet: true, headers: []})
 })

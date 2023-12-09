@@ -63,4 +63,6 @@ p To manually stop intervals (without relying on ``.until()`` or monitored conte
 
 h2 See also
 
-p See [``Flow``](/docs/flow/) for the methods on ``interval()``'s return value. For timeouts (essentially single-trigger intervals), see [``timeout()``](/docs/interval/).
+ul
+	li [``Flow``](/docs/flow/)
+	li [``timeout()``](/docs/interval/)

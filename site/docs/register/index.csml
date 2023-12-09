@@ -52,4 +52,6 @@ ui-code
 	console.log(customElements.get('uh-oh')); // undefined
 
 h2 See also
-p To automatically detect used elements on the page, see [``register.auto()``](/docs/register/auto/).
+
+ul
+	li [``register.auto()``](/docs/register/auto/)

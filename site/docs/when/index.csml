@@ -106,6 +106,6 @@ p Also, note that the combination of the shorthand and the existance of ``.does(
 
 h2 See also
 
-p For a very similar interface for observers (such as ``MutationObserver`` or ``ResizeObserver``), see [``when().observes()``](/docs/when/observes/).
-
-p For more information about flows and their methods, see [flows](/docs/flow/).
+ul
+	li [``when().observes()``](/docs/when/observes/)
+	li [flows](/docs/flow/)

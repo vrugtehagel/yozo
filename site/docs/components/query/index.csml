@@ -1,7 +1,7 @@
 @script
 	export const layout = 'docs'
 	export const title = 'query()'
-	export const description = 'Like .querySelector(), the query() function selects elements in your components\'s template.'
+	export const description = 'Like ``.querySelector()``, the ``query()`` function selects elements in your components\'s template.'
 
 h2 Syntax
 

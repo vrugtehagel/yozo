@@ -112,3 +112,13 @@ p The template has been simplified to its bare bones, only containing a simple b
 p Then, to replace the ``@click`` expression, we set up the first [``connected()``](/docs/components/connected/) hook. Only when the component is connected do we want this click handler set up (and this is what ``@click`` does, internally, too). To set up the handler, we use [``when()``](/docs/when/), since it is monitored and therefore is taken down by the ``connected()`` hook whenever the component disconnects. If we'd have used ``.addEventListener()``, then repeatedly connecting (and disconnecting) the custom element would set up additional listeners, without ever taking older ones down.
 
 p For the ``{{'{'}}{ $.amount }}`` expression, we'll set up an [``effect()``](/docs/effect/), since they allow us to describe an update with implicit dependencies. In this case, we simply set the button's ``.textContent`` to the correct expression. The effect sees that the ``$.amount`` variable is being accessed, and therefore re-runs the effect whenever ``$.amount`` changes. Since there's not much of a point to updating the text for disconnected components, we wrap the ``effect()`` with another ``connected()`` hook. Since effects, much like the ``when()`` call, are monitored, the connected callback takes it down whenever the custom element disconnects.
+
+h2 See also
+
+ul
+	li [``register()``](/docs/register/)
+	li [``<title>``](/docs/components/title/)
+	li [``<meta>``](/docs/components/meta/)
+	li [``<template>``](/docs/components/template/)
+	li [``<script>``](/docs/components/script/)
+	li [``<style>``](/docs/components/style/)
