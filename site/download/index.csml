@@ -1,6 +1,6 @@
 @script
 	export const layout = 'docs'
-	export const title = 'Versions'
+	export const title = 'Download'
 	export const description = 'Download Yozo\'s development or production bundle, new or old, and see how the more recent versions differ from past ones.'
 	const versionsURL = new URL('../../archive/versions.json', import.meta.url)
 	const versions = await fetch(versionsURL).then(response => response.json())
