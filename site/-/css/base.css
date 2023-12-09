@@ -64,8 +64,8 @@
 					%3Cpath d='M6 1H9V4V1L4 6M4 2H1V9H8V6' stroke='%238BE9FD' fill='none' stroke-linejoin='round' stroke-linecap='round'/%3E \
 				%3C/svg%3E \
 			");
-			display: inline-block; width: 1rem; height: 1rem; margin: 0 0 0 .5ch;
-			line-height: 1rem;
+			display: inline-block; width: .875rem; margin: 0 0 0 .5ch;
+			line-height: .875rem;
 		}
 	}
 	.badge {
