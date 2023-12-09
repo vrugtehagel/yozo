@@ -71,7 +71,7 @@ A section with a simple sandbox, allowing for multiple files and allowing the us
 
 ### Docs
 
-We need the following pages, in the same tree-like structure (10/57 pages done).
+We need the following pages, in the same tree-like structure (11/57 pages done).
  - [x] monitor()
     - [ ] monitor.add()
     - [ ] monitor.ignore()
@@ -88,7 +88,7 @@ We need the following pages, in the same tree-like structure (10/57 pages done).
     - [x] constructor
     - [ ] flow.pipe()
     - [ ] flow.now()
-    - [ ] flow.then()
+    - [x] flow.then()
     - [ ] flow.if()
     - [ ] flow.or()
     - [ ] flow.after()
