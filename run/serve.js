@@ -3,7 +3,7 @@ import { writeAll } from 'std/streams/mod.ts'
 import { serveDir } from 'std/http/file_server.ts'
 
 import { build } from './build.js'
-import '../archive/lib-1.0.0.js'
+import '../archive/lib-0.0.1.js'
 
 
 const {Flow} = self.yozo
@@ -27,7 +27,7 @@ const flow = new Flow(async trigger => {
 	console.log('')
 	console.log(`${gray('?')} Serving terminated.`)
 	Deno.exit(1)
-}).throttle(1000).then(async () => {
+}).debounce(100).throttle(1000).then(async x => {
 	console.clear()
 	await build()
 	const now = new Date()
