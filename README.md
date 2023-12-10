@@ -66,7 +66,7 @@ A section with a simple sandbox, allowing for multiple files and allowing the us
 
 ### Docs
 
-We need the following pages, in the same tree-like structure (11/57 pages done).
+We need the following pages, in the same tree-like structure (12/57 pages done).
  - [x] monitor()
     - [ ] monitor.add()
     - [ ] monitor.ignore()
@@ -112,7 +112,7 @@ We need the following pages, in the same tree-like structure (11/57 pages done).
        - [ ] @event (/events/)
        - [ ] :attribute (/attributes/)
        - [ ] .property (/properties/)
-    - [ ] meta
+    - [x] meta
        - [ ] attribute
        - [ ] property
        - [ ] method
