@@ -1,21 +1,16 @@
 # YOZO
 
-Yozo itself is written in the `src/` directory. The documentation (and rest of the site) resides under `site/`. Assets are stored in `site/-/`. 
-
-
-## Site
-
-The site consists of three major sections:
+Yozo itself is written in the `src/` directory. The documentation (and rest of the site) resides under `site/`. Assets are stored in `site/-/`. The site consists of three major sections:
 
  - `tour/`: a gradual interactive experience teaching Yozo.
  - `play/`: an interactive sandbox allowing users to play around with Yozo.
- - `docs/`: this is where the formal documentention is written. Each feature is described in MDN-like fashion.
+ - `docs/`: this is where the formal documentention is written.
 
+Tests are included through adding `/test/` to the end of a docs page's URL. A collection of all tests is found at `/docs/test/`.
 
-## Potential additions
-Here's a list of things that I would like if they fit within budget
- - Easier imports (potentially using `<link>`). Not sure if this is actually useful enough; it is already possible to import things and the API for this would not fit into `$` very prettily (maybe it should just go into `imports`?).
- - Add warning for when you use a global effect (i.e. effect with non-local dependencies) inside a component definition.
+The current and older versions are available to download at `/download/`.
+
+And there's also the homepage, of course.
 
 
 ## Todo
