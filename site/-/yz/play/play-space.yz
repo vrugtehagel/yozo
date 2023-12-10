@@ -1,6 +1,6 @@
 <title>play-space</title>
 <meta attribute=occupant type=string>
-<meta event=occupy>
+<meta event=change>
 
 <template mode=closed>
 	<div id=file-picker>

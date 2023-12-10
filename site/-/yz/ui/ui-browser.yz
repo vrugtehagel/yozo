@@ -99,9 +99,7 @@ $.reload = async () => $.navigate($.src)
 
 effect(async () => {
 	if(!$.messenger) return
-	console.log('waiting to be ready...')
 	await until($.messenger.ready())
-	console.log('ready!')
 	this.dispatchEvent(new CustomEvent('messengerload'))
 })
 </script>
