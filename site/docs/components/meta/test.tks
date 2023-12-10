@@ -1,0 +1,84 @@
+// we're in a browser
+if(self.Deno) return;
+
+// the check-box component is defined
+const name = `check-box-${ crypto.randomUUID() }`;
+const source = `
+	<title>${ name }</title>
+	<meta attribute="checked" type="boolean">
+	<meta attribute="name" type="string">
+	<meta property="value">
+	<meta method="toggle">
+	<meta form-associated>
+
+	<template mode="open">
+		<div @click="$.toggle()"></div>
+	</template>
+	<script>
+	$.toggle = () => {
+		$.checked = !$.checked;
+	};
+
+	const internals = this.attachInternals();
+	when($.$checked).changes().then(() => {
+		internals.setFormValue($.checked);
+	});
+	</script>
+	<style>
+	:host {
+		display: inline-block;
+		width: 3em;
+		height: 3em;
+	}
+
+	div {
+		width: 100%;
+		height: 100%;
+		background: white;
+		:host([checked]) & { background: skyblue; }
+	}
+	</style>
+`;
+
+// the source is uploaded to a fake server
+const webServer = await import('/-/js/web-server/index.js');
+webServer.claim('/test/');
+webServer.clear('/test/');
+webServer.upload({
+	src: `/test/${ name }.yz`,
+	body: source
+});
+
+// the component is registered, created and connected inside a form
+await self.yozo.register(`/test/${ name }.yz`);
+const form = document.createElement('form');
+const element = document.createElement(name);
+document.body.append(form);
+form.append(element);
+
+// the element is named __name__
+element.name = '__name__';
+
+// the element is clicked
+element.shadowRoot.querySelector('div')?.click();
+
+// the element is manually set to checked
+element.checked = true;
+
+// the element is programmatically toggled
+element.toggle();
+
+// the form's data includes the __key__ key with value __value__
+new FormData(form).get(__key__) == __value__
+
+
+// TEST: The check-box component works as advertised
+// Given we're in a browser
+// and the check-box component is defined
+// and the source is uploaded to a fake server
+// and the component is registered, created and connected inside a form
+// and the element is named foo
+// and the element is manually set to checked
+// and the element is programmatically toggled
+// and the element is clicked
+// Verify the form's data includes the 'foo' key with value 'true'

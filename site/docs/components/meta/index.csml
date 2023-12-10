@@ -1,0 +1,98 @@
+@script
+	export const layout = 'docs'
+	export const title = '<meta>'
+	export const description = 'Define component metadata through ``<meta>`` tags, such as attributes, properties, methods, and more.'
+
+p Components in Yozo are custom elements. That means that they, like regular HTML elements, have a certain interface; pre-defined attributes, properties, methods, events, etcetera. Yozo's component structure is designed to make it easy to understand a component's interface just by glancing at its definition file. When defining properties and methods on the state variable for the component, [``$``](/docs/components/$/), the meta tags are responsible for exposing said properties on the actual component. Each meta tag is identified by a single "main" attribute. Other attributes are options for said type, and will never be a "main" attribute for another type in the future. The types Yozo defines are:
+
+ul
+	li [``attribute``](/docs/components/meta/attribute/) to define attributes on the custom element. Additional options allow for creating a matching property (as many attributes have) and setting a default value.
+	li [``property``](/docs/components/meta/property/) for definition a property. Optionally, the property may be marked read-only.
+	li [``method``](/docs/components/meta/method/) for defining a method. These are read-only by default.
+	li [``form-associated``](/docs/components/meta/form-associated/) to mark an element as, well, form-associated. This needs to be set to allow components to contribute in forms.
+	li [``hook``](/docs/components/meta/hook/) is a lower level type that allows for creating lifecycle callbacks that are not predefined in Yozo. For example, ``adoptedCallback`` is a custom element lifecycle callback that Yozo does not provide by default. However, it may be made available as ``adopted(…)`` through ``<meta hook="adopted">``.
+
+h2 Examples
+
+h3 Attributes
+
+p In vanilla web components, we need to use lifecycle callbacks and getters and setters to hook into things changing. In Yozo, we use the component's state variabele [``$``](/docs/components/$/) to react to attributes or properties changing. In particular, the ``attributeChangedCallback()`` is unavailable since it is replaced by the individual live variables for the attributes (and the parent bucket for them, ``$.$attributes``). For example:
+
+ui-code[language=yz]
+	<title>measuring-beaker</title>
+	<meta attribute="amount" type="number">
+	<script>
+	when($.$amount).changes().then(() => {
+		console.log(`The amount is now ${ $.amount }`);
+	});
+	when($.$attributes.$amount).changes().then(() => {
+		// listen to the attribute itself
+	});
+	</script>
+
+p The former expression listens for changes in ``$.$amount``, which is the live variable created for the property matching the "amount" attribute. This property is created because we provided ``type="number"``, which indicates we want a matching property that converts the attribute's value (which is always a string or ``null``) to a number. If we leave the ``type`` option off completely, no property is created and we'll need to listen to changes in ``$.$attributes.$amount``, which represents the attribute itself.
+
+p Note that generally we don't even need to explicitly listen for changes to the attributes or properties, but we can use them in [``effect()``](/docs/effect/) expressions. That way, we can describe the behavior of the component in a readable manner instead of jumping through hoops to make it happen.
+
+h3 Custom checkbox
+
+p As a more complete example, let's create a custom form-associated checkbox element. We'll have a boolean ``checked`` attribute, and a name attribute. Both of them will have associated properties as well. We'll then create a ``value`` property, as an alias of the ``checked`` property, and a ``toggle()`` method to toggle the checkbox programatically.
+
+ui-code[language=yz]
+	<title>check-box</title>
+	<meta attribute="checked" type="boolean">
+	<meta attribute="name" type="string">
+	<meta property="value">
+	<meta method="toggle">
+	<meta form-associated>
+
+	<template mode="closed">
+		<div @click="$.toggle()"></div>
+	</template>
+	<script>
+	$.toggle = () => {
+		$.checked = !$.checked;
+	};
+
+	const internals = this.attachInternals();
+	when($.$checked).changes().then(() => {
+		internals.setFormValue($.checked));
+	});
+
+	live.link($.$value, {
+		get: () => $.checked,
+		set: value => $.checked = value,
+		changes: when($.$checked).changes()
+	});
+	</script>
+	<style>
+	:host {
+		display: inline-block;
+		width: 3em;
+		height: 3em;
+	}
+
+	div {
+		width: 100%;
+		height: 100%;
+		background: white;
+		:host([checked]) & { background: skyblue; }
+	}
+	</style>
+
+p We first defined the component name using the [``<title>``](/docs/components/title/) element, and then proceed to specify the attributes, extra property, and the ``toggle()`` method. Then we go into more detail, defining the template, the logic for the ``toggle()`` method, and we handle setting the internal form value to be submitted alongside forms using the native ``.attachInternals()``. Lastly, we define the ``value`` property as an alias of the ``checked`` property using [``live.link()``](/docs/live/link/). We also define some very basic styles, to make the element usable.
+
+h2 Usage notes
+
+p Some things could be nice to express in the form of meta tags, such as events a component may dispatch. While Yozo could potentially introduce new types of meta tags in the future, it is entirely possible to add meta tags that Yozo does not understand, such as e.g. ``<meta event="input">``. You are encouraged to document these, though for those worried about forward compatibility, note that using any other dash-including tag name is future-proof. In other words, instead of documenting additional interface properties using ``<meta>``, using e.g. ``<x-meta>`` will never clash with future versions of Yozo.
+
+h2 See also
+
+ul
+	li [``<meta attribute=…>``](/docs/components/meta/attribute/)
+	li [``<meta property=…>``](/docs/components/meta/property/)
+	li [``<meta method=…>``](/docs/components/meta/method/)
+	li [``<meta form-associated>``](/docs/components/meta/form-associated/)
+	li [``<meta hook=…>``](/docs/components/meta/hook/)
+	li [``$``](/docs/components/$/)
+	li [``<title>``](/docs/components/title/)
