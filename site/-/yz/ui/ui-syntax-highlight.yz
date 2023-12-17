@@ -7,19 +7,19 @@
 </template>
 
 <script>
-import('/-/js/libraries/prism.js').then(() => $.loaded = true)
+import('/-/js/prism/index.js').then(({Prism}) => $.prism = Prism)
 
 const code = query('code')
 
 effect(() => {
 	const zeroWidthSpace = '\u200B'
 	const value = $.value + zeroWidthSpace
-	if(!$.loaded) return code.textContent = value
-	const grammar = window.Prism.languages[$.language]
+	if(!$.prism) return code.textContent = value
+	const grammar = $.prism.languages[$.language]
 	const language = grammar ? $.language : 'txt'
 	code.className = `language-${language}`
 	if(language == 'txt') return code.textContent = value
-	code.innerHTML = window.Prism.highlight(value, grammar, language)
+	code.innerHTML = $.prism.highlight(value, grammar, language)
 })
 </script>
 
@@ -35,9 +35,9 @@ pre {
 pre, code {
 	font-family: inherit;
 }
+code { color: var(--text-color); }
 
 /* html */
-code { color: var(--text-color); }
 .doctype .name, .entity { color: var(--meta-color); }
 .doctype .doctype-tag,
 .tag .tag { color: var(--keyword-color); }
