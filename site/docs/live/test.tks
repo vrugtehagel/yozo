@@ -39,6 +39,9 @@ __value__.addEventListener('__event__', () => __event__s++);
 // the __event__ event was fired __amount__ times
 __event__s == __amount__
 
+// iterating over __value__ iterates over the live values
+[...__value__].every($item => live.get($item) != $item)
+
 
 // TEST: Setting a live variable to another unwraps the other variable
 // Given Yozo helpers are in scope
@@ -77,3 +80,7 @@ __event__s == __amount__
 // and a live variable $data1 gets created with value data
 // and a live variable $data2 gets created with value data
 // Verify $data1 is different from $data2
+
+// Given Yozo helpers are in scope
+// and a live variable $ gets created with value [4, 5, 6]
+// Verify iterating over $ iterates over the live values

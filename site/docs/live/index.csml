@@ -118,6 +118,29 @@ ui-code
 
 p Note that this also means it is safe to just assume a certain data structure, even before the data structure has been loaded. For example, code may rely on nested keys on a live global state object before the state object exists. This makes it very easy to write clean effects and template logic.
 
+h3 Iteration
+p If the value wrapped by a live variable is iterable, then the live variable itself is also iterable. The values (i.e. items) in the iteration are live variables themselves, wrapping the items of the underlying iterable. For example:
+
+ui-code
+	const $items = live([ 'foo', 'bar', 'baz' ]);
+	for (const $item of $items){
+		console.log($item); // Live<'foo'>, …
+	}
+
+p When using static object methods such as ``Object.keys()`` or ``Object.entries()``, the behavior is in-line with that for arrays. Specifically, for ``Object.keys()``, the dollar-prefixed keys are returned. This excludes symbols as well as ``'addEventListener'`` and other event target-related properties. ``Object.entries()`` therefore retrieves the prefixed keys paired with their respective live values. In code,
+
+ui-code
+	const $data = live({ foo: 23, bar: 'baz' });
+
+	for (const [prefixedKey, $value] of Object.entries($data)){
+		console.log(prefixedKey); // '$foo', …
+		console.log($value); // Live<23>, …
+	}
+
+p To find the non-prefixed key, we would need ``prefixedKey.slice(1)``. To retrieve the unwrapped value in each iteration, use [``live.get()``](/docs/live/get/).
+
+p When it comes to monitoring, there is a non-trivial difference between iterating a live object first and then unwrapping the values individually versus unwrapping the object first and then iterating the plain values. The former monitors only for changes in the values of the iterated object, whereas the latter monitors for any change (or deepchange) in the iterated object itself.
+
 h2 Usage notes
 p A few notes about the bavior of live variables. Live variables generally automatically avoid being double-live, meaning that if a live variable is being assigned to another live variable, it is unwrapped and the assignee is set to the non-live value directly. Passing a live variable to ``live()`` itself does the same; it is unwrapped first, and then a new live variable is created for that value.
 
