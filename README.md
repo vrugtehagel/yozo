@@ -66,7 +66,7 @@ A section with a simple sandbox, allowing for multiple files and allowing the us
 
 ### Docs
 
-We need the following pages, in the same tree-like structure (12/57 pages done).
+We need the following pages, in the same tree-like structure (13/60 pages done).
  - [x] monitor()
     - [ ] monitor.add()
     - [ ] monitor.ignore()
@@ -79,6 +79,9 @@ We need the following pages, in the same tree-like structure (12/57 pages done).
     - [ ] live.set()
     - [ ] live.delete()
     - [ ] live.link()
+    - [ ] change event
+    - [ ] deepchange event
+    - [ ] keychange event
  - [x] Flow
     - [x] constructor
     - [ ] flow.pipe()
