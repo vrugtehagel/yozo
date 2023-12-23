@@ -46,7 +46,7 @@ ui-code
 		console.log(error.message); // "unexpected token"
 	}
 
-p We might also verify using ``customElements.get(…)`` (which is a native Web Components API) that the element was not defined. For defined elements, it returns the constructor for the registered custom element, and it returns ``undefined`` otherwise:
+p We might also verify using ``customElements.get(…)`` (which is a native web components API) that the element was not defined. For defined elements, it returns the constructor for the registered custom element, and it returns ``undefined`` otherwise:
 
 ui-code
 	console.log(customElements.get('uh-oh')); // undefined

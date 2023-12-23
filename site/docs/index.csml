@@ -57,14 +57,14 @@ ul
 	li Feature-rich component definitions, from [reactive attributes](/docs/components/meta/attribute/) to [scoped styles](/docs/components/style/) (see details on the [components](/docs/components/) page);
 	li Simple, fine-grained state management with [``live()``](/docs/live/);
 	li Simpler listeners and callbacks with [flows](/docs/flow/), specifically:
-	ul
-		li Event listeners through [``when()``](/docs/when/);
-		li Observers of any type through [``when().observes()``](/docs/when/observes/);
-		li Timeouts with [``timeout()``](/docs/timeout/);
-		li Intervals with [``interval()``](/docs/interval/);
-		li Running callbacks every frame with [``frame()``](/docs/frame/);
-		li Waiting for the browser to paint with [``paint()``](/docs/paint/);
-		li For advanced cases, manually creating flows with the [``Flow``](/docs/flow/constructor) constructor;
+		ul
+			li Event listeners through [``when()``](/docs/when/);
+			li Observers of any type through [``when().observes()``](/docs/when/observes/);
+			li Timeouts with [``timeout()``](/docs/timeout/);
+			li Intervals with [``interval()``](/docs/interval/);
+			li Running callbacks every frame with [``frame()``](/docs/frame/);
+			li Waiting for the browser to paint with [``paint()``](/docs/paint/);
+			li For advanced cases, manually creating flows with the [``Flow``](/docs/flow/constructor) constructor;
 	li State-dependent effects through [``effect()``](/docs/effect/);
 	li Purifying functions with side effects through [``purify()``](/docs/purify/);
 	li Creating your own monitoring mechanisms with [``monitor()``](/docs/monitor/).

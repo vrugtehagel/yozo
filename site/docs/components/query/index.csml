@@ -60,7 +60,7 @@ ui-code[language=yz]
 	<script>
 	connected(() => {
 		effect(() => {
-			if($.loading) return;
+			if ($.loading) return;
 			const button = query('button');
 			when(button).clicks().then(() => {
 				// Acting…
