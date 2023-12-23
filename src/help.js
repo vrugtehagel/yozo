@@ -43,6 +43,8 @@ const messages = {
 	'live-$1-on-non-live': method => `
 		live.${method}(…) was called, but its first argument wasn't live.
 		This was probably a mistake; it does nothing.`,
+	'live-property-$1-not-iterable': key => `
+		Cannot iterate over .$${key} because its value is not iterable.`,
 	'live-link-target-$1-not-live': guess => `
 		Something non-live was passed to live.link(…).
 		Probably, you missed the $ in .$${guess}.`,

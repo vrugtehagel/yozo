@@ -28,8 +28,11 @@ class LiveCore {
 				if(key == Symbol.iterator){
 					access(key) //
 					return () => {
+						if(!this.__value[key]) //
+							error`live-property-${this.__key}-not-iterable` //
 						monitor.add('live', this.__$value, 'keychange')
-						return [...this.__value].map((thing, index) => this.__cached(index).__$value)[Symbol.iterator]()
+						return [...this.__value]
+							.map((thing, index) => this.__cached(index).__$value)[key]()
 					}
 				}
 				if(key[0] == '$') return this.__cached(key.slice(1)).__$value
@@ -54,8 +57,7 @@ class LiveCore {
 				monitor.add('live', this.__$value, 'keychange')
 				return Object.keys(this.__value ?? {}).map(key => `$${key}`)
 			},
-			getOwnPropertyDescriptor: () =>
-				({ configurable: true, enumerable: true }),
+			getOwnPropertyDescriptor: () => ({configurable: true, enumerable: true}),
 			defineProperty: () => false
 		})
 		live[R].set(this.__$value, this)
