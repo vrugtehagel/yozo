@@ -14,6 +14,8 @@ Prism.languages.insertBefore('javascript', 'keyword', {
 
 // Globals that I'd like to give highlighting
 Prism.languages.js.native = /\bwindow|console|document\b/
+Prism.languages.javascript.punctuation = /[(){}[\]:;,]/
+Prism.languages.javascript.operator = [Prism.languages.javascript.operator, /\./]
 
 // Yozo component syntax is just HTML with some additional JS contexts
 Prism.languages.yz = Prism.languages.extend('markup', {
