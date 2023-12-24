@@ -1,0 +1,51 @@
+@script
+	export const layout = 'docs'
+	export const title = 'flow.now()'
+	export const description = 'The ``flow.now()`` method triggers a flow, optionally with arguments to pass to the callbacks in the flow pipeline.'
+
+h2 Syntax
+
+ui-code
+	flow.now();
+	flow.now(...args);
+
+h3 Parameters
+dl
+	dt ``...args`` [[optional]]
+	dd > p Any number of arguments to pass to the callbacks in the pipeline.
+
+h3 Return value
+p The same [``Flow``](/docs/flow/) object the method was called on.
+
+ui-callout[type=info]
+	p **Note:** Once a flow is stopped, either through [``flow.stop()``](/docs/flow/stop/), [``flow.until()``](/docs/flow/until/), or something else, it no longer triggers even when manually calling ``.now()`` on them.
+
+h2 Examples
+
+h3 Immediate event handler
+p Using ``flow.now()``, we can create an event listener, and immediately fire it to execute the callback. For example, say we want an element to follow the mouse after clicking it. Thus, inside the click handler, we can both set up a ``mousemove`` handler, and fire it immediately to place the element right away.
+
+ui-code
+	const { when } = window.yozo;
+	const element = document.querySelector('…');
+	const body = document.body;
+
+	when(element).clicks().then(event => {
+		when(body).mousemoves().then(({ pageX, pageY }) => {
+			element.style.left = `${ pageX }px`;
+			element.style.top = `${ pageY }px`;
+		}).now(event);
+	});
+
+p This works, because the only properties on the event that we care about are ``event.pageX`` and ``event.pageY``. So although the ``click`` event differs in some ways from the ``mousemove`` event, we can pass it to the ``mousemove`` handler and everything works just fine. In some cases, we'll need to create a manual object to mimic the shape of the event we're calling ``.now()`` for; in others, we don't need to pass an argument at all.
+
+h2 Usage notes
+p It is possible to create an "empty" [flow](/docs/flow/) object (i.e. construct one by passing an empty callback to the [``Flow`` constructor](/docs/flow/constructor/)), and then triggering it manually with ``.now()``. However, this is not advised; Yozo is able to warn about triggers firing when set up through the constructor, which indicates improper cleanup, but it cannot warn about triggers with ``.now()``. In other words, it is strongly recommended to handle the triggers for a manually created flow inside the constructor callback instead of using ``.now()``.
+
+
+h2 See also
+
+ul
+	li [flows](/docs/flow/)
+	li [``Flow`` constructor](/docs/flow/constructor/)
+	li [``flow.then()``](/docs/flow/then/)
