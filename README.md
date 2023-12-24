@@ -27,6 +27,7 @@ Below this, there's a more detailed breakdown of the site and what's needed.
      - Building full testing sandbox
      - Write all of the content
  - Create the homepage
+ - You can select the zero-width space when copy-pasting code examples
  - Fix docs-outline component header detection
  - Check browsers
      - play doesn't work (Safari can't top-level await some stuff)
@@ -66,7 +67,7 @@ A section with a simple sandbox, allowing for multiple files and allowing the us
 
 ### Docs
 
-We need the following pages, in the same tree-like structure (13/60 pages done).
+We need the following pages, in the same tree-like structure (14/60 pages done).
  - [x] monitor()
     - [ ] monitor.add()
     - [ ] monitor.ignore()
@@ -75,7 +76,7 @@ We need the following pages, in the same tree-like structure (13/60 pages done).
     - [ ] type: 'undo'
     - [ ] type: 'live'
  - [x] live()
-    - [ ] live.get()
+    - [x] live.get()
     - [ ] live.set()
     - [ ] live.delete()
     - [ ] live.link()
@@ -116,7 +117,7 @@ We need the following pages, in the same tree-like structure (13/60 pages done).
        - [ ] :attribute (/attributes/)
        - [ ] .property (/properties/)
     - [x] meta
-       - [ ] attribute
+       - [x] attribute
        - [ ] property
        - [ ] method
        - [ ] form-associated
