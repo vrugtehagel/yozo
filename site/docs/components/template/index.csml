@@ -46,7 +46,7 @@ h2 Examples
 
 h3 FizzBuzz
 
-p FizzBuzz is a basic programming task where one is asked write a program that outputs the numbers 1 through N, but every number divisible by three is replaced by "Fizz", every number divisible by 5 by "Buzz", and every number divisible by both is replaced by "FizzBuzz". For this component, we'll do the same; we'll have buttons to increase or decrease the maximum number N, and output each number (including Fizzes and Buzzes) dynamically. Note that this component could be made more efficiently (both in terms of brevity as well as runtime performance) but it is a fictional component to demonstrate template features.
+p FizzBuzz is a classic programming task where one is asked write a program that outputs the numbers 1 through N, but every number divisible by three is replaced by "Fizz", every number divisible by 5 by "Buzz", and every number divisible by both is replaced by "FizzBuzz". For this component, we'll do the same; we'll have buttons to increase or decrease the maximum number N, and output each number (including Fizzes and Buzzes) dynamically. Note that this component could be made more efficiently (both in terms of brevity as well as runtime performance) but it is a fictional component to demonstrate template features.
 
 ui-code[language=yz]
 	<title>fizz-buzz</title>
