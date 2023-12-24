@@ -13,10 +13,11 @@
 !DOCTYPE html
 html[lang=en]
 	meta[charset=utf-8]
+	title {{ page.title }} | YOZO
+
 	meta[name=viewport][content="width=device-width,initial-scale=1"]
 	meta[name=robots][content="noindex,nofollow"]
-
-	title {{ page.title }} | YOZO
+	meta[name=description][content={{ page.description }}]
 
 	@if(!exclude.has('yozo'))
 		script[src=/lib-latest.js]
