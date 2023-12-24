@@ -19,7 +19,7 @@ html[lang=en]
 	title {{ page.title }} | YOZO
 
 	@if(!exclude.has('yozo'))
-		script[src=/dev-latest.js]
+		script[src=/lib-latest.js]
 	@if(!exclude.has('yozo-register'))
 		script
 			self.yozo.register.auto(name => {
