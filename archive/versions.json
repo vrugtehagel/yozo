@@ -1,4 +1,15 @@
 [{
+	"number": "0.3.1",
+	"hash": "t4r49tZS0QPW2aSUZLwzdw==",
+	"timestamp": 1703601909747,
+	"changelog": {
+		"breaking": [],
+		"improvements": [],
+		"bugs": [
+			"Fixed a memory leak where a monitor.ignore() was preventing references to internal rendering flows from being cleaned up"
+		]
+	}
+}, {
 	"number": "0.3.0",
 	"hash": "QHNKIdG8kNmCgbPo7KQ3CQ==",
 	"timestamp": 1701717589632,
