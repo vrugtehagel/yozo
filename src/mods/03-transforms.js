@@ -14,7 +14,7 @@ define.register(3, Symbol(), context => {
 			return (thisArg, ...scopes) =>
 				result.call(thisArg, ...scopes.map(scope => scope[1]))
 		}
-		meta.__render = (node, ...scopes) => monitor.ignore(() => {
+		meta.__render = (node, ...scopes) => {
 			const root = node.cloneNode(true)
 			const iterator = document.createNodeIterator(root, 5)
 			let current
@@ -33,7 +33,7 @@ define.register(3, Symbol(), context => {
 				}
 			}
 			return root
-		})
+		}
 	}
 	return {constructor}
 })
