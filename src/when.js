@@ -2,6 +2,8 @@ import { error, warn } from './help.js' //
 import { Flow } from './flow.js'
 import { camelCase } from './utils.js'
 
+
+// Turn event listeners and observers into flows
 export const when = (...targets) => new Proxy({
 	does: (type, options) => {
 		let handler
@@ -16,6 +18,8 @@ export const when = (...targets) => new Proxy({
 	observes: (type, options) => {
 		let observer
 		return new Flow(trigger => {
+			// We convert the type to PascalCase and look it up in the global scope
+			// e.g. 'mutation' -> window.MutationObserver
 			const name = camelCase(`-${type}-observer`) //
 			if(typeof self[name] != 'function') //
 				error`when-cannot-observe-${type}-no-${name}` //
@@ -24,6 +28,7 @@ export const when = (...targets) => new Proxy({
 		}).cleanup(() => observer.disconnect())
 	}
 }, {get: (source, property) => {
+	// Cut off a trailing "s" if there is one, then pass it to .does()
 	const type = property.replace(/s$/, '') //
 	if(!source[property] && type != property && 'on' + property in self) //
 		warn`when-${property}-instead-of-${type}-mistake` //

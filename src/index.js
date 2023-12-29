@@ -16,13 +16,6 @@ import './mods/07-query.js'
 import './mods/08-style.js'
 import './mods/10-script.js'
 
-import './transforms/00-inline-text.js'
-import './transforms/01-for.js'
-import './transforms/02-if-else.js'
-import './transforms/03-attributes.js'
-import './transforms/04-properties.js'
-import './transforms/05-events.js'
-
 self.yozo = {
 	monitor, until,
 	Flow,

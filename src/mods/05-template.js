@@ -16,14 +16,14 @@ define.register(5, 'template', (context, [args]) => {
 		return {
 			constructor: function(meta){
 				meta.root = this.attachShadow(args[0])
-				meta.root.append(meta.__render(context.__template, [`{${[...context.x]}}`, meta.x]))
+				meta.root.append(meta.__render(context.__template, [[`{${[...context.x]}}`, meta.x]]))
 				customElements.upgrade(meta.root)
 			}
 		}
 	}
 	return {
 		constructor: function(meta){
-			meta.root = meta.__render(context.__template, [`{${[...context.x]}}`, meta.x])
+			meta.root = meta.__render(context.__template, [[`{${[...context.x]}}`, meta.x]])
 			customElements.upgrade(meta.root)
 		},
 		connectedCallback: function(meta){
