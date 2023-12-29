@@ -1,3 +1,5 @@
+// Just printing the errors. Not super efficient or anything, but it doesn't
+// really need to be.
 const printer = (show = console.log, suppress) => (parts, ...subs) => {
 	const expanded = String.raw(parts, ...subs)
 	const id = String.raw(parts, ...subs.map((sub, index) => `$${index + 1}`))
@@ -34,15 +36,12 @@ const messages = {
 	'monitor-registry-already-has-$1': name => `
 		monitor.register('${name}', …) was called, but "${name}" was already registerd.
 		You cannot overwrite an existing registration; re-registrations are ignored.`,
-	'monitor-$1-definition-must-be-class': name => `
-		Registering "${name}", but its definition was not a class.
-		Register it using monitor.register('${name}', class { … }).`,
+	'monitor-$1-definition-should-be-class': name => `
+		Registering "${name}", but its definition didn't look like a class.
+		If this wasn't intentional, use monitor.register('${name}', class { … }) instead.`,
 	'flow-stopped-but-triggered': () => `
 		A flow was triggered after it stopped. Often, this indicates a memory leak.
 		Make sure you use .cleanup(…) to undo everything triggering the flow.`,
-	'live-$1-on-non-live': method => `
-		live.${method}(…) was called, but its first argument wasn't live.
-		This was probably a mistake; it does nothing.`,
 	'live-property-$1-not-iterable': key => `
 		Cannot iterate over .$${key} because its value is not iterable.`,
 	'live-link-target-$1-not-live': guess => `
@@ -63,6 +62,12 @@ const messages = {
 	'define-missing-title': () => `
 		Component definition is missing <title>…</title>.
 		This is required, as it determines the component's tag name.`,
+	'define-attribute-$1-is-type-bigint-instead-of-big-int': attribute => `
+		Attribute "${attribute}" defined type "bigint". That should probably be "big-int".
+		Other valid types are "string", "boolean", or "number".`,
+	'define-attribute-$1-type-$2-unknown': (attribute, type) => `
+		Attribute "${attribute}" defined unknown type "${type}".
+		Valid types are "string", "boolean", "number", and "big-int"`,
 	'define-attribute-$1-type-$2-does-not-exist': (attribute, type) => `
 		Attribute "${attribute}" defined type "${type}", but that doesn't exist.
 		The type attribute is converted to PascalCase, and that must be a global.`,
@@ -70,6 +75,17 @@ const messages = {
 		Expression "${expression}" in #for is not iterable.`,
 	'transform-if-found-loose-$1': statement => `
 		Found an "${statement}" attribute without an #if.
-		Make sure the element follows an element with an #if or #else-if.`
+		Make sure the element follows an element with an #if or #else-if.`,
+	'transform-mixing-class-and-class-list': () => `
+		Found both a .class-list and a :class attribute on a single element.
+		:class overwrites all classes when it updates, so mixing them is not advised.`,
+	'transform-elseif-instead-of-else-if': () => `
+		Found an "#elseif" attribute; that should probably be "#else-if".`,
+	'transform-loose-flow-control-$1': flowControl => `
+		Found an unrecognized flow control attribute "${flowControl}".
+		It's okay to have it, but it'll be ignored.`,
+	'transform-for-without-of': () => `
+		Found a #for without " of ", which is the only type of #for expression supported.
+		If you need to loop over numbers, generate an array of numbers and iterate that.`
 }
 

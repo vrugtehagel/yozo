@@ -1,4 +1,18 @@
 [{
+	"number": "0.3.2",
+	"hash": "6WMESgeDUepEqyXmyWS+PQ==",
+	"timestamp": 1703854014795,
+	"changelog": {
+		"breaking": [],
+		"improvements": [
+			"Major performance improvements to in-template logic parsing.",
+			"Added several error and warning messages for mistakes in in-template logic (development build only)."
+		],
+		"bugs": [
+			"Fixed an issue where the 'has' trap on live variables throws an error if the value wrapped is nullish."
+		]
+	}
+}, {
 	"number": "0.3.1",
 	"hash": "t4r49tZS0QPW2aSUZLwzdw==",
 	"timestamp": 1703601909747,
