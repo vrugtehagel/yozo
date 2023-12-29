@@ -6,7 +6,7 @@
 		"breaking": [],
 		"improvements": [],
 		"bugs": [
-			"Fixed a memory leak where a monitor.ignore() was preventing references to internal rendering flows from being cleaned up"
+			"Fixed a memory leak where a monitor.ignore() was preventing references to internal rendering flows from being cleaned up."
 		]
 	}
 }, {
@@ -27,10 +27,10 @@
 	"changelog": {
 		"breaking": [],
 		"improvements": [
-			"Dev builds are not longer minified"
+			"Dev builds are not longer minified."
 		],
 		"bugs": [
-			"Fixed an issue where shadowless components would break after connecting for a second time"
+			"Fixed an issue where shadowless components would break after connecting for a second time."
 		]
 	}
 }, {
@@ -40,7 +40,7 @@
 	"changelog": {
 		"breaking": [],
 		"improvements": [
-			"register() now accepts URL objects as first argument"
+			"register() now accepts URL objects as first argument."
 		],
 		"bugs": []
 	}
@@ -50,7 +50,7 @@
 	"timestamp": 1700395579154,
 	"changelog": {
 		"breaking": [
-			"track() has been renamed to monitor()",
+			"track() has been renamed to monitor().",
 			"Tracking shorthands like track.undo() and track.live() have been removed in favor of the more general monitor(['undo'], () => { … }) and likewise for other types. Registering new types will also no longer create shorthands."
 		],
 		"improvements": [],
