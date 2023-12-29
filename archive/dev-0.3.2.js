@@ -16,7 +16,7 @@
   var error = printer((message) => {
     throw new Error(message);
   });
-  var warn = printer((message) => console.warn(message));
+  var warn2 = printer((message) => console.warn(message));
   var warnOnce = printer(
     (message) => console.warn(message),
     "Warnings after this one will be suppressed"
@@ -40,15 +40,12 @@
     "monitor-registry-already-has-$1": (name) => `
 		monitor.register('${name}', \u2026) was called, but "${name}" was already registerd.
 		You cannot overwrite an existing registration; re-registrations are ignored.`,
-    "monitor-$1-definition-must-be-class": (name) => `
-		Registering "${name}", but its definition was not a class.
-		Register it using monitor.register('${name}', class { \u2026 }).`,
+    "monitor-$1-definition-should-be-class": (name) => `
+		Registering "${name}", but its definition didn't look like a class.
+		If this wasn't intentional, use monitor.register('${name}', class { \u2026 }) instead.`,
     "flow-stopped-but-triggered": () => `
 		A flow was triggered after it stopped. Often, this indicates a memory leak.
 		Make sure you use .cleanup(\u2026) to undo everything triggering the flow.`,
-    "live-$1-on-non-live": (method) => `
-		live.${method}(\u2026) was called, but its first argument wasn't live.
-		This was probably a mistake; it does nothing.`,
     "live-property-$1-not-iterable": (key) => `
 		Cannot iterate over .$${key} because its value is not iterable.`,
     "live-link-target-$1-not-live": (guess) => `
@@ -69,6 +66,12 @@
     "define-missing-title": () => `
 		Component definition is missing <title>\u2026</title>.
 		This is required, as it determines the component's tag name.`,
+    "define-attribute-$1-is-type-bigint-instead-of-big-int": (attribute) => `
+		Attribute "${attribute}" defined type "bigint". That should probably be "big-int".
+		Other valid types are "string", "boolean", or "number".`,
+    "define-attribute-$1-type-$2-unknown": (attribute, type) => `
+		Attribute "${attribute}" defined unknown type "${type}".
+		Valid types are "string", "boolean", "number", and "big-int"`,
     "define-attribute-$1-type-$2-does-not-exist": (attribute, type) => `
 		Attribute "${attribute}" defined type "${type}", but that doesn't exist.
 		The type attribute is converted to PascalCase, and that must be a global.`,
@@ -118,7 +121,7 @@
       monitor.add("undo", () => this.stop());
       callback?.((...args) => {
         if (this.#stopped)
-          warn`flow-stopped-but-triggered`;
+          warn2`flow-stopped-but-triggered`;
         this.now(...args);
       });
     }
@@ -245,7 +248,7 @@
   }, { get: (source, property) => {
     const type = property.replace(/s$/, "");
     if (!source[property] && type != property && "on" + property in self)
-      warn`when-${property}-instead-of-${type}-mistake`;
+      warn2`when-${property}-instead-of-${type}-mistake`;
     return source[property] ?? source.does.bind(null, property.replace(/s$/, ""));
   } });
 
@@ -263,7 +266,6 @@
   // src/live.js
   var live = (thing) => new LiveCore({ __value: { $: live.get(thing) } }, "$").__$value;
   var coreMap = /* @__PURE__ */ new WeakMap();
-  var treeMap = /* @__PURE__ */ new WeakMap();
   var access = async (key) => {
     access.recent = key;
     await "mircrotask";
@@ -292,16 +294,18 @@
           if (target[key2])
             return target[key2].bind(target);
           monitor.add("live", this.__cached(key2).__$value, "deepchange");
+          if (coreMap.has(this.__value?.[key2]))
+            warnOnce`live-property-${key2}-doubled`;
           return this.__value?.[key2];
         },
         set: (target, key2, value) => {
           if (key2[0] == "$")
-            warn`live-property-set-${key2}-has-$`;
+            warn2`live-property-set-${key2}-has-$`;
           return live.set(this.__cached(key2).__$value, value);
         },
         deleteProperty: (target, key2, value) => {
           if (key2[0] == "$")
-            warn`live-property-delete-${key2}-has-$`;
+            warn2`live-property-delete-${key2}-has-$`;
           return live.delete(this.__cached(key2).__$value);
         },
         has: (target, key2) => {
@@ -317,9 +321,6 @@
         defineProperty: () => false
       });
       coreMap.set(this.__$value, this);
-      if (root == this)
-        treeMap.set(this, /* @__PURE__ */ new Set());
-      treeMap.get(root).add(new WeakRef(this));
       this.__value = this.__parent.__value?.[this.__key];
       this.__keys = Object.keys(this.__value ?? {});
     }
@@ -366,9 +367,14 @@
     if (!core)
       return key == null ? $live : $live[key];
     access(key == null ? core.__key : key);
-    if (key != null)
+    if (key != null) {
+      if (coreMap.has(core.__cached(key).__value))
+        warnOnce`live-property-${key}-doubled`;
       return core.__cached(key).__value;
+    }
     monitor.add("live", $live, "deepchange");
+    if (coreMap.has(core.__value))
+      warnOnce`live-property-${key}-doubled`;
     return core.__value;
   };
   live.set = ($live, value) => {
@@ -455,14 +461,16 @@
   monitor.ignore = (callback) => monitor([], callback).result;
   monitor.add = (name, ...things) => {
     if (!monitor[R][name])
-      warn`monitor-add-${name}-not-in-registry`;
+      warn2`monitor-add-${name}-not-in-registry`;
     monitor[S]?.[name]?.add(...things);
   };
   monitor.register = (name, registration) => {
     if (name == "result")
-      warn`monitor-cannot-register-result`;
+      warn2`monitor-cannot-register-result`;
     if (monitor[R][name])
-      warn`monitor-registry-already-has-${name}`;
+      warn2`monitor-registry-already-has-${name}`;
+    if (!registration?.toString().startsWith("class "))
+      warn2`monitor-${name}-definition-should-be-class`;
     monitor[R][name] ??= registration;
   };
   monitor[R] = {
@@ -674,8 +682,12 @@
           });
         } else if (options.type) {
           const type = self[camelCase(`-${options.type}`)];
-          if (!type)
-            error`define-attribute-${options.attribute}-type-${type}-does-not-exist`;
+          if (options.type == "bigint")
+            warn`define-attribute-${options.attribute}-is-type-bigint-instead-of-big-int`;
+          else if (!["boolean", "string", "number", "big-int"].includes(options.type))
+            warn`define-attribute-${options.attribute}-type-${options.type}-unknown`;
+          else if (!type)
+            error`define-attribute-${options.attribute}-type-${options.type}-does-not-exist`;
           live.link(meta.x.$[`$${options.as ?? name}`], {
             get: () => type(live.get(meta.x.$.$attributes, name) ?? options.default ?? ""),
             set: (value) => meta.x.$.$attributes[name] = value == null ? null : `${value}`,
@@ -779,7 +791,15 @@
           transforms.push((meta, clone, scopes) => {
             const cache = [];
             meta.x.connected(() => effect(() => {
-              const array = [...getter.call(node, ...scopes.map((scope) => scope[1]))];
+              const array = true ? (() => {
+                const value = getter.call(node, ...scopes.map((scope) => scope[1]));
+                if (typeof value[Symbol.iterator] == "function")
+                  return [...value];
+                error`transform-for-${expression}-not-iterable`;
+              })() : (
+                //
+                [...getter.call(node, ...scopes.map((scope) => scope[1]))]
+              );
               while (cache.length > array.length)
                 cache.pop()[1].undo();
               array.map((item, index) => {
@@ -837,15 +857,15 @@
         } else {
           const looseElse = [...node.attributes].find(({ name }) => ["#else-if", "#else"].includes(name))?.name;
           if (looseElse)
-            warn`transform-if-found-loose-${looseElse}`;
+            warn2`transform-if-found-loose-${looseElse}`;
           if (node.hasAttribute("#elseif"))
-            warn`transform-elseif-instead-of-else-if`;
+            warn2`transform-elseif-instead-of-else-if`;
           const looseFlowControl = [...node.attributes].find(({ name }) => name.startsWith("#"))?.name;
           if (looseFlowControl)
-            warn`transform-loose-flow-control-${looseFlowControl}`;
+            warn2`transform-loose-flow-control-${looseFlowControl}`;
           const usesClassList = [...node.attributes].some(({ name }) => name.startsWith(".class-list"));
           if (node.hasAttribute(":class") && usesClassList)
-            warn`transform-mixing-class-and-class-list`;
+            warn2`transform-mixing-class-and-class-list`;
           const shorthands = [...node.attributes].map((attribute) => {
             if (attribute.name[0] == ":") {
               const name = attribute.name.slice(1);

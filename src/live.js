@@ -20,8 +20,6 @@ export const live = thing =>
 
 // Map for live variables to their LiveCore
 const coreMap = new WeakMap
-// Map for root live variables to weakrefs of all the live variable descendants
-const treeMap = new WeakMap
 
 // Keep track of what was last accessed so we can give better error messages
 const access = async key => { //
@@ -88,8 +86,6 @@ class LiveCore {
 			defineProperty: () => false
 		})
 		coreMap.set(this.__$value, this)
-		if(root == this) treeMap.set(this, new Set)
-		treeMap.get(root).add(new WeakRef(this))
 		this.__value = this.__parent.__value?.[this.__key]
 		this.__keys = Object.keys(this.__value ?? {})
 	}
