@@ -1,4 +1,4 @@
-import { R, S, compose } from './utils.js'
+import { compose } from './utils.js'
 import { monitor } from './monitor.js'
 
 
@@ -39,7 +39,7 @@ export const define = definer => {
 	// Now we create that map mentioned previously and pass it to definer()
 	// This will collect all attributes and "innerHTML" content for each
 	// top-level element in the component definition
-	definer(Object.fromEntries(define[R]
+	definer(Object.fromEntries(registrations
 		.map(([mod, name]) => [name, (...args) => (calls[name] ??= []).push(args)])
 	))
 	// Now, we run each mod (defined in src/mods/), passing them the attributes
@@ -48,7 +48,7 @@ export const define = definer => {
 	// and we then compose them into a single object of aggregated functions,
 	// to be slapped onto the prototype
 	const composed = compose(
-		define[R].map(([mod, name]) => mod(context, calls[name] ?? []))
+		registrations.map(([mod, name]) => mod(context, calls[name] ?? []))
 	)
 	Object.entries(composed).map(([key, callback]) => {
 		// We sneakily avoid overwriting the constructor here with ??=
@@ -65,8 +65,8 @@ export const define = definer => {
 }
 
 // This is where we register mods, sorting them by their priority argument
-define[R] = []
+const registrations = []
 define.register = (priority, name, mod) => {
-	define[R].push([mod, name, priority])
-	define[R].sort((a, b) => a[2] - b[2])
+	registrations.push([mod, name, priority])
+	registrations.sort((a, b) => a[2] - b[2])
 }

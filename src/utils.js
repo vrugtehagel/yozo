@@ -1,9 +1,3 @@
-// Two main symbols are used.
-// S is generally used for buckets of values or chaching
-// and R is mostly used for registrations
-export const S = Symbol()
-export const R = Symbol()
-
 // Also occasionally used for PascalCase through camelCase(`-${}`)
 export const camelCase = string => string.replace(/-+(\w?)/g,
 	(full, character) => character.toUpperCase())

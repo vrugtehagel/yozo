@@ -1,7 +1,7 @@
 import { define } from '../define.js'
 import { Flow } from '../flow.js'
 import { monitor } from '../monitor.js'
-import { S, R, compose } from '../utils.js'
+import { compose } from '../utils.js'
 
 
 // Here we define hooks such as connected() and disconnected()
@@ -22,6 +22,9 @@ define.register(2, 'meta', (context, argslist) => {
 		const {hook, unhook} = args[0]
 		if(!hook) return {}
 
+		const items = Symbol()
+		const queuedArgs = Symbol()
+
 		// This exposes the hook inside the template as a variable
 		// it'll be looked up in meta.x[…]
 		context.x.add(hook)
@@ -36,29 +39,30 @@ define.register(2, 'meta', (context, argslist) => {
 					item[1] = monitor(['undo'], () => callback?.(...args))
 				}).cleanup(() => {
 					item[1]?.undo()
-					meta.x[hook][R].delete(item)
+					meta[items].delete(item)
 				})]
-				meta.x[hook][R].add(item)
+				meta[items].add(item)
 				// Fire "immediately" if somehow the hook has already fired before
 				// calling the hook itself
-				if(meta.x[hook][S]) queueMicrotask(() => item[0].now(...meta.x[hook][S]))
+				if(meta[queuedArgs])
+					queueMicrotask(() => item[0].now(...meta[queuedArgs]))
 				return item[0]
 			}
 
 			// This is where we dump all the [Flow, ?{undo}] pairs that are still alive
-			meta.x[hook][R] = new Set
+			meta[items] = new Set
 		}
 		const hookCallback = function(meta, ...args){
-			meta.x[hook][S] = args
-			for(const item of meta.x[hook][R]) item[0].now(...args)
+			meta[queuedArgs] = args
+			for(const item of meta[items]) item[0].now(...args)
 		}
 		if(!unhook) return {constructor, [`${hook}Callback`]: hookCallback}
 		return {
 			constructor,
 			[`${hook}Callback`]: hookCallback,
 			[`${unhook}Callback`]: function(meta, ...args){
-				meta.x[hook][S] = null
-				for(const item of meta.x[hook][R]) item[1]?.undo()
+				meta[queuedArgs] = null
+				for(const item of meta[items]) item[1]?.undo()
 			}
 		}
 	}))

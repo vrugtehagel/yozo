@@ -2,7 +2,7 @@ import { define } from '../define.js'
 import { effect } from '../effect.js'
 import { when } from '../when.js'
 import { monitor } from '../monitor.js'
-import { S, camelCase } from '../utils.js'
+import { camelCase } from '../utils.js'
 import { error, warn } from '../help.js' //
 
 

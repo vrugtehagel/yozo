@@ -93,23 +93,6 @@
 		If you need to loop over numbers, generate an array of numbers and iterate that.`
   };
 
-  // src/utils.js
-  var S = Symbol();
-  var R = Symbol();
-  var camelCase = (string) => string.replace(
-    /-+(\w?)/g,
-    (full, character) => character.toUpperCase()
-  );
-  var compose = (objects) => {
-    const result = { constructor: null };
-    for (const object of objects)
-      for (const key of Object.keys(object))
-        result[key] ??= function(...args) {
-          objects.map((object2) => object2[key]?.call(this, ...args));
-        };
-    return result;
-  };
-
   // src/flow.js
   var Flow = class {
     #steps = [];
@@ -222,6 +205,21 @@
       queueMicrotask(() => queueMicrotask(callback));
       return this;
     }
+  };
+
+  // src/utils.js
+  var camelCase = (string) => string.replace(
+    /-+(\w?)/g,
+    (full, character) => character.toUpperCase()
+  );
+  var compose = (objects) => {
+    const result = { constructor: null };
+    for (const object of objects)
+      for (const key of Object.keys(object))
+        result[key] ??= function(...args) {
+          objects.map((object2) => object2[key]?.call(this, ...args));
+        };
+    return result;
   };
 
   // src/when.js
@@ -434,58 +432,59 @@
   };
 
   // src/monitor.js
+  var context;
   var monitor = (names, callback) => {
-    const before = monitor[S];
-    monitor[S] = {};
+    const before = context;
+    context = {};
     const call = {};
     names.map((name) => {
-      monitor[S][name] = new monitor[R][name]();
-      call[name] = monitor[S][name].result;
+      context[name] = new registrations[name]();
+      call[name] = context[name].result;
     });
     call.result = callback();
-    monitor[S] = before;
+    context = before;
     return call;
   };
   var until = (thing) => {
-    if (!monitor[S])
+    if (!context)
       return thing;
-    const before = monitor[S];
+    const before = context;
     return { then: (resolve) => Promise.resolve(thing).then((result) => {
       if (Object.keys(before).some((name) => before[name].until?.()))
         return;
-      queueMicrotask(() => monitor[S] = before);
+      queueMicrotask(() => context = before);
       resolve(result);
-      queueMicrotask(() => monitor[S] = null);
+      queueMicrotask(() => context = null);
     }) };
   };
   monitor.ignore = (callback) => monitor([], callback).result;
   monitor.add = (name, ...things) => {
-    if (!monitor[R][name])
+    if (!registrations[name])
       warn2`monitor-add-${name}-not-in-registry`;
-    monitor[S]?.[name]?.add(...things);
+    context?.[name]?.add(...things);
   };
   monitor.register = (name, registration) => {
     if (name == "result")
       warn2`monitor-cannot-register-result`;
-    if (monitor[R][name])
+    if (registrations[name])
       warn2`monitor-registry-already-has-${name}`;
     if (!registration?.toString().startsWith("class "))
       warn2`monitor-${name}-definition-should-be-class`;
-    monitor[R][name] ??= registration;
+    registrations[name] ??= registration;
   };
-  monitor[R] = {
+  var registrations = {
     // Prevent "result" from being registered because it's already used
     // for the return value of monitored calls
     result: true,
     // Monitor cleanup functions
     undo: class {
-      [R] = [];
+      #callbacks = [];
       #stopped;
       // This is what'll be returned from the monitor() calls
       result = () => {
         if (this.#stopped)
           return;
-        this[R].splice(0).map((callback) => callback());
+        this.#callbacks.splice(0).map((callback) => callback());
         this.#stopped = true;
       };
       // add() is the only required method for these classes
@@ -493,7 +492,7 @@
       add(callback) {
         if (this.#stopped)
           return callback();
-        this[R].push(callback);
+        this.#callbacks.push(callback);
       }
       // Stop until() calls from continuing if the call has been undone
       until() {
@@ -503,14 +502,14 @@
     // Monitor use of live variables for different event types
     live: class {
       // Cache of live variable to array of used types
-      [R] = /* @__PURE__ */ new Map();
+      #cache = /* @__PURE__ */ new Map();
       result = new EventTarget();
       add($live, type) {
-        const cache = this[R].get($live) ?? [];
+        const cache = this.#cache.get($live) ?? [];
         if (cache.includes(type))
           return;
         cache.push(type);
-        this[R].set($live, cache);
+        this.#cache.set($live, cache);
         monitor.ignore(() => when($live).does(type)).then(() => this.result.dispatchEvent(new CustomEvent("change")));
       }
     }
@@ -549,7 +548,7 @@
 
   // src/define.js
   var define = (definer) => {
-    const context = {
+    const context2 = {
       // The exposed properties to be used in the component logic
       x: /* @__PURE__ */ new Set(["query", "$"]),
       // A lookup map: component instance -> metadata
@@ -558,37 +557,38 @@
       __body: class extends HTMLElement {
         constructor() {
           super();
-          context.__meta.set(this, { x: {} });
-          monitor.ignore(() => composed.constructor.call(this, context.__meta.get(this)));
+          context2.__meta.set(this, { x: {} });
+          monitor.ignore(() => composed.constructor.call(this, context2.__meta.get(this)));
         }
       }
     };
     const calls = {};
     definer(Object.fromEntries(
-      define[R].map(([mod, name]) => [name, (...args) => (calls[name] ??= []).push(args)])
+      registrations2.map(([mod, name]) => [name, (...args) => (calls[name] ??= []).push(args)])
     ));
     const composed = compose(
-      define[R].map(([mod, name]) => mod(context, calls[name] ?? []))
+      registrations2.map(([mod, name]) => mod(context2, calls[name] ?? []))
     );
     Object.entries(composed).map(([key, callback]) => {
-      return context.__body.prototype[key] ??= function(...args) {
-        return monitor.ignore(() => callback.call(this, context.__meta.get(this), ...args));
+      return context2.__body.prototype[key] ??= function(...args) {
+        return monitor.ignore(() => callback.call(this, context2.__meta.get(this), ...args));
       };
     });
-    customElements.define(context.__title, context.__body);
-    return customElements.whenDefined(context.__title);
+    customElements.define(context2.__title, context2.__body);
+    return customElements.whenDefined(context2.__title);
   };
-  define[R] = [];
+  var registrations2 = [];
   define.register = (priority, name, mod) => {
-    define[R].push([mod, name, priority]);
-    define[R].sort((a, b) => a[2] - b[2]);
+    registrations2.push([mod, name, priority]);
+    registrations2.sort((a, b) => a[2] - b[2]);
   };
 
   // src/register.js
+  var registered = /* @__PURE__ */ new Set();
   var register = async (url) => {
-    if (register[R].has(`${url}`))
+    if (registered.has(`${url}`))
       return;
-    register[R].add(`${url}`);
+    registered.add(`${url}`);
     const response = await fetch(url);
     const template = document.createElement("template");
     template.innerHTML = await response.text();
@@ -601,16 +601,16 @@
       }
     });
   };
-  register[R] = /* @__PURE__ */ new Set();
   var cancelled;
+  var autoRegistered;
   register.auto = (find) => {
-    if (register.auto[R])
+    if (autoRegistered)
       return;
-    register.auto[R] = /* @__PURE__ */ new Set();
+    autoRegistered = /* @__PURE__ */ new Set();
     const autoDefine = (name) => {
-      if (register.auto[R].has(name))
+      if (autoRegistered.has(name))
         return;
-      register.auto[R].add(name);
+      autoRegistered.add(name);
       const url = find(name);
       if (!url)
         return;
@@ -622,26 +622,26 @@
       for (const template of root.querySelectorAll("template"))
         from(template.content);
     };
-    define.register(6, Symbol(), (context) => {
+    define.register(6, Symbol(), (context2) => {
       if (cancelled)
         return {};
-      if (context.__template)
-        from(context.__template);
+      if (context2.__template)
+        from(context2.__template);
       return {};
     }, {});
     return when(document).observes("mutation", { childList: true, subtree: true }).then(() => from(document)).now().if(() => null).cleanup(() => cancelled = true);
   };
 
   // src/mods/00-title.js
-  define.register(0, "title", (context, [args]) => {
+  define.register(0, "title", (context2, [args]) => {
     if (!args?.[1])
       error`define-missing-title`;
-    context.__title = args[1];
+    context2.__title = args[1];
     return {};
   });
 
   // src/mods/01-meta.js
-  define.register(1, "meta", (context, argslist) => {
+  define.register(1, "meta", (context2, argslist) => {
     const attributes = argslist.filter((args) => args[0].attribute);
     const properties = [
       ...argslist.filter((args) => args[0].property),
@@ -650,18 +650,18 @@
     ];
     properties.map(([options]) => {
       const get = function() {
-        return monitor.ignore(() => live.get(context.__meta.get(this).x.$, options.property));
+        return monitor.ignore(() => live.get(context2.__meta.get(this).x.$, options.property));
       };
       Object.defineProperty(
-        context.__body.prototype,
+        context2.__body.prototype,
         options.property,
         "readonly" in options ? { get } : { get, set: function(value) {
-          context.__meta.get(this).x.$[options.property] = value;
+          context2.__meta.get(this).x.$[options.property] = value;
         } }
       );
     });
-    context.__body.observedAttributes = attributes.map((args) => args[0].attribute);
-    context.__body.formAssociated = argslist.some((args) => args[0].formAssociated != null);
+    context2.__body.observedAttributes = attributes.map((args) => args[0].attribute);
+    context2.__body.formAssociated = argslist.some((args) => args[0].formAssociated != null);
     const constructor = function(meta) {
       meta.x.$ = live({ attributes: {} });
       attributes.map(([options]) => {
@@ -710,7 +710,7 @@
   });
 
   // src/mods/02-hooks.js
-  define.register(2, "meta", (context, argslist) => {
+  define.register(2, "meta", (context2, argslist) => {
     return compose([
       ...argslist,
       [{ hook: "connected", unhook: "disconnected" }],
@@ -719,7 +719,9 @@
       const { hook, unhook } = args[0];
       if (!hook)
         return {};
-      context.x.add(hook);
+      const items = Symbol();
+      const queuedArgs = Symbol();
+      context2.x.add(hook);
       const constructor = function(meta) {
         meta.x[hook] = (callback) => {
           const item = [new Flow().then((...args2) => {
@@ -727,18 +729,18 @@
             item[1] = monitor(["undo"], () => callback?.(...args2));
           }).cleanup(() => {
             item[1]?.undo();
-            meta.x[hook][R].delete(item);
+            meta[items].delete(item);
           })];
-          meta.x[hook][R].add(item);
-          if (meta.x[hook][S])
-            queueMicrotask(() => item[0].now(...meta.x[hook][S]));
+          meta[items].add(item);
+          if (meta[queuedArgs])
+            queueMicrotask(() => item[0].now(...meta[queuedArgs]));
           return item[0];
         };
-        meta.x[hook][R] = /* @__PURE__ */ new Set();
+        meta[items] = /* @__PURE__ */ new Set();
       };
       const hookCallback = function(meta, ...args2) {
-        meta.x[hook][S] = args2;
-        for (const item of meta.x[hook][R])
+        meta[queuedArgs] = args2;
+        for (const item of meta[items])
           item[0].now(...args2);
       };
       if (!unhook)
@@ -747,8 +749,8 @@
         constructor,
         [`${hook}Callback`]: hookCallback,
         [`${unhook}Callback`]: function(meta, ...args2) {
-          meta.x[hook][S] = null;
-          for (const item of meta.x[hook][R])
+          meta[queuedArgs] = null;
+          for (const item of meta[items])
             item[1]?.undo();
         }
       };
@@ -756,7 +758,7 @@
   });
 
   // src/mods/03-transforms.js
-  define.register(3, Symbol(), (context) => {
+  define.register(3, Symbol(), (context2) => {
     const transformsMap = /* @__PURE__ */ new Map();
     const getTransforms = (root, ...scopeNames) => {
       if (transformsMap.get(root))
@@ -930,7 +932,7 @@
   });
 
   // src/mods/05-template.js
-  define.register(5, "template", (context, [args]) => {
+  define.register(5, "template", (context2, [args]) => {
     if (!args) {
       return {
         constructor: function(meta) {
@@ -940,19 +942,19 @@
     }
     const template = document.createElement("template");
     template.innerHTML = args[1];
-    context.__template = template.content;
+    context2.__template = template.content;
     if (args[0].mode) {
       return {
         constructor: function(meta) {
           meta.root = this.attachShadow(args[0]);
-          meta.root.append(meta.__render(context.__template, [[`{${[...context.x]}}`, meta.x]]));
+          meta.root.append(meta.__render(context2.__template, [[`{${[...context2.x]}}`, meta.x]]));
           customElements.upgrade(meta.root);
         }
       };
     }
     return {
       constructor: function(meta) {
-        meta.root = meta.__render(context.__template, [[`{${[...context.x]}}`, meta.x]]);
+        meta.root = meta.__render(context2.__template, [[`{${[...context2.x]}}`, meta.x]]);
         customElements.upgrade(meta.root);
       },
       connectedCallback: function(meta) {
@@ -965,7 +967,7 @@
   });
 
   // src/mods/07-query.js
-  define.register(7, Symbol(), (context) => {
+  define.register(7, Symbol(), (context2) => {
     const constructor = function(meta) {
       meta.x.query = (selector) => meta.root.querySelector(selector);
       meta.x.query.all = (selector) => [...meta.root.querySelectorAll(selector)];
@@ -974,7 +976,7 @@
   });
 
   // src/mods/08-style.js
-  define.register(8, "style", (context, [args]) => {
+  define.register(8, "style", (context2, [args]) => {
     if (!args)
       return {};
     const sheet = new CSSStyleSheet();
@@ -989,11 +991,11 @@
   });
 
   // src/mods/10-script.js
-  define.register(10, "script", (context, [args]) => {
+  define.register(10, "script", (context2, [args]) => {
     if (!args)
       return {};
     const callback = new Function(
-      `{${[...context.x]}}`,
+      `{${[...context2.x]}}`,
       `const{${Object.keys(self.yozo)}}=self.yozo;${args[1]}`
     );
     return {

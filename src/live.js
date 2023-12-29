@@ -3,7 +3,6 @@ import { Flow } from './flow.js'
 import { when } from './when.js'
 import { effect } from './effect.js'
 import { monitor } from './monitor.js'
-import { R } from './utils.js'
 
 
 // Live variables are just proxies

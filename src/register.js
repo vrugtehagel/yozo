@@ -1,17 +1,18 @@
 import { define } from './define.js'
 import { when } from './when.js'
-import { camelCase, R } from './utils.js'
+import { camelCase } from './utils.js'
 
 
 // register() and register.auto()
 // register() takes a URL, fetches it as text, parses it as HTML, and
 // then uses the define() function to register the component definition
 
+const registered = new Set
 export const register = async url => {
 	// Prevent re-registration of the same URL, regardless of whether
 	// the registration succeeded or not
-	if(register[R].has(`${url}`)) return
-	register[R].add(`${url}`)
+	if(registered.has(`${url}`)) return
+	registered.add(`${url}`)
 	const response = await fetch(url)
 	const template = document.createElement('template')
 	template.innerHTML = await response.text()
@@ -25,7 +26,6 @@ export const register = async url => {
 		}
 	})
 }
-register[R] = new Set
 
 // We only allow for calling register.auto() once.
 // This is because it also needs to dig into component templates
@@ -35,15 +35,16 @@ register[R] = new Set
 // then discovering elements in their template, loading those, discovering more,
 // etcetera).
 let cancelled
+let autoRegistered
 register.auto = find => {
 	// Keep track of which component names we have tried to register
-	if(register.auto[R]) return
-	register.auto[R] = new Set
+	if(autoRegistered) return
+	autoRegistered = new Set
 
 	// Take a name, find the URL and run the registration
 	const autoDefine = name => {
-		if(register.auto[R].has(name)) return
-		register.auto[R].add(name)
+		if(autoRegistered.has(name)) return
+		autoRegistered.add(name)
 		const url = find(name)
 		if(!url) return
 		register(url)
