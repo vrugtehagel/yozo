@@ -28,6 +28,7 @@ Below this, there's a more detailed breakdown of the site and what's needed.
      - Write all of the content
  - Create the homepage
  - You can select the zero-width space when copy-pasting code examples
+ - Hovering the part above the header in the version dropdowns doesn't work
  - Fix docs-outline component header detection
  - Check browsers
      - play doesn't work (Safari can't top-level await some stuff)
