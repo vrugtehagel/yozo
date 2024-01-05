@@ -73,11 +73,3 @@
 		font-weight: 900;
 	}
 }
-
-p:first-child foo-bar {
-	color: red;
-	p:first-child foo-bar {
-		color: red;
-	}
-}
-
