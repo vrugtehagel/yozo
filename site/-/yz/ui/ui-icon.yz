@@ -38,6 +38,9 @@ connected(() => effect(async () => {
 :host {
 	display: inline-block; height: 1.5rem; padding: .75rem;
 }
+#container {
+	margin: auto;
+}
 #container, svg {
 	display: block; height: 100%;
 }
