@@ -2,13 +2,12 @@
 
 <template mode=closed>
 	<nav>
-		<ui-button href=/ aria-label="Home" disabled>
+		<ui-button href=/ aria-label="Home">
 			<ui-icon type=logo width=12 height=12></ui-icon>
 			<ui-icon type=wordmark width=36 height=12></ui-icon>
 		</ui-button>
-		<ui-button href=/tour/ disabled>Tour</ui-button>
-		<ui-button href=/play/>Play</ui-button>
 		<ui-button href=/docs/>Docs</ui-button>
+		<ui-button href=/play/>Play</ui-button>
 		<!-- search -->
 		<ui-button icon=download href=/download/></ui-button>
 	</nav>
