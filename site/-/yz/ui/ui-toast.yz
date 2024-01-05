@@ -20,7 +20,7 @@ $.action = () => {
 	this.dispatchEvent(new CustomEvent('action'))
 }
 
-$.show = async (duration = 5000) => {
+$.show = purify(async (duration = 5000) => {
 	closeQueue.forEach(uiToast => uiToast.open = false)
 	closeQueue.clear()
 	removeQueue.forEach(uiToast => uiToast.remove())
@@ -42,7 +42,7 @@ $.show = async (duration = 5000) => {
 	await until(when(this).transitionends()
 		.if(({target}) => target == this).once())
 	if(appendAndRemove) this.remove()
-}
+})
 </script>
 
 <style>
