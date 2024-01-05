@@ -10,7 +10,7 @@ ui-code[language=html]
 	<script src="https://yozo.ooo/dev-latest.js"></script>
 
 ui-callout[type=warning]
-	p For real projects, avoid directly linking to the packages on yozo.ooo, __especially__ the "-latest"-suffixed packages (since they will change over time). Instead, [download](/download/) the versioned bundles and put them up on your own domain. This helps speed up your site, since it avoids the need for a connection to another domain, and avoids strain on Yozo's site, which is not built to be a CDN.
+	p **Warning:** For real projects, avoid directly linking to the packages on yozo.ooo, __especially__ the "-latest"-suffixed packages (since they will change over time). Instead, [download](/download/) the versioned bundles and put them up on your own domain. This helps speed up your site, since it avoids the need for a connection to another domain, and avoids strain on Yozo's site, which is not built to be a CDN.
 
 p To follow along without setting up a new project locally, use Yozo's [playground](/play/)!
 
