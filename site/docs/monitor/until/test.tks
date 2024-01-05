@@ -1,0 +1,105 @@
+// Yozo helpers are in scope
+const { monitor, until } = self.yozo;
+
+// an async monitored function is set up using await
+let cleanups = 0;
+const call = monitor(['undo'], async () => {
+	await until(new Promise(resolve => setTimeout(resolve, 10)));
+	monitor.add('undo', () => cleanups++);
+});
+
+// an async monitored function is set up using .then method
+let cleanups = 0;
+const call = monitor(['undo'], async () => {
+	until(new Promise(resolve => setTimeout(resolve, 10))).then(() => {
+		monitor.add('undo', () => cleanups++);
+	});
+	await new Promise(resolve => setTimeout(resolve, 10));
+});
+
+// an async monitored function is set up with a plain value
+let cleanups = 0;
+const call = monitor(['undo'], async () => {
+	await until('microtask');
+	monitor.add('undo', () => cleanups++);
+});
+
+// an async monitored function is set up with a microtask inside a .then method
+let cleanups = 0;
+const call = monitor(['undo'], async () => {
+	until(new Promise(resolve => setTimeout(resolve, 10))).then(async () => {
+		monitor.add('undo', () => cleanups++);
+		await 'microtask';
+		monitor.add('undo', () => cleanups++);
+	});
+	await new Promise(resolve => setTimeout(resolve, 10));
+});
+
+// an async monitored function is set up with a rejecting promise
+let cleanups = 0;
+const call = monitor(['undo'], async () => {
+	until(new Promise((resolve, reject) => setTimeout(reject, 10))).catch(() => {
+		monitor.add('undo', () => cleanups++);
+	});
+	await new Promise(resolve => setTimeout(resolve, 10));
+});
+
+// an async monitored function is set up that'll be undone immediately
+let ranFull = false;
+const call = monitor(['undo'], async () => {
+	await until(new Promise(resolve => setTimeout(resolve, 10)));
+	ranFull = true;
+});
+
+// the function has finished running
+await call.result;
+
+// the function gets time to theoretically run
+await new Promise(resolve => setTimeout(resolve, 50));
+
+// the call is undone
+call.undo();
+
+// the cleanup code has run
+cleanups == 1
+
+// the cleanup code has run only once
+cleanups == 1
+
+// the rest of the monitored function has not run
+!ranFull
+
+// TEST: until can resume monitored contexts with await
+// Given Yozo helpers are in scope
+// and an async monitored function is set up using await
+// and the function has finished running
+// When the call is undone
+// Then the cleanup code has run
+
+// TEST: until can resume monitored contexts with .then()
+// Given Yozo helpers are in scope
+// and an async monitored function is set up using .then method
+// and the function has finished running
+// When the call is undone
+// Then the cleanup code has run
+
+// TEST: until also works with non-promise values
+// Given Yozo helpers are in scope
+// and an async monitored function is set up with a plain value
+// and the function has finished running
+// When the call is undone
+// Then the cleanup code has run
+
+// TEST: Queuing a microtask inside a .then() doesn't resume the context
+// Given Yozo helpers are in scope
+// and an async monitored function is set up with a microtask inside a .then method
+// and the function has finished running
+// When the call is undone
+// Then the cleanup code has run only once
+
+// TEST: Undoing a microtask before resolution stops the monitored function
+// Given Yozo helpers are in scope
+// and an async monitored function is set up that'll be undone immediately
+// When the call is undone
+// Given the function gets time to theoretically run
+// Then the rest of the monitored function has not run

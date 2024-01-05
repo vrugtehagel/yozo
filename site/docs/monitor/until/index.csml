@@ -1,0 +1,71 @@
+@script
+	export const layout = 'docs'
+	export const title = 'until()'
+	export const description = 'Use ``until()`` in conjunction with ``await`` to maintain the monitored context in asynchronous monitored functions.'
+
+p To learn more about monitored contexts, check out [``monitor()``](/docs/monitor/).
+
+h2 Syntax
+
+ui-code
+	await until(thing);
+	until(thing).then(() => { … });
+
+h3 Parameters
+dl
+	dt ``thing``
+	dd > p Usually, a ``Promise`` to await, but any value is accepted.
+
+h3 Return value
+p The ``until()`` method returns a ``Promise``; it resolves to the same value as ``thing``. If the promise rejects, then the monitored context is not resumed; if this is a possibility, use a ``.catch()`` handler inside the ``until()`` call (like ``until(thing.catch(…))``).
+
+ui-callout[type=warning]
+	p **Warning:** The ``.then()`` handler on the returned promise must be called immediately (which includes using ``until()`` together with ``await``). This is because the monitored context is only temporarily restored exactly when the promise resolves; anything after that is too late.
+
+h2 Examples
+
+h3 Using fetch()
+p In this example, we'll set up an effect that first makes a request using ``fetch()``, and subsequently condintionally attaches a click handler. The code might look something like
+
+ui-code
+	effect(async () => {
+		const username = $.inputValue;
+		const url = new URL('https://example.com/check_name');
+		url.searchParams.set('username', username);
+		const response = await until(fetch(url));
+		const json = await until(response.json());
+		if(!json.isAvailable) return;
+		when(confirmButton).clicks().then(() => {
+			$.confirmUsername(username);
+		});
+	});
+
+p Here, we need to wait for a request to finish before deciding whether or not to attach the click handler. Without ``until()``, the asynchronicity would cause the monitored context to be lost. To fix this, we add ``until()`` around the whole thing that we're awaiting (both around the ``fetch(…)`` and the ``response.json()`` call). This allows us to pick the monitored context back up after the ``await``.
+
+ui-callout[type=info]
+	p **Note:** While using ``until()`` is technically unnecessary if the code following it do not add anything to the monitored context, it is good practice to use ``until()`` when using ``await`` in monitored contexts to avoid bugs that may unexpectedly occur when altering such a piece of code in the future.
+
+p Now, a question one might have is; what if we change ``$.inputValue`` twice in quick succession, so that the first fetch call has not yet completed when the effect re-runs? Well, ``until()`` is smart about this; if it notices that a monitored context has been cleaned up when its argument finally resolves, it then won't resolve the returned promise. In practice, that means the function just "stops" at that point. The never-settling promise will then be garbage collected and removed.
+
+h3 Awaiting when()
+p One of the benefits of using [``when()``](/docs/when/) is its ease of use with ``await``. This also means that, if we wish to use that, then in monitored contexts we need ``until()``. For example, say we have a library of photos. We let the user enter a name, and then retrieve a photo by that name. Then, they can click on the photo to download it. Here's what an effect could look like that achieves this:
+
+ui-code
+	effect(() => {
+		const name = $.photoName;
+		await until(
+			when(img).loads().once().after(() => img.src = name)
+		);
+		when(img).clicks().then(() => {
+			$.download(name);
+		});
+	});
+
+p Without ``until()``, this example would create a memory leak; specifically, the click handlers would add up over time, since they are never cleaned up. With ``until()``, the monitored context is resumed after the ``await`` expression, and thus the ``when()`` call adds its cleanup callbacks to the monitored context.
+
+h2 See also
+
+ul
+	li [``monitor()``](/docs/monitor/)
+	li [``when()``](/docs/when/)
+	li [``timeout()``](/docs/when/)
