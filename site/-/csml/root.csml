@@ -49,6 +49,27 @@ html[lang=en]
 	@else
 		:html {{ content }}
 
+	strong#under-construction-banner
+		details
+			summary
+				ui-icon[type=warning]
+				span
+					b Warning:
+					:text-only Yozo is still under development.
+				ui-button[icon=close][onclick="this.closest('#under-construction-banner').remove()"]
+			ul
+				li > label
+					:text-only Yozo itself
+					progress[max=100][value=95]
+				li > label
+					:text-only Homepage
+					progress[max=100][value=0]
+				li > label
+					:text-only Documentation
+					progress[max=100][value=20]
+				li > label
+					:text-only Playground
+					progress[max=100][value=100]
 
 	@if(!exclude.has('site-footer'))
 		site-footer
