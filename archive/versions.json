@@ -1,11 +1,3 @@
-until() now returns a proper promise
-
-Minor performance improvements.
-Added an error message for elements with both an #if and #for attribute
-
-Fixed an issue with #for attributes not functioning properly on <template> elements
-Fixed an issue where non-element nodes between elements in an #if-else chain were not removed
-
 [{
 	"number": "0.3.3",
 	"hash": "+FzooO1UJxnL9Y38XKpRww==",
