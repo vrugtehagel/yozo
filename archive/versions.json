@@ -1,4 +1,28 @@
+until() now returns a proper promise
+
+Minor performance improvements.
+Added an error message for elements with both an #if and #for attribute
+
+Fixed an issue with #for attributes not functioning properly on <template> elements
+Fixed an issue where non-element nodes between elements in an #if-else chain were not removed
+
 [{
+	"number": "0.3.3",
+	"hash": "+FzooO1UJxnL9Y38XKpRww==",
+	"timestamp": 1704576769371,
+	"changelog": {
+		"breaking": [],
+		"improvements": [
+			"The until() function now returns a proper Promise object, supporting manually calling .then() on them.",
+			"Added an error message for elements with both an #if and #for attribute (development build only).",
+			"Minor performance improvements for effect(), live.link(), monitoring live variables, component internals, and in-template logic."
+		],
+		"bugs": [
+			"When using the #for attribute on a <template> element, it now renders the template's contents rather than the template element itself.",
+			"Fixed an issue where non-element nodes between elements in an #if-else chain were not removed."
+		]
+	}
+}, {
 	"number": "0.3.2",
 	"hash": "Lcy6WvLuZaKyYYkHFcAiZw==",
 	"timestamp": 1703854014795,

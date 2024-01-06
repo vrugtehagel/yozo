@@ -202,7 +202,7 @@ live.link = ($live, thing) => {
 		cache = value
 		changing = false
 	}
-	const listener = when($live).deepchange().then(() => {
+	const listener = () => {
 		if(changing) return
 		// if there's no setter, it's a readonly link, so change it back
 		if(!options.set) return change(cache)
@@ -211,10 +211,11 @@ live.link = ($live, thing) => {
 		// Basically, the link itself should not have any weird side effects.
 		options.set(monitor.ignore(() => live.get($live)))
 		change(monitor.ignore(options.get))
-	})
+	}
+	$live.addEventListener('deepchange', listener)
 	change(monitor.ignore(options.get))
 	return (options.changes ?? new Flow)
 		.then(() => change(monitor.ignore(options.get)))
 		.if(() => null)
-		.cleanup(() => listener.stop())
+		.cleanup(() => $live.removeEventListener('deepchange', listener))
 }

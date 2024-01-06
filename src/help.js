@@ -73,6 +73,9 @@ const messages = {
 		The type attribute is converted to PascalCase, and that must be a global.`,
 	'transform-for-$1-not-iterable': expression => `
 		Expression "${expression}" in #for is not iterable.`,
+	'transform-for-and-if-simultaneously': () => `
+		Found a #for and #if attribute on the same element. This is ambiguous.
+		Instead, use a wrapper <template #for="…"> or <template #if="">.`,
 	'transform-if-found-loose-$1': statement => `
 		Found an "${statement}" attribute without an #if.
 		Make sure the element follows an element with an #if or #else-if.`,

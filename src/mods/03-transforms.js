@@ -48,27 +48,28 @@ define.register(3, Symbol(), context => {
 				transforms.push(...parts.map((part, index) => {
 					node = iterator.nextNode()
 					if(index % 2 == 0) return
-					const getter = new Function(...scopeNames, `return(${node.textContent})`)
-					return (meta, clone, scopes) => meta.x.connected(() => effect(() =>
+					const getter = new Function(...scopeNames, `return(${part})`)
+					return (meta, clone, scopes) => effect(() => {
 						clone.textContent = getter(...scopes.map(scope => scope[1]))
-					))
+					})
 				}))
 			} else if(node.getAttribute('#for')){
 				// We only support #for…of, things will break without the " of "
 				if(!node.getAttribute('#for').includes(' of ')) //
 					error`transform-for-without-of` //
+				if(node.hasAttribute('#if')) //
+					error`transform-for-and-if-simultaneously` //
 
 				// For simplicity, we only do #for…of expressions (not #for…;…;…).
 				// We replace the #for element from the template with an "anchor node",
 				// i.e. an empty text node.
 				// This node exists as a placeholder for the node iterator to land on.
 
-
 				const [scopeName, expression] = node.getAttribute('#for').split(' of ')
 				node.before('')
 				node.removeAttribute('#for')
 				node.remove()
-				const element = node
+				const element = node.localName == 'template' ? node.content : node
 				const getter = new Function(...scopeNames, `return(${expression})`)
 				transforms.push((meta, clone, scopes) => {
 					// the cloned node is just the anchor node,
@@ -79,33 +80,34 @@ define.register(3, Symbol(), context => {
 					// That lets us avoid re-rendering the whole #for every single
 					// time something changes in the iterable expression
 
-					// Array<[Item, RenderedNode[]]>
+					// Array<[Item, Call]>
 					const cache = []
-					meta.x.connected(() => effect(() => {
+					monitor.add('undo', () => cache.splice(0).map(item => item[1].undo()))
+					effect(() => {
 						const array =
 							true ? (() => { //
-								const value = getter.call(node, ...scopes.map(scope => scope[1])) //
+								const value = getter(...scopes.map(scope => scope[1])) //
 								if(typeof value[Symbol.iterator] == 'function') return [...value] //
 								error`transform-for-${expression}-not-iterable` //
 							})() : //
-							[...getter.call(node, ...scopes.map(scope => scope[1]))]
-						while(cache.length > array.length)
-							cache.pop()[1].undo()
+							[...getter(...scopes.map(scope => scope[1]))]
+						while(cache.length > array.length) cache.pop()[1].undo()
 						array.map((item, index) => {
 							// If the item we get in the iterable is the same,
 							// Then leave the already-rendered nodes alone
 							if(cache[index] && cache[index][0] === item) return
-							const call = monitor(['undo'], () => {
+							cache[index]?.[1].undo()
+							cache[index] = [item, monitor(['undo'], () => {
 								const rendered = meta.__render(element, [...scopes, [scopeName, item]])
-								const nodes = rendered.nodeType == 11 ? rendered.childNodes : [rendered]
+								const nodes = rendered.nodeType == 11
+									? [...rendered.childNodes]
+									: [rendered]
 								monitor.add('undo', () => nodes.map(node => node.remove()))
 								;(cache[index - 1]?.[1].result.at(-1) ?? clone).after(...nodes)
 								return nodes
-							})
-							cache[index]?.[1]()
-							cache[index] = [item, call]
+							})]
 						})
-					}))
+					})
 				})
 
 			} else if(node.getAttribute('#if')){
@@ -124,6 +126,7 @@ define.register(3, Symbol(), context => {
 				const consume = attribute => {
 					const element = anchor.nextElementSibling
 					if(!element?.hasAttribute(attribute)) return
+					while(anchor.nextSibling != element) anchor.nextSibling.remove()
 					expressions.push(`()=>(${element.getAttribute(attribute) || true})`)
 					chain.push(element.localName == 'template' ? element.content : element)
 					element.removeAttribute(attribute)
@@ -141,8 +144,9 @@ define.register(3, Symbol(), context => {
 				transforms.push((meta, clone, scopes) => {
 					let connectedIndex
 					const connected = []
-					meta.x.connected(() => effect(() => {
-						const index = getter.call(null, ...scopes.map(scope => scope[1]))
+					monitor.add('undo', () => connected.splice(0).map(node => node.remove()))
+					effect(() => {
+						const index = getter(...scopes.map(scope => scope[1]))
 						if(index == connectedIndex) return
 						connectedIndex = index
 						connected.splice(0).map(node => node.remove())
@@ -152,7 +156,7 @@ define.register(3, Symbol(), context => {
 						const nodes = rendered.nodeType == 11 ? rendered.childNodes : [rendered]
 						connected.push(...nodes)
 						clone.after(...nodes)
-					}))
+					})
 				})
 			} else {
 
@@ -186,11 +190,11 @@ define.register(3, Symbol(), context => {
 						const name = attribute.name.slice(1)
 						const getter = new Function(...scopeNames, `return(${attribute.value})`)
 						node.removeAttribute(attribute.name)
-						return (meta, clone, scopes) => meta.x.connected(() => effect(() => {
+						return (meta, clone, scopes) => effect(() => {
 							const value = getter.call(clone, ...scopes.map(scope => scope[1]))
 							if(value == null) clone.removeAttribute(name)
 							else clone.setAttribute(name, value)
-						}))
+						})
 					} else if(attribute.name[0] == '.'){
 						// Property attributes. We allow for things such as
 						//	.parent-node.style.box-shadow="…"
@@ -199,7 +203,7 @@ define.register(3, Symbol(), context => {
 						const chain = attribute.name.slice(1).split('.').map(camelCase)
 						const getter = new Function(...scopeNames, `return(${attribute.value})`)
 						node.removeAttribute(attribute.name)
-						return (meta, clone, scopes) => meta.x.connected(() => effect(() => {
+						return (meta, clone, scopes) => effect(() => {
 							const value = getter.call(clone, ...scopes.map(scope => scope[1]))
 							const properties = [...chain]
 							const tail = properties.pop()
@@ -212,17 +216,18 @@ define.register(3, Symbol(), context => {
 							// individual class names
 							if(current instanceof DOMTokenList) current.toggle(last, value)
 							else current[tail] = value
-						}))
+						})
 					} else if(attribute.name[0] == '@'){
 						const type = attribute.name.slice(1)
-						const handler = new Function(...scopeNames, 'event', attribute.value)
+						const getter = new Function(...scopeNames, 'event', attribute.value)
 						node.removeAttribute(attribute.name)
-						return (meta, clone, scopes) => meta.x.connected(() => {
-							when(clone).does(type).then(event => monitor.ignore(() => {
-								// Maybe I should bake the monitor.ignore into flow callbacks?
-								handler.call(clone, ...scopes.map(scope => scope[1]), event)
-							}))
-						})
+						return (meta, clone, scopes) => {
+							const handler = event => monitor.ignore(() =>
+								getter.call(clone, ...scopes.map(scope => scope[1]), event)
+							)
+							clone.addEventListener(type, handler)
+							monitor.add('undo', () => clone.removeEventListener(type, handler))
+						}
 					}
 				})
 				transforms.push((...args) => {
@@ -235,7 +240,7 @@ define.register(3, Symbol(), context => {
 
 	// Now on a per-instance level, we can actually render stuff
 	const constructor = function(meta){
-		meta.__render = (tree, scopes) => {
+		meta.__render = (tree, scopes, scheduler = update => update()) => {
 			const transforms = getTransforms(tree, ...scopes.map(scope => scope[0]))
 			// To render a parsed tree, we first get the array of transforms
 			// That's cached, so this work happens once per component registration
@@ -243,9 +248,11 @@ define.register(3, Symbol(), context => {
 			// items from the node iterator
 			const clone = tree.cloneNode(true)
 			const iterator = document.createNodeIterator(clone, 5)
-			transforms.map(transform => {
-				const node = iterator.nextNode()
-				transform?.(meta, node, scopes)
+			const pairs = transforms
+				.map(transform => [iterator.nextNode(), transform])
+				.filter(([node, transform]) => transform)
+			scheduler(() => {
+				pairs.map(pair => pair[1](meta, pair[0], scopes))
 			})
 			return clone
 		}

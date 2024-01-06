@@ -34,41 +34,30 @@ export const monitor = (names, callback) => {
 
 export const until = thing => {
 	if(!context) return thing
-	// Okay, this is kind of magical, but it works.
 	// It's a bit difficult for until() to "catch" the monitored context
-	// and pick it back up, since the resolve handler we get to "go back
-	// to" the function until()'s in queues a microtask.
-	// For example,
-	// 	await {then: resolve => {
-	//		console.log('before resolve')
-	//		resolve()
-	//		console.log('after resolve')
-	// 	}}
-	//	console.log('after await')
-	// this logs "before resolve", "after resolve", "after await" because
-	// the resolve() function queues a microtask
+	// and pick it back up. But we can do it by carefully scheduling microtasks.
 
-	// Anyway, first of all, we need to stop the current monitored context
-	const before = context
-	// We don't need to remove the monitored context here with context = null
+	// We don't need to stop the monitored context here with context = null
 	// because until() calls and monitor() calls already "queue" this up
+	return new Promise(async resolve => {
+		const before = context
+		const result = await thing
 
-	// Now, return a manual then handler and normalize the "thing" argument
-	// to be a promise.
-	return {then: resolve => Promise.resolve(thing).then(result => {
 		// This lets us abort function halfway through, pretty neat
 		if(Object.keys(before).some(name => before[name].until?.())) return
 
 		// Now, we queue three microtasks; one that restores the monitored
-		// context, one that resumes the function, and one that stops the
-		// monitored context after that.
+		// context, one that resumes the "outer" function, and one that
+		// stops the monitored context after that.
 		// It's okay if there are other microtasks at this point,
 		// because we're queueing these three microtasks in a row.
 		// It's impossible to shove a microtask in between any of these three.
+		// A key element to that is that resolve() doesn't execute any code
+		// by itself, it just schedules a microtask that resolves the promise.
 		queueMicrotask(() => context = before)
 		resolve(result)
 		queueMicrotask(() => context = null)
-	})}
+	})
 }
 
 // Basically equivalent to monitoring for nothing
@@ -129,11 +118,9 @@ const registrations = {
 			if(cache.includes(type)) return
 			cache.push(type)
 			this.#cache.set($live, cache)
-			// Ignore the flow set up to listen to the monitored event
-			// I don't remember what happens if we don't do this but it's
-			// probably going to be weird monitoring bugs
-			monitor.ignore(() => when($live).does(type))
-				.then(() => this.result.dispatchEvent(new CustomEvent('change')))
+			$live.addEventListener(type, () =>
+				this.result.dispatchEvent(new CustomEvent('change'))
+			)
 		}
 	}
 }

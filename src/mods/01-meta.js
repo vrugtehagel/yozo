@@ -51,7 +51,7 @@ define.register(1, 'meta', (context, argslist) => {
 			// We can't use live.link() here because the change callback is
 			// the attributeChangedCallback lifecycle callback
 			meta.x.$.$attributes[name] = null
-			when(meta.x.$.$attributes[`$${name}`]).change().then(() => {
+			meta.x.$.$attributes[`$${name}`].addEventListener('change', () => {
 				const value = live.get(meta.x.$.$attributes, name)
 				if(value == null) this.removeAttribute(options.attribute)
 				else this.setAttribute(options.attribute, value)
