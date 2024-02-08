@@ -127,7 +127,7 @@ p { margin: 0; }
 	& ui-icon { width: 3rem; height: 3rem; }
 }
 #unreachable {
-	background: no-repeat center / 100% 100% url("/-/svg/img/play-unreachable.svg");
+	background: no-repeat center / 100% 100% url("/-/img/play-unreachable.svg");
 	& p {
 		padding: 1rem 2rem;
 		color: var(--text-color); background-color: black;

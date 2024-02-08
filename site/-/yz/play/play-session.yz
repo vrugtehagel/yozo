@@ -3,7 +3,7 @@
 <template mode=closed>
 	<ui-loader #if="!$.playManager"></ui-loader>
 	<div id=disconnected #if="$.playManager?.$play.mode == 'disconnected'">
-		<img src=/-/svg/img/play-disconnected.svg alt="">
+		<img src=/-/img/play-disconnected.svg alt="">
 		Session disconnected.
 		<ui-button @click="$.playManager?.reconnect()">Reconnect</ui-button>
 	</div>
