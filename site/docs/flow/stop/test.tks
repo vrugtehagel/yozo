@@ -1,0 +1,47 @@
+// Yozo helpers are in scope
+const { Flow } = self.yozo;
+
+// a generic flow is created, counting its triggers
+let triggers = 0;
+const flow = new Flow();
+flow.then(() => triggers++);
+
+// a generic flow is created, counting its cleanups
+let cleanups = 0;
+const flow = new Flow();
+flow.cleanup(() => cleanups++);
+
+// the flow is stopped
+flow.stop();
+
+// the flow is stopped twice
+flow.stop().stop();
+
+// it tries to trigger
+flow.now();
+
+// it never triggered
+triggers == 0
+
+// it cleaned up once
+cleanups == 1
+
+
+// TEST: A flow can be stopped
+// Given Yozo helpers are in scope
+// and a generic flow is created, counting its triggers
+// When the flow is stopped
+// Given it tries to trigger
+// Then it never triggered
+
+// TEST: cleanups run after a flow stops
+// Given Yozo helpers are in scope
+// and a generic flow is created, counting its cleanups
+// When the flow is stopped
+// Then it cleaned up once
+
+// TEST: cleanups run once even after stopping multiple times
+// Given Yozo helpers are in scope
+// and a generic flow is created, counting its cleanups
+// When the flow is stopped twice
+// Then it cleaned up once
