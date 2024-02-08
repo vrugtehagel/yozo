@@ -6,7 +6,7 @@
 		"breaking": [],
 		"improvements": [],
 		"bugs": [
-			"Fixed an issue where flow.stop() did not return the flow object it was called on if the flow was already stopped."
+			"Fixed an issue where flow.stop() did not return the flow object it was called on if the flow was already stopped.",
 			"Flows no longer collect references to pipeline callbacks that are added after the flow has stopped."
 		]
 	}
