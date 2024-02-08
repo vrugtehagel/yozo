@@ -1,4 +1,16 @@
 [{
+	"number": "0.3.4",
+	"hash": "BzlftRt7KnoKMU8MuAdQXQ==",
+	"timestamp": 1707352207231,
+	"changelog": {
+		"breaking": [],
+		"improvements": [],
+		"bugs": [
+			"Fixed an issue where flow.stop() did not return the flow object it was called on if the flow was already stopped."
+			"Flows no longer collect references to pipeline callbacks that are added after the flow has stopped."
+		]
+	}
+}, {
 	"number": "0.3.3",
 	"hash": "+FzooO1UJxnL9Y38XKpRww==",
 	"timestamp": 1704576769371,

@@ -5,32 +5,31 @@ import { monitor } from './monitor.js'
 export class Flow {
 	#steps = []
 	#cleanup = []
-	#stopped
 	#stopping
 	#stopIndex
 
 	constructor(callback){
 		monitor.add('undo', () => this.stop())
 		callback?.((...args) => {
-			if(this.#stopped) warn`flow-stopped-but-triggered` //
+			if(!this.#steps) warn`flow-stopped-but-triggered` //
 			this.now(...args)
 		})
 	}
 
 	flow(callback){
-		this.#steps.push(callback)
+		this.#steps?.push(callback)
 		return this
 	}
 
 	now(...args){
 		let index = -1
 		const next = () => {
-			if(this.#stopped) return
+			if(!this.#steps) return
 			index++
 			if(index < this.#stopIndex) return
 			if(this.#stopping) this.#stopIndex = index + 1
 			if(this.#steps.length + 1 == this.#stopIndex) this.stop()
-			this.#steps[index]?.(next, ...args)
+			this.#steps?.[index]?.(next, ...args)
 		}
 		next()
 		return this
@@ -62,10 +61,9 @@ export class Flow {
 	}
 
 	stop(){
-		if(this.#stopped) return
-		this.#stopped = true
-		this.#steps.splice(0)
-		this.#cleanup.splice(0).map(callback => callback())
+		if(this.#steps)
+			this.#cleanup.splice(0).map(callback => callback())
+		this.#steps = null
 		return this
 	}
 
@@ -78,8 +76,8 @@ export class Flow {
 	}
 
 	cleanup(callback){
-		if(this.#stopped) callback()
-		else this.#cleanup.push(callback)
+		if(this.#steps) this.#cleanup.push(callback)
+		else callback()
 		return this
 	}
 
