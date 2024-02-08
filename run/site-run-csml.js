@@ -2,6 +2,8 @@ import { copy, walk } from 'std/fs/mod.ts'
 import { red } from 'std/fmt/colors.ts'
 import { csml, addFlagToTag, addTransform } from 'csml/mod.ts'
 
+import { getSizeInfo } from './yozo-get-size-info.js'
+
 
 addFlagToTag('ui-code', ':indent(0, 1)')
 addFlagToTag('script', ':indent(0, 1)')
@@ -19,9 +21,10 @@ export async function runCSML(){
 	await removeCSMLFiles()
 }
 
-async function runPage(url){
+async function runPage(url, globalArgs){
 	try {
-		const html = await csml.render('dist/-/csml/root.csml', {url})
+		const args = {globalArgs, url}
+		const html = await csml.render('dist/-/csml/root.csml', args)
 		const out = url.replace(/\.csml$/, '.html')
 		await Deno.writeTextFile(out, html)
 	} catch(error) {
@@ -34,8 +37,10 @@ async function runPages(){
 	const skip = [/\/-\//]
 	const includeDirs = false
 	const promises = []
+	const sizeInfo = getSizeInfo()
+	const args = {sizeInfo}
 	for await(const entry of walk('dist', {exts, skip, includeDirs}))
-		promises.push(runPage(entry.path))
+		promises.push(runPage(entry.path, args))
 	await Promise.all(promises)
 }
 

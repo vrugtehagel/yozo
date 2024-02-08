@@ -1,6 +1,6 @@
 @script
 	const cwd = await Deno.cwd()
-	const {layoutArgs} = csml.args
+	const layoutArgs = {...csml.args.globalArgs, ...csml.args.layoutArgs}
 	const url = `${cwd}/${csml.args.url}`
 	const directory = url.split('/').slice(0, -1).join('/')
 	const page = await csml.import(url, layoutArgs)
