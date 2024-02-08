@@ -17,19 +17,21 @@ And there's also the homepage, of course.
 
 Below this, there's a more detailed breakdown of the site and what's needed.
 
- - Lock in modules by writing tests (in their respective page in /docs/)
  - Add sourcemaps
  - More byteshaving
  - Create /docs/ pages
+ - Lock in modules by writing tests (in their respective page in /docs/)
  - Create tour
      - Define steps and sections
      - Build testing kit
      - Building full testing sandbox
      - Write all of the content
  - Create the homepage
- - You can select the zero-width space when copy-pasting code examples
- - Hovering the part above the header in the version dropdowns doesn't work
  - Fix docs-outline component header detection
+ - Fix semicolon setting for CSS-in-JS template strings
+ - Add JSX highlighting for StencilJS example
+ - Test the compare examples on homepage
+ - Maybe add CORS header to lib-latest
  - Check browsers
      - play doesn't work (Safari can't top-level await some stuff)
  - NPM package?
@@ -68,7 +70,7 @@ A section with a simple sandbox, allowing for multiple files and allowing the us
 
 ### Docs
 
-We need the following pages, in the same tree-like structure (17/60 pages done).
+We need the following pages, in the same tree-like structure (18/60 pages done).
  - [x] monitor()
     - [ ] monitor.add()
     - [ ] monitor.ignore()
@@ -93,7 +95,7 @@ We need the following pages, in the same tree-like structure (17/60 pages done).
     - [ ] flow.or()
     - [ ] flow.after()
     - [ ] flow.cleanup()
-    - [ ] flow.die()
+    - [x] flow.stop()
     - [ ] flow.until()
     - [ ] flow.once()
     - [ ] flow.debounce()
@@ -112,8 +114,8 @@ We need the following pages, in the same tree-like structure (17/60 pages done).
     - [ ] title
     - [x] template
        - [ ] inline
-       - [x] for...of (/for-of/)
-       - [ ] if...else (/if-else/)
+       - [x] for…of (/for-of/)
+       - [ ] if…else (/if-else/)
        - [ ] @event (/events/)
        - [ ] :attribute (/attributes/)
        - [ ] .property (/properties/)
