@@ -80,7 +80,8 @@ effect(async () => {
 $.add = async () => {
 	const src = uiInput.fullValue
 	const {fullValue} = uiInput
-	$.playManager?.createFile({src})
+	const uuid = $.playManager?.createFile({src})
+	if(uuid) $.occupant = `file:${uuid}`
 	uiInput.value = ''
 	$.adding = false
 	newFile.style.setProperty('transition', 'none')

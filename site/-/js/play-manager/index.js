@@ -169,6 +169,7 @@ export function createFile({src, body = ''}){
 	if(src.endsWith('/')) src += 'index.html'
 	const uuid = crypto.randomUUID()
 	current().$files[uuid] = {src, body}
+	return uuid
 }
 
 export async function removeFile(uuid){
