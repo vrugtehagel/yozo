@@ -87,7 +87,7 @@ ui-dropdown {
 	&::part(button):hover { background-color: var(--highlight-color); }
 	&::part(dropdown) {
 		max-height: 16rem;
-		inset: 3.5rem 0 auto 0;
+		inset: 3.5rem 0 auto 0; z-index: 1;
 		overflow: auto;
 	}
 }
