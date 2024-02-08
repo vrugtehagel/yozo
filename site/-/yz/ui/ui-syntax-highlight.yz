@@ -12,14 +12,12 @@ import('/-/js/prism/index.js').then(({Prism}) => $.prism = Prism)
 const code = query('code')
 
 effect(() => {
-	const zeroWidthSpace = '\u200B'
-	const value = $.value + zeroWidthSpace
-	if(!$.prism) return code.textContent = value
+	if(!$.prism) return code.textContent = $.value
 	const grammar = $.prism.languages[$.language]
 	const language = grammar ? $.language : 'txt'
 	code.className = `language-${language}`
-	if(language == 'txt') return code.textContent = value
-	code.innerHTML = $.prism.highlight(value, grammar, language)
+	if(language == 'txt') return code.textContent = $.value
+	code.innerHTML = $.prism.highlight($.value, grammar, language)
 })
 </script>
 
