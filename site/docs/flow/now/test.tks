@@ -1,7 +1,7 @@
 // Yozo helpers are in scope
-const { Flow, live, effect, when, timeout } = self.yozo;
+const { Flow } = self.yozo;
 
-// a generic flow is created and monitored
+// a generic flow is created, logging its triggers
 let triggers = [];
 const flow = new Flow();
 flow.then((...args) => triggers.push(args));
@@ -27,7 +27,7 @@ triggers.length == 0
 
 // TEST: A flow can be triggered with arguments
 // Given Yozo helpers are in scope
-// and a generic flow is created and monitored
+// and a generic flow is created, logging its triggers
 // When the flow is triggered with arguments 23, 'foo'
 // Then triggers[0]?.[0] is equal to 23
 // and triggers[0]?.[1] is equal to 'foo'
@@ -35,14 +35,14 @@ triggers.length == 0
 
 // TEST: A flow can be triggered multiple times
 // Given Yozo helpers are in scope
-// and a generic flow is created and monitored
+// and a generic flow is created, logging its triggers
 // When the flow is triggered twice without arguments
 // Then the flow triggered twice
 // Finally the flow is stopped
 
 // TEST: A stopped flow doesn't trigger
 // Given Yozo helpers are in scope
-// and a generic flow is created and monitored
+// and a generic flow is created, logging its triggers
 // When the flow is stopped
 // Given the flow is triggered with arguments 23, 'foo'
 // Then the flow did not trigger

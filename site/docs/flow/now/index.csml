@@ -40,7 +40,7 @@ ui-code
 p This works, because the only properties on the event that we care about are ``event.pageX`` and ``event.pageY``. So although the ``click`` event differs in some ways from the ``mousemove`` event, we can pass it to the ``mousemove`` handler and everything works just fine. In some cases, we'll need to create a manual object to mimic the shape of the event we're calling ``.now()`` for; in others, we don't need to pass an argument at all.
 
 h2 Usage notes
-p It is possible to create an "empty" [flow](/docs/flow/) object (i.e. construct one by passing an empty callback to the [``Flow`` constructor](/docs/flow/constructor/)), and then triggering it manually with ``.now()``. However, this is not advised; Yozo is able to warn about triggers firing when set up through the constructor, which indicates improper cleanup, but it cannot warn about triggers with ``.now()``. In other words, it is strongly recommended to handle the triggers for a manually created flow inside the constructor callback instead of using ``.now()``.
+p It is possible to create an "empty" [flow](/docs/flow/) object (i.e. construct one by passing an empty callback to the [``Flow`` constructor](/docs/flow/constructor/)), and then triggering it manually with ``.now()``. However, this is not advised; when using the constructor, Yozo is able to warn about flows that have been stopped but are still triggering (which indicates improper cleanup). However, it does not warn about triggers being triggered through ``.now()``. In other words, it is strongly recommended to handle the triggers for a manually created flow inside the constructor callback instead of using ``.now()``.
 
 
 h2 See also
