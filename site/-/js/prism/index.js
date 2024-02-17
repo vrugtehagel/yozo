@@ -1,21 +1,26 @@
 window.Prism = {manual: true}
 await import('./prism.js')
 export const Prism = window.Prism
-delete window.Prism
+// delete window.Prism
 
 
-// These are 'special' tokens. null and undefined are added as well.
-Prism.languages.insertBefore('javascript', 'keyword', {
-	meta: {
+for(const jsLike of ['js', 'jsx']){
+
+	// These are 'special' tokens. null and undefined are added as well.
+	const meta = {
 		pattern: /(?:(\bimport\s*\.\s*)meta\b)|(?:\b(null|undefined|this|super|arguments)\b)/,
 		lookbehind: true
 	}
-})
+	Prism.languages.insertBefore(jsLike, 'keyword', {meta})
 
-// Globals that I'd like to give highlighting
-Prism.languages.js.native = /\bwindow|console|document\b/
-Prism.languages.javascript.punctuation = /[(){}[\]:;,]/
-Prism.languages.javascript.operator = [Prism.languages.javascript.operator, /\./]
+	// Globals that I'd like to give highlighting
+	Prism.languages[jsLike].native = /\bwindow|console|document\b/
+
+	// Not too happy with puntuation highlighting (specifically chaining), so here we go
+	Prism.languages[jsLike].punctuation = /[(){}[\]:;,]/
+	Prism.languages[jsLike].operator = [Prism.languages[jsLike].operator, /\./]
+
+}
 
 // Yozo component syntax is just HTML with some additional JS contexts
 Prism.languages.yz = Prism.languages.extend('markup', {

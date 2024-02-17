@@ -18,10 +18,9 @@ $play.storage ??= defaultCreations
 
 $play.creations = JSON.parse(sessionStorage.getItem('play-manager:creations'))
 when($play.$creations).deepchanges().throttle(500).then(() => {
-	const json = JSON.stringify($play.creations)
-	sessionStorage.setItem('play-manager:creations', json)
+       const json = JSON.stringify($play.creations)
+       sessionStorage.setItem('play-manager:creations', json)
 })
-$play.creations ??= $play.storage
 
 live.link($play.$connected, () => webServer.claimed('/file/'))
 live.link($play.$mode, () => {
@@ -30,12 +29,20 @@ live.link($play.$mode, () => {
 	return 'editing'
 })
 live.link($play.$uuid, {
-	get: () => sessionStorage.getItem('play-manager:current-uuid'),
-	set: value => sessionStorage.setItem('play-manager:current-uuid', value),
-	changes: when(window).storages()
-		.if(({key}) => key == 'play-manager:current-uuid')
+       get: () => sessionStorage.getItem('play-manager:current-uuid'),
+       set: value => sessionStorage.setItem('play-manager:current-uuid', value),
+       changes: when(window).storages()
+               .if(({key}) => key == 'play-manager:current-uuid')
 })
-open($play.uuid)
+
+if(window.playManagerRequest){
+	const uuid = crypto.randomUUID()
+	$play.$creations[uuid] = window.playManagerRequest
+	delete window.playManagerRequest
+	open(uuid)
+} else {
+	open($play.uuid)
+}
 
 effect(() => {
 	when(current().$files).deepchange().then(() => $play.saved = false)
@@ -52,6 +59,11 @@ effect(() => {
 	}).now()
 })
 
+when(window).beforeunloads().then(event => {
+	if($play.saved) return
+	event.preventDefault()
+	event.returnValue = true
+})
 
 export async function reset(){
 	if(reset.inProgress) return
@@ -95,6 +107,7 @@ export function create(){
 	const spaces = [`file:${fileUuid}`, '', '', '']
 	const layout = 'side-by-side'
 	$play.$creations[uuid] = {name, files, spaces, layout}
+	$play.saved = false
 	$play.uuid = uuid
 }
 
@@ -142,7 +155,7 @@ export async function remove(){
 	const creation = $play.$creations[uuid]
 	const stored = $play.$storage[uuid]
 	const uiToast = document.createElement('ui-toast')
-	uiToast.type = 'danger'
+	uiToast.type = 'info'
 	uiToast.actionText = 'Undo'
 	uiToast.textContent = 'Preset deleted.'
 	const showPromise = uiToast.show()
@@ -176,7 +189,7 @@ export async function removeFile(uuid){
 	await customElements.whenDefined('ui-toast')
 	const file = {...current().$files[uuid]}
 	const uiToast = document.createElement('ui-toast')
-	uiToast.type = 'danger'
+	uiToast.type = 'info'
 	uiToast.actionText = 'Undo'
 	uiToast.textContent = `File ${file.src.split('/').at(-1)} deleted.`
 	const showPromise = uiToast.show()

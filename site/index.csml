@@ -1,7 +1,83 @@
 @script
 	export const title = 'Home'
-	export const exclude = ['site-nav', 'site-footer']
+	const {sizeInfo} = csml.args
+	const entries = sizeInfo.types.map(type => [type.algorithm, type])
+	const types = Object.fromEntries(entries)
 
 main
-	ui-icon[type=logo]
-	p Yozo is in development!
+	section#hero
+		header
+			h1
+				span.sr-only Yozo
+				ui-icon[type=wordmark]
+			p Simplicity at its finest!
+
+		p.teaser
+			span Yozo is a tiny (<5bk) drop-in stress-free solution for web components.
+			span Skip NPM - with a single ``script``, it lets you write beautiful code, and ship it, too.
+		ui-icon[type=scroll-down]
+
+	section#selling-points
+		header.sr-only > h2 Selling points
+		section.selling-point
+			h3
+				ui-icon[type=tiny]
+				:text-only Really really small
+			p Yozo's latest releast comes in at {{ types.gzip?.size }} bytes gzipped, and it will always remain less than 5kb to keep sites snappy and responsive. For reference, that's smaller than this image of a car:{{' '}}
+				img[src=/-/img/tiny-van.png][alt="Very small image of a red van"][width=64][height=24][loading=lazy]
+		section.selling-point
+			h3
+				ui-icon[type=web-components]
+				:text-only Web components
+			p Built on top of native web components, Yozo works everywhere and plays nice with other frameworks. Write your components once, and use them in any project.
+		section.selling-point
+			h3
+				ui-icon[type=forward]
+				:text-only Skip the hassle
+			p Because complex build tools and configuration hell are a nighmare, Yozo was made to be the framework that Just Works. Include it with a script tag, and start using it right away.
+
+	section#compare
+		div.explanation
+			h2 What it looks like
+			p Yozo lets you write concise, declarative, and readable code, and it comes to life just like that.
+
+			p Component APIs are immediately obvious, because their definitions start with it. From just the first three lines; we can see this component is called ``click-counter``, it has an ``amount`` attribute, and a ``reset()`` method. Simple as that!
+
+			p Not convinced? Compare this component to implementations in two other Web Component libraries/frameworks: Lit and StencilJS. For the sake of completeness, I've also included what this basic component would look like when written in vanilla JS.
+
+		home-compare
+
+
+	section
+		h2 More...
+		p Yozo is still in development. This page is unfinished.
+
+
+	@script	/*
+		section#getting-started
+			header
+				h2 Getting started
+				p Here's how you can get up and running with Yozo. From scratch, to seeing the things happen in your browser.
+
+		ol
+			li Start with a new folder
+			li Create ``index.html``
+			li Add boilerplate HTML
+			li Download & add Yozo
+			li Include the script tag
+			li Check ``window.yozo``
+			li Create a component file
+			li Write its contents
+			li Register the component
+			li Use the component
+			li You made it!
+
+		section#should-you-use-yozo
+			h2 Should you use Yozo?
+			p Well, that depends. Want to spice up your site with some custom components? Then, yes! Want to write a complex, highly performant web application? Then... probably not. Yozo parses and compiles your components right in the browser, while having a tiny footprint. That makes it incredibly easy to use - but it does mean that it sacrifices some runtime perfomance. All in all, for things like blogs and (semi-)static sites, Yozo is the perfect fit!
+
+		section#made-with-love
+			h2 Made with love
+			p I'm just a guy who loves pushing the buttons on his keyboard. That's how Yozo was born. Of course, I hope you love Yozo as much as I do - but if you don't, or if you're having issues, don't hesitate to [let me know](github.com/newissue) what's on your mind. I'd love to help out.
+
+		*/

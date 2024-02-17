@@ -9,7 +9,7 @@
 		"test": "deno test --allow-read=site"
 	},
 	"imports": {
-		"csml/": "https://deno.land/x/csml@0.1.17/",
+		"csml/": "https://deno.land/x/csml@0.1.18/",
 		"esbuild/": "https://deno.land/x/esbuild@v0.17.18/",
 		"std/": "https://deno.land/std@0.204.0/",
 

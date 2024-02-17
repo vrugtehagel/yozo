@@ -45,7 +45,7 @@ connected(() => effect(() => {
 	if(!$.showLineNumbers) return container.style.setProperty('--left', 0)
 	when(lineNumbers).observes('resize').then(([entry]) => {
 		const {inlineSize} = entry.borderBoxSize[0]
-		container.style.setProperty('--left', inlineSize)
+		container.style.setProperty('--left', Math.floor(inlineSize))
 	})
 }))
 </script>
@@ -81,8 +81,8 @@ textarea, ui-syntax-highlight {
 	letter-spacing: 0;
 }
 textarea {
-	width: max(100%, var(--width) * 1px + 2rem); height: max(100%, var(--height) * 1px + 2rem);
-	margin: 0;
+	width: max(100% - var(--left, 0) * 1px, var(--width) * 1px + 1rem);
+	height: max(100%, var(--height) * 1px + 2rem); margin: 0;
 	position: absolute; left: calc(var(--left, 0) * 1px);
 	color: white; background: transparent;
 	border: none; outline: none;

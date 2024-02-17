@@ -1,0 +1,17 @@
+<svg viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg">
+	<defs>
+		<style>
+			@keyframes pushDown {
+				from { translate: 0 0; opacity: 0; }
+				25% { opacity: 1; }
+				75% { opacity: 1; }
+				to { translate: 0 6px; opacity: 0; }
+			}
+			path:nth-of-type(1){ animation-delay: -1s; }
+			path:nth-of-type(2){ animation-delay: -2s; }
+			path { animation: pushDown 2s linear infinite; }
+		</style>
+	</defs>
+	<path d="M1 1L6 5M11 1L6 5" stroke="currentColor" stroke-linecap="round"/>
+	<path d="M1 1L6 5M11 1L6 5" stroke="currentColor" stroke-linecap="round"/>
+</svg>

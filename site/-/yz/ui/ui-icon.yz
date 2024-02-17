@@ -18,11 +18,11 @@ const {cache} = this.constructor
 connected(() => effect(async () => {
 	container.replaceChildren()
 	if(!$.type) return
-	const url = new URL(`${$.type}.svg`, `${window.location.origin}/-/svg/`)
+	const url = new URL(`${$.type}.svg`, `${window.location.origin}/-/icons/`)
 	const {pathname} = url
 	const cached = cache.get(pathname)
 	if(cached) return container.append(cached.cloneNode(true))
-	if(!pathname.startsWith('/-/svg/')) return
+	if(!pathname.startsWith('/-/icons/')) return
 	const response = await until(fetch(url).catch(() => null))
 	if(!response?.ok) return
 	const text = await until(response.text())

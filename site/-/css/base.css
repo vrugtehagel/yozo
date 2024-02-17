@@ -72,45 +72,4 @@
 		border-radius: 2em;
 		font-weight: 900;
 	}
-
-	#under-construction-banner {
-		display: block; width: min(1200px, 90%); padding: .5rem;
-		position: fixed; inset: auto auto 2rem 50%; translate: -50% 0; z-index: 1000;
-		background: var(--background-color);
-		border: medium solid var(--string-color); border-radius: 2.25rem;
-		box-shadow: 0 0 10px 5px var(--sub-background-color);
-		font-weight: normal;
-		cursor: pointer;
-		& b { margin-right: .5ch; }
-		& ui-icon {
-			margin-left: .25rem;
-			color: var(--string-color);
-		}
-		& ui-button {
-			margin-left: auto;
-			border-radius: 50%;
-		}
-		& summary {
-			display: flex;
-			align-items: center;
-			list-style: none;
-		}
-		& ul {
-			list-style: none;
-			padding: 1rem 2.5rem; margin: 0;
-		}
-		& label {
-			display: flex;
-			align-items: center; gap: 0 2rem; flex-wrap: wrap;
-			white-space: nowrap;
-		}
-		& progress {
-			flex: 1 0 0;
-			min-width: 100px; max-width: 80%; height: .75rem; margin: .75rem 0 .75rem auto;
-			background-color: var(--comment-color);
-			border: none; border-radius: 1rem;
-			&::-moz-progress-bar,
-			&::-webkit-progress-bar { background: var(--primary-color); }
-		}
-	}
 }

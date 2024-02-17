@@ -22,18 +22,17 @@ Below this, there's a more detailed breakdown of the site and what's needed.
  - Create /docs/ pages
  - Lock in modules by writing tests (in their respective page in /docs/)
  - Create tour
-     - Define steps and sections
-     - Build testing kit
-     - Building full testing sandbox
-     - Write all of the content
+    - Define steps and sections
+    - Build testing kit
+    - Building full testing sandbox
+    - Write all of the content
  - Create the homepage
  - Fix docs-outline component header detection
  - Fix semicolon setting for CSS-in-JS template strings
- - Add JSX highlighting for StencilJS example
  - Test the compare examples on homepage
  - Maybe add CORS header to lib-latest
  - Check browsers
-     - play doesn't work (Safari can't top-level await some stuff)
+    - play doesn't work (Safari can't top-level await some stuff)
  - NPM package?
  - Check site for occurances of certain words to improve inclusivity
 

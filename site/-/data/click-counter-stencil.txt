@@ -1,0 +1,43 @@
+import {
+	Component,
+	Prop,
+	Method,
+	Fragment
+} from '@stencil/core';
+
+@Component({
+	tag: 'click-counter',
+	shadow: true,
+	styles: `
+		button {
+			padding: .75rem 1.5rem;
+			border: none;
+			font-size: 1rem;
+			line-height: 1.5;
+			border-radius: .75rem;
+			color: #181823;
+			background-color: #FFB86C;
+			cursor: pointer;
+		}
+	`,
+})
+export class ClickCounter {
+	@Prop({ reflect: true }) amount: number;
+
+	increment = () => {
+		this.amount += 1;
+	}
+
+	@Method()
+	reset(){
+		this.amount = 0;
+	}
+
+	render() {
+		return (<Fragment>
+			<button onClick={this.increment}>
+				clicks: { $.amount }
+			</button>
+		</Fragment>);
+	}
+};
