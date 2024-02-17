@@ -3,14 +3,14 @@
 	export const title = '<meta>'
 	export const description = 'Define component metadata through ``<meta>`` tags, such as attributes, properties, methods, and more.'
 
-p Components in Yozo are custom elements. That means that they, like regular HTML elements, have a certain interface; pre-defined attributes, properties, methods, events, etcetera. Yozo's component structure is designed to make it easy to understand a component's interface just by glancing at its definition file. When defining properties and methods on the state variable for the component, [``$``](/docs/components/$/), the meta tags are responsible for exposing said properties on the actual component. Each meta tag is identified by a single "main" attribute. Other attributes are options for said type, and will never be a "main" attribute for another type in the future. The types Yozo defines are:
+p Components in Yozo are custom elements. That means that they, like regular HTML elements, have a certain interface; pre-defined attributes, properties, methods, events, etcetera. Yozo's component structure is designed to make it easy to understand a component's interface just by glancing at its definition file. When defining properties and methods on the state variable for the component, [``$``](/docs/components/$/), the meta tags are responsible for exposing said properties on the actual component. The different types of meta tags Yozo understands are:
 
 ul
-	li [``attribute``](/docs/components/meta/attribute/) to define attributes on the custom element. Additional options allow for creating a matching property (as many attributes have) and setting a default value.
-	li [``property``](/docs/components/meta/property/) for definition a property. Optionally, the property may be marked read-only.
-	li [``method``](/docs/components/meta/method/) for defining a method. These are read-only by default.
-	li [``form-associated``](/docs/components/meta/form-associated/) to mark an element as, well, form-associated. This needs to be set to allow components to contribute in forms.
-	li [``hook``](/docs/components/meta/hook/) is a lower level type that allows for creating lifecycle callbacks that are not predefined in Yozo. For example, ``adoptedCallback`` is a custom element lifecycle callback that Yozo does not provide by default. However, it may be made available as ``adopted(…)`` through ``<meta hook="adopted">``.
+	li [``<meta attribute=…>``](/docs/components/meta/attribute/) to define attributes on the custom element. Additional options allow for creating a matching property (as many attributes have) and setting a default value.
+	li [``<meta property=…>``](/docs/components/meta/property/) for definition a property. Optionally, the property may be marked read-only.
+	li [``<meta method=…>``](/docs/components/meta/method/) for defining a method. These are read-only by default.
+	li [``<meta form-associated>``](/docs/components/meta/form-associated/) to mark an element as, well, form-associated. This needs to be set to allow components to contribute in forms.
+	li [``<meta hook=…>``](/docs/components/meta/hook/) is a lower level type that allows for creating lifecycle callbacks that are not predefined in Yozo. For example, ``adoptedCallback`` is a custom element lifecycle callback that Yozo does not provide by default. However, it may be made available as ``adopted(…)`` through ``<meta hook="adopted">``.
 
 h2 Examples
 
@@ -36,7 +36,7 @@ p Note that generally we don't even need to explicitly listen for changes to the
 
 h3 Custom checkbox
 
-p As a more complete example, let's create a custom form-associated checkbox element. We'll have a boolean ``checked`` attribute, and a name attribute. Both of them will have associated properties as well. We'll then create a ``value`` property, as an alias of the ``checked`` property, and a ``toggle()`` method to toggle the checkbox programatically.
+p As a more complete example, let's create a custom form-associated checkbox element. We'll have a boolean ``checked`` attribute, and a ``name`` attribute. Both of them will have associated properties as well. We'll then create a ``value`` property, as an alias of the ``checked`` property, and a ``toggle()`` method to toggle the checkbox programatically.
 
 ui-code[language=yz]
 	<title>check-box</title>

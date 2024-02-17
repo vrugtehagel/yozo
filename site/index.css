@@ -8,8 +8,12 @@ main {
 	width: 100%; margin: 0 auto; box-sizing: border-box;
 }
 
-body:not(.scrolled) site-nav {
-	background-color: var(--sub-background-color);
+site-nav {
+	transition: background-color .5s;
+
+	body:not(.scrolled) & {
+		background-color: var(--sub-background-color);
+	}
 }
 
 h2 {

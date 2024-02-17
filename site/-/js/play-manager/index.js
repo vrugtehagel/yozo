@@ -18,9 +18,10 @@ $play.storage ??= defaultCreations
 
 $play.creations = JSON.parse(sessionStorage.getItem('play-manager:creations'))
 when($play.$creations).deepchanges().throttle(500).then(() => {
-       const json = JSON.stringify($play.creations)
-       sessionStorage.setItem('play-manager:creations', json)
+	const json = JSON.stringify($play.creations)
+	sessionStorage.setItem('play-manager:creations', json)
 })
+$play.creations ??= $play.storage
 
 live.link($play.$connected, () => webServer.claimed('/file/'))
 live.link($play.$mode, () => {
@@ -29,10 +30,10 @@ live.link($play.$mode, () => {
 	return 'editing'
 })
 live.link($play.$uuid, {
-       get: () => sessionStorage.getItem('play-manager:current-uuid'),
-       set: value => sessionStorage.setItem('play-manager:current-uuid', value),
-       changes: when(window).storages()
-               .if(({key}) => key == 'play-manager:current-uuid')
+	get: () => sessionStorage.getItem('play-manager:current-uuid'),
+	set: value => sessionStorage.setItem('play-manager:current-uuid', value),
+	changes: when(window).storages()
+		.if(({key}) => key == 'play-manager:current-uuid')
 })
 
 if(window.playManagerRequest){
@@ -64,6 +65,11 @@ when(window).beforeunloads().then(event => {
 	event.preventDefault()
 	event.returnValue = true
 })
+
+export function openExternal(preset){
+	const proxy = window.open('/play/', '_blank')
+	proxy.playManagerRequest = preset
+}
 
 export async function reset(){
 	if(reset.inProgress) return

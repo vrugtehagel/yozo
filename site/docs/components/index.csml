@@ -1,10 +1,10 @@
 @script
 	export const layout = 'docs'
 	export const title = 'Components'
-	export const description = 'Write reusable web components, in a structured, straight-foward format. Features ranging from inline template logic to fine-grained reactivity.'
+	export const description = 'Write reusable web components, in a structured, straight-foward format, with features ranging from inline template logic to fine-grained reactivity.'
 
 h2 Anatomy
-p The main feature Yozo provides is components. Essentially, Yozo provides a much more streamlined way to write native web components. It features shadow roots, templates, scoped styles, hooks, simple ways to add attributes, methods, or properties, and more!
+p Yozo's main attraction is components. Essentially, Yozo provides a much more streamlined way to write native web components. It features shadow roots, templates, scoped styles, hooks, simple ways to add attributes, methods, or properties, and more!
 
 p So, let's dive into the anatomy of a Yozo component. First of all, each component should be written in a separate file. Generally, it is recommended to use a ``.yz`` extension, so it is easy for developers to recognize the files. Then, configure your editor to highlight ``.yz`` files as HTML. However, the function responsible for parsing the files, [``register()``](/docs/register/), is not picky about the extension; it will try to read any file it receives regardless of extension. Since the format is HTML-like, if configuring syntax highlighting for ``.yz`` files is a problem, the second-best option would be to use ``.html``.
 

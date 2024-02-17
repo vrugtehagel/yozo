@@ -54,7 +54,7 @@ import('/-/js/play-manager/index.js').then(mod => $.playManager = mod)
 		white-space: nowrap;
 	}
 	#creations-list {
-  		display: flex; max-height: calc(40vh - 3rem); padding: .5rem;
+		display: flex; max-height: calc(40vh - 3rem); padding: .5rem;
 		flex-direction: column;
 		background-color: var(--sub-background-color);
 		border-radius: 1rem;

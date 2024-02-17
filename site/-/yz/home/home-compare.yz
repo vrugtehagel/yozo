@@ -9,10 +9,16 @@
 	</menu>
 	<ui-loader .hidden="!$.loading"></ui-loader>
 	<ui-code :language="$.language" .hidden="$.loading" .text-content="$.code"></ui-code>
-	<ui-button .hidden="$.selected != 'yozo'" icon=external @click="$.openEditor()"
+	<ui-button .hidden="$.selected != 'yozo'" icon=external
+		@click="$.playManager.openExternal($.examplePreset)"
 	>See it live</ui-button>
 </template>
 <script>
+import('/-/js/play-manager/index.js').then(mod => $.playManager = mod)
+fetch('/-/data/click-counter-play-example.json')
+	.then(response => response.json())
+	.then(preset => $.examplePreset = preset)
+
 $.selected
 $.frameworks = {
 	yozo: {name: 'Yozo', language: 'yz'},
@@ -20,6 +26,7 @@ $.frameworks = {
 	stencil: {name: 'StencilJS', language: 'jsx'},
 	vanilla: {name: 'Vanilla', language: 'js'}
 }
+
 
 live.link($.$language, () => $.frameworks[$.selected]?.language)
 
@@ -35,17 +42,6 @@ $.select = purify(async framework => {
 })
 
 connected(() => $.select('yozo')).once()
-
-const clickCounter = query('home-click-counter')
-$.reset = () => clickCounter.reset()
-
-$.openEditor = async () => {
-	const url = '/-/data/click-counter-play-example.json'
-	const response = await fetch(url)
-	const data = await response.json()
-	const proxy = window.open('/play/', '_blank')
-	proxy.playManagerRequest = data
-}
 </script>
 <style>
 :host {
