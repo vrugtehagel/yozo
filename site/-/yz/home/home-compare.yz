@@ -14,11 +14,6 @@
 	>See it live</ui-button>
 </template>
 <script>
-import('/-/js/play-manager/index.js').then(mod => $.playManager = mod)
-fetch('/-/data/click-counter-play-example.json')
-	.then(response => response.json())
-	.then(preset => $.examplePreset = preset)
-
 $.selected
 $.frameworks = {
 	yozo: {name: 'Yozo', language: 'yz'},
@@ -42,6 +37,14 @@ $.select = purify(async framework => {
 })
 
 connected(() => $.select('yozo')).once()
+
+$.openExternal = async () => {
+	const url = '/-/data/click-counter-play-example.json'
+	const response = await fetch(url)
+	const preset = await response.json()
+	const proxy = window.open('/play/', '_blank')
+	proxy.playManagerRequest = preset
+}
 </script>
 <style>
 :host {

@@ -66,10 +66,6 @@ when(window).beforeunloads().then(event => {
 	event.returnValue = true
 })
 
-export function openExternal(preset){
-	const proxy = window.open('/play/', '_blank')
-	proxy.playManagerRequest = preset
-}
 
 export async function reset(){
 	if(reset.inProgress) return
