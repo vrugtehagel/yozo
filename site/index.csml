@@ -13,7 +13,7 @@ main
 			p Simplicity at its finest!
 
 		p.teaser
-			span Yozo is a tiny (<5bk) drop-in stress-free solution for web components.
+			span Yozo is a tiny (<5kB) drop-in stress-free solution for web components.
 			span Skip NPM - with a single ``script``, it lets you write beautiful code, and ship it, too.
 		ui-icon[type=scroll-down]
 
@@ -23,7 +23,7 @@ main
 			h3
 				ui-icon[type=tiny]
 				:text-only Really really small
-			p Yozo's latest releast comes in at {{ types.gzip?.size }} bytes gzipped, and it will always remain less than 5kb to keep sites snappy and responsive. For reference, that's smaller than this image of a car:{{' '}}
+			p Yozo's latest releast comes in at {{ types.gzip?.size }} bytes gzipped, and it will always remain less than 5kB to keep sites snappy and responsive. For reference, that's smaller than this image of a car:{{' '}}
 				img[src=/-/img/tiny-van.png][alt="Very small image of a red van"][width=64][height=24][loading=lazy]
 		section.selling-point
 			h3
