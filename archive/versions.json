@@ -1,4 +1,15 @@
 [{
+	"number": "0.3.5",
+	"hash": "15fpdmuTezSGQM9NBswD0w==",
+	"timestamp": 1711052171455,
+	"changelog": {
+		"breaking": [],
+		"improvements": [],
+		"bugs": [
+			"Fixed an issue where using live variables breaks in workers due to the HTMLElement class not existing."
+		]
+	}
+}, {
 	"number": "0.3.4",
 	"hash": "BzlftRt7KnoKMU8MuAdQXQ==",
 	"timestamp": 1707352207231,
