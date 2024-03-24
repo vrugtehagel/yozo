@@ -1,4 +1,15 @@
 [{
+	"number": "0.3.6",
+	"hash": "n4ql9r8K2m/VMjS26Iybwg==",
+	"timestamp": 1711284369125,
+	"changelog": {
+		"breaking": [],
+		"improvements": [],
+		"bugs": [
+			"Strings and other non-objects are no longer diffed for live variables for performance reasons, and the keychange will no longer fire on them."
+		]
+	}
+}, {
 	"number": "0.3.5",
 	"hash": "15fpdmuTezSGQM9NBswD0w==",
 	"timestamp": 1711052171455,

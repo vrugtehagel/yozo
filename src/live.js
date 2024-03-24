@@ -105,14 +105,16 @@ class LiveCore {
 			this.__$value.dispatchEvent(new CustomEvent('change', {detail: {oldValue, value}}))
 
 		// Diffing the keys for keychange event
-		const keys = Object.keys(this.__value ?? {})
-		const diff = new Set(this.__keys)
-		this.__keys = keys
-		for(const key of keys)
-			if(diff.has(key)) diff.delete(key)
-			else diff.add(key)
-		if(diff.size)
-			this.__$value.dispatchEvent(new CustomEvent('keychange', {detail: {keys: [...diff]}}))
+		if(typeof this.__value == `object`){
+			const keys = Object.keys(this.__value ?? {})
+			const diff = new Set(this.__keys)
+			this.__keys = keys
+			for(const key of keys)
+				if(diff.has(key)) diff.delete(key)
+				else diff.add(key)
+			if(diff.size)
+				this.__$value.dispatchEvent(new CustomEvent('keychange', {detail: {keys: [...diff]}}))
+		}
 
 		// Go up the tree to collect deepchanges
 		let core = this.__parent
