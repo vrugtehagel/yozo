@@ -94,18 +94,13 @@ class LiveCore {
 	}
 
 	// Here is where we make changes and compare states to what things were before
-	__alter(alteration, deepChanges = new Set([this])){
+	__alter(alteration, deepChanges = new Set()){
 		const result = alteration?.()
 		const oldValue = this.__value
-		const value = this.__parent.__value?.[this.__key]
-		this.__value = value
-		// Comparison happens using Object.is because it's "better" than ===
-		// Specifically around NaN and -0
-		if(!Object.is(oldValue, value))
-			this.__$value.dispatchEvent(new CustomEvent('change', {detail: {oldValue, value}}))
+		const value = this.__value = this.__parent.__value?.[this.__key]
 
 		// Diffing the keys for keychange event
-		if(typeof this.__value == `object`){
+		if(typeof value == 'object'){
 			const keys = Object.keys(this.__value ?? {})
 			const diff = new Set(this.__keys)
 			this.__keys = keys
@@ -116,14 +111,18 @@ class LiveCore {
 				this.__$value.dispatchEvent(new CustomEvent('keychange', {detail: {keys: [...diff]}}))
 		}
 
+		// Comparison happens using Object.is because it's "better" than ===
+		// Specifically around NaN and -0
+		if(Object.is(oldValue, value)) return result
+		else this.__$value.dispatchEvent(new CustomEvent('change', {detail: {oldValue, value}}))
+
 		// Go up the tree to collect deepchanges
-		let core = this.__parent
-		deepChanges.add(this)
+		let core = this
 		while(!deepChanges.has(core) && core.__parent){
 			core.__alter(null, deepChanges)
+			deepChanges.add(core)
 			core = core.__parent
 		}
-		if(Object.is(oldValue, value)) return result
 
 		// Also go around the object's properties for deepchanges
 		for(const core of Object.values(this.__cache))

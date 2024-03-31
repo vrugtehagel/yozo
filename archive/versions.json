@@ -1,4 +1,15 @@
 [{
+	"number": "0.3.7",
+	"hash": "8MfejNOHL3e7zp+uDSI8Gw==",
+	"timestamp": 1711877023898,
+	"changelog": {
+		"breaking": [],
+		"improvements": [],
+		"bugs": [
+			"Fixed an issue where the deepchange event would trigger on unchanged variables during the setting of a parent variable."
+		]
+	}
+}, {
 	"number": "0.3.6",
 	"hash": "n4ql9r8K2m/VMjS26Iybwg==",
 	"timestamp": 1711284369125,
