@@ -10,7 +10,7 @@
 	<ui-loader .hidden="!$.loading"></ui-loader>
 	<ui-code :language="$.language" .hidden="$.loading" .text-content="$.code"></ui-code>
 	<ui-button .hidden="$.selected != 'yozo'" icon=external
-		@click="$.playManager.openExternal($.examplePreset)"
+		@click="$.openExternal($.examplePreset)"
 	>See it live</ui-button>
 </template>
 <script>
@@ -21,7 +21,6 @@ $.frameworks = {
 	stencil: {name: 'StencilJS', language: 'jsx'},
 	vanilla: {name: 'Vanilla', language: 'js'}
 }
-
 
 live.link($.$language, () => $.frameworks[$.selected]?.language)
 
