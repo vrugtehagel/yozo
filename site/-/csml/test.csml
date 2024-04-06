@@ -38,7 +38,7 @@ script[type=module]
 
 main
 	h1 Tests for {{ page.title[0].toLowerCase() + page.title.slice(1) }}
-	p {{ page.description }} See [the documentation](../) for details on usage.
+	p {{ page.description }} See [{{ page.title }}](../) for details on usage.
 
 	test-summary[total={{ tests.length }}]
 
