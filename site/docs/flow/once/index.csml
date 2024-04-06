@@ -1,0 +1,106 @@
+@script
+	export const layout = 'docs'
+	export const title = 'flow.once()'
+	export const description = 'The ``flow.once()`` method allows one trigger through in the pipeline and simultaneously stops the flow it was called on whenever that happens.'
+
+h2 Syntax
+
+ui-code
+	flow.once();
+
+h3 Parameters
+p None.
+
+h3 Return value
+p The same [``Flow``](/docs/flow/) object the method was called on.
+
+h2 Details
+p The ``.once()`` method participates in the flow pipeline, but in a bit of a special way. Once a trigger reaches ``.once()`` in the callback pipeline, two things happen.
+
+ul
+	li The trigger is allowed through to the rest of the pipeline, and
+	li any other triggers in the pipeline (ones that have not yet reached ``.once()``) are stopped in-place.
+
+p As a result, there is more flexibility in where you put ``.once()``, but its position in the pipeline still has meaning. In particular, this behavior is perfect for ``await`` expressions; more about this in the [Awaiting flows](./#awaiting-flows) example below.
+
+ui-callout[type=warning]
+	p **Warning:** theoretically, event listeners can use the native ``{ once: true }`` option; when using flows, it is strongly recommended to use ``.once()``. This is because with ``.once()``, on top of the event listener being cleaned up, the flow itself is also stopped, whereas with ``{ once: true }`` the flow will remain "alive" while the underlying listener has been removed.
+
+h2 Examples
+
+h3 Loading an image
+
+p Some events are expected to fire only once, such as the ``load`` event. For events like these, ``.once()`` is perfect; it takes down the flow whenever the event fires, meaning there are no concerns about memory leaks. As an example, let's use [``when()``](/docs/when/) in conjunction with ``.once()`` to load an image and append it to the DOM.
+
+ui-code
+	const img = document.createElement('img');
+	when(img).loads().once().then(() => {
+		document.body.append(img);
+	});
+	img.src = '/assets/img/mythical-beast.webp';
+
+p It's also possible to have the ``.then()`` call before the ``.once()``; in this case it doesn't matter.
+
+h3 Positioning .once()
+p For callback pipelines using only [``.then()``](/docs/flow/then/), it doesn't matter whether ``.once()`` is put before any ``.then()`` methods, in between, or after. However, once other methods are thrown in the mix, it starts mattering. First, let's see what happens with [``.if()``](/docs/flow/if/).
+
+ul
+	li In ``.once().if(…).then(…)``, the flow is stopped as soon as it triggers, and the ``.then()`` handler fires only if the trigger passes the condition in ``.if()``.
+	li In ``.if().once(…).then(…)``, the ``.then()`` handler fires as soon as a trigger passes the condition in ``.if()``, at which point the flow is stopped.
+
+p Similarly, when using [``.await()``](/docs/flow/await/), [``.debounce()``](/docs/flow/debounce/), or any other asynchronous pipeline callbacks, then the position ``.once()`` has in the callback pipline is also relevant. To take ``.debounce()`` as an example:
+
+ul
+	li In ``.once().debounce(1000).then(…)``, the flow is stopped at the first trigger, and then ``.then()`` handler fires 1000ms after that.
+	li In ``.debounce(1000).once().then(…)``, then only after 1000ms of inactivity after the first trigger does the ``.then()`` handler fire and the flow stops.
+
+p The ``.once()`` method acts somewhat like a gatekeeper; it lets once trigger through, and tells all other triggers to just give up. Once the trigger that was let through reaches the end of the callback pipeline, the flow is stopped completely and cleaned.
+
+p It can also be useful to compare ``.once()`` to ``.until(() => true)``. The [``.until()``](/docs/flow/until/) method stops the flow whenever its callback returns something truthy, so at first glance this might seem similar to ``.once()``. The main difference is that ``.until()`` stops the flow right away, and does not let any triggers through to the rest of the callback pipeline. More specifically, ``.once().then()`` allows the ``.then()`` callback to run, whereas in ``.until(() => true).then()``, triggers never get past the ``.until()``.
+
+h3 Awaiting flows
+
+p We can rewrite the image loading example using ``await``, and make it (in a way) more sequential.
+
+ui-code
+	const img = document.createElement('img');
+	await when(img).loads().once().after(() => {
+		img.src = '/assets/img/mythical-beast.webp';
+	});
+	document.body.append(img);
+
+p Here, we use [``.after()``](/docs/flow/after/) to set the ``.src`` property on the image. This is because it is not possible to set the ``.src`` after the ``await`` expression, since then the image never has something to load in the first place, and we can't set the ``.src`` before attaching the event either, because the event might fire before the event listener was even set up (even if this is not actually possible - it feels unstable, and could be possible in other similar cases).
+
+h3 Defer until connected
+
+p Some components could have heavy logic they need to run to instantiate. Sometimes, that logic can be deferred to when the component first connects to the DOM. For this, we can use ``.once()`` in together with the [``connected()``](/docs/components/connected/) hook.
+
+ui-code[language=yz]
+	<title>complex-rendering</title>
+	<template mode="closed">
+		<div id="render-container"></div>
+	</template>
+	<script>
+	const renderContainer = query('#render-container');
+
+	connected(() => {
+		renderComplexThingIntoContainer(renderContainer);
+		// …
+	}).once();
+	</script>
+
+p This causes the ``connected()`` lifecycle to fire only once; when the component disconnects and connects again, this callback is no longer fired. Note that this does mean any event listeners set up inside the handler, or otherwise [monitorable](/docs/monitor/) items, are taken down immediately. Instead, if this is not desired, there's an alternative. Instead of stopping the flow returned by ``connected()`` immediately after it triggers (which is what ``.once()`` does), it can instead be stopped when the component disconnects through ``.until(disconnected())``.
+
+h2 Usage notes
+
+p Calling ``.once()`` more than once on the same flow does nothing; only the first call is relevant to the behavior of the callback pipeline.
+
+h2 See also
+
+ul
+	li [``Flow``](/docs/flow/)
+	li [``when()``](/docs/when/)
+	li [``until()``](/docs/flow/until/)
+	li [``if()``](/docs/flow/if/)
+	li [``debounce()``](/docs/flow/debounce/)
+	li [``connected()``](/docs/components/connected/)

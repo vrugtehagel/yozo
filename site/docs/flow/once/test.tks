@@ -1,0 +1,54 @@
+// Yozo helpers are in scope
+const { Flow } = self.yozo;
+
+// a flow is created
+const flow = new Flow();
+
+// the triggers are limited to only fire once
+flow.once();
+
+// all but every third trigger is filtered out
+let count = 0;
+flow.then(() => count++)
+	.if(() => count % 3 == 0);
+
+// the amount of triggers are counted
+let triggers = 0;
+flow.then(() => triggers++);
+
+// the flow is stopped
+flow.stop();
+
+// the flow is triggered
+flow.now();
+
+// the flow is triggered twice
+flow.now();
+flow.now();
+
+// the end of the callback pipeline received __amount__ triggers
+triggers == __amount__
+
+
+// TEST: .once() allows only one trigger through
+// Given Yozo helpers are in scope
+// and a flow is created
+// and the triggers are limited to only fire once
+// and the amount of triggers are counted
+// When the flow is triggered twice
+// Then the end of the callback pipeline received 1 triggers
+// Finally the flow is stopped
+
+// TEST: .once() activates once it gets a trigger
+// Given Yozo helpers are in scope
+// and a flow is created
+// and all but every third trigger is filtered out
+// and the triggers are limited to only fire once
+// and the amount of triggers are counted
+// When the flow is triggered twice
+// Verify the end of the callback pipeline received 0 triggers
+// When the flow is triggered
+// Then the end of the callback pipeline received 1 triggers
+// When the flow is triggered
+// Then the end of the callback pipeline received 1 triggers
+// Finally the flow is stopped
