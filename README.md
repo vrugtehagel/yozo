@@ -15,10 +15,11 @@ And there's also the homepage, of course.
 
 ## Todo
 
-Below this, there's a more detailed breakdown of the site and what's needed.
+Below this, there's a more detailed breakdown of the site and what's still needed.
 
  - Add sourcemaps
  - More byteshaving
+ - Add highlighting to inline `<code>`
  - Create /docs/ pages
  - Lock in modules by writing tests (in their respective page in /docs/)
  - Create tour
@@ -33,7 +34,7 @@ Below this, there's a more detailed breakdown of the site and what's needed.
  - Maybe add CORS header to lib-latest
  - Check browsers
     - play doesn't work (Safari can't top-level await some stuff)
- - NPM package?
+ - JSR package?
  - Check site for occurances of certain words to improve inclusivity
 
 
@@ -43,8 +44,8 @@ The tour highlights each individual part of Yozo in a logical order, allowing th
  - Introduction
     - Using Yozo
        - Outline its size
-       - `<script src=https://yozo.ooo/dev-latest.js>`
-       - Outline its synchronousness
+       - `<script src=./dev-latest.js>`
+       - (?) Outline its synchronousness
        - `const {...} = yozo`
     - Basics of when()
        - Outline .then()
@@ -69,7 +70,7 @@ A section with a simple sandbox, allowing for multiple files and allowing the us
 
 ### Docs
 
-We need the following pages, in the same tree-like structure (18/60 pages done).
+We need the following pages, in the same tree-like structure (21/60 pages done).
  - [x] monitor()
     - [ ] monitor.add()
     - [ ] monitor.ignore()
@@ -83,7 +84,7 @@ We need the following pages, in the same tree-like structure (18/60 pages done).
     - [ ] live.delete()
     - [ ] live.link()
     - [ ] change event
-    - [ ] deepchange event
+    - [x] deepchange event
     - [ ] keychange event
  - [x] Flow
     - [x] constructor
@@ -96,7 +97,7 @@ We need the following pages, in the same tree-like structure (18/60 pages done).
     - [ ] flow.cleanup()
     - [x] flow.stop()
     - [ ] flow.until()
-    - [ ] flow.once()
+    - [x] flow.once()
     - [ ] flow.debounce()
     - [ ] flow.throttle()
  - [x] when()
@@ -124,7 +125,7 @@ We need the following pages, in the same tree-like structure (18/60 pages done).
        - [ ] method
        - [ ] form-associated
        - [ ] hook
-    - [ ] script
+    - [x] script
     - [ ] connected
     - [ ] disconnected
     - [ ] style
