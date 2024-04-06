@@ -1,0 +1,65 @@
+// we're in a browser
+if(self.Deno) return;
+
+// a component is defined with a __method__ method that returns __thing__
+const name = `script-test-${ crypto.randomUUID() }`;
+const source = `
+	<title>${ name }</title>
+	<meta method="__method__">
+	<script>
+	$.__method__ = () => {
+		return __thing__;
+	}
+	</script>
+`;
+
+// the source is uploaded to a fake server
+const webServer = await import('/-/js/web-server/index.js');
+webServer.claim('/test/');
+webServer.clear('/test/');
+webServer.upload({
+	src: `/test/${ name }.yz`,
+	body: source
+});
+
+// the component is registered and created
+await self.yozo.register(`/test/${ name }.yz`);
+const element = document.createElement(name);
+
+// __expression__ returns a function
+typeof __expression__ == 'function'
+
+// __expression__ returns a live variable
+self.yozo.live.get(__expression__) != __expression__
+
+// __expression__ returns __value__
+__expression__ == __value__
+
+
+// TEST: query is available in a <script>
+// Given we're in a browser
+// and a component is defined with a getQuery method that returns query
+// and the source is uploaded to a fake server
+// and the component is registered and created
+// Verify element.getQuery() returns a function
+
+// TEST: connected is available in a <script>
+// Given we're in a browser
+// and a component is defined with a getConnected method that returns connected
+// and the source is uploaded to a fake server
+// and the component is registered and created
+// Verify element.getConnected() returns a function
+
+// TEST: $ is available in a <script>
+// Given we're in a browser
+// and a component is defined with a getState method that returns $
+// and the source is uploaded to a fake server
+// and the component is registered and created
+// Verify element.getState() returns a live variable
+
+// TEST: monitor is available in a <script>
+// Given we're in a browser
+// and a component is defined with a getMonitor method that returns monitor
+// and the source is uploaded to a fake server
+// and the component is registered and created
+// Verify element.getMonitor() returns yozo.monitor
