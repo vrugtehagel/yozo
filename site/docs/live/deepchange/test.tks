@@ -45,5 +45,6 @@ __event__s == __amount__
 // And a deepchange event listener gets attached to $.$foo.$bar
 // And $.$foo.bar gets set to 23
 // And $.foo gets set to { bar: 23, baz: 'qux' }
+// And the live variable $ gets set to { foo: { bar: 23 } }
 // Verify the deepchange event was fired 0 times
 
