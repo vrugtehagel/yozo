@@ -3,7 +3,7 @@ import { writeAll } from 'std/streams/mod.ts'
 import { serveDir } from 'std/http/file_server.ts'
 
 import { build } from './build.js'
-import '../archive/lib-0.0.1.js'
+import '../site/archive/lib-0.0.1.js'
 
 
 const {Flow} = self.yozo

@@ -29,7 +29,7 @@ async function verifyChecksum(version, {quiet}){
 }
 
 export async function verifyVersion({quiet} = {}){
-	const json = await Deno.readTextFile('archive/versions.json')
+	const json = await Deno.readTextFile('site/versions.json')
 	const versions = JSON.parse(json)
 	const version = versions[0]
 	const checksumOk = await verifyChecksum(version, {quiet})
@@ -38,9 +38,9 @@ export async function verifyVersion({quiet} = {}){
 }
 
 async function fixChangelog(number){
-	const json = await Deno.readTextFile('archive/versions.json')
+	const json = await Deno.readTextFile('site/versions.json')
 	const hash = await computeChecksum()
-	await Deno.writeTextFile('archive/versions.json', `[{
+	await Deno.writeTextFile('site/versions.json', `[{
 		"number": "${number}",
 		"hash": "${hash}",
 		"timestamp": ${Date.now()},
