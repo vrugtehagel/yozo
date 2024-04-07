@@ -1,4 +1,18 @@
 [{
+	"number": "0.3.8",
+	"hash": "ydIqK9v2NWQeSpsCYAu4mA==",
+	"timestamp": 1712489164222,
+	"changelog": {
+		"breaking": [],
+		"improvements": [
+			"Added a warning for when two properties or methods are defined on a component with the same name.",
+			"Added a warning for when a defined method turns out not to be a function."
+		],
+		"bugs": [
+			"Fixed a bug where the attributeChanged callback fired twice per attribute change."
+		]
+	}
+}, {
 	"number": "0.3.7",
 	"hash": "8MfejNOHL3e7zp+uDSI8Gw==",
 	"timestamp": 1711877023898,

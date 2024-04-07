@@ -71,6 +71,12 @@ const messages = {
 	'define-attribute-$1-type-$2-does-not-exist': (attribute, type) => `
 		Attribute "${attribute}" defined type "${type}", but that doesn't exist.
 		The type attribute is converted to PascalCase, and that must be a global.`,
+	'define-property-$1-conflicing': name => `
+		There was a conflict between two properties or methods named "${name}".
+		Please use another name for one or both of them.`,
+	'define-method-$1-not-a-function': name => `
+		A method "${name}" was defined, but it wasn't a function.
+		Please define $.${name} and make sure it is a function.`,
 	'transform-for-$1-not-iterable': expression => `
 		Expression "${expression}" in #for is not iterable.`,
 	'transform-for-and-if-simultaneously': () => `

@@ -1,4 +1,4 @@
-import { error } from '../help.js' //
+import { error, warn } from '../help.js' //
 import { define } from '../define.js'
 import { camelCase } from '../utils.js'
 import { monitor } from '../monitor.js'
@@ -20,9 +20,29 @@ define.register(1, 'meta', (context, argslist) => {
 		...argslist.filter(args => args[0].method).map(args => [{property: args[0].method, readonly: true}])
 	]
 
+	const propertyNames = properties.map(([{property}]) => property) //
+	const uniqueProperties = new Set(propertyNames) //
+	if(uniqueProperties.size != properties.length){ //
+		let name //
+		do { //
+			uniqueProperties.delete(name) //
+			name = propertyNames.pop() //
+		} while(uniqueProperties.has(name)) //
+		if(name) error`define-property-${name}-conflicing` //
+	} //
+
 	// Define the properties on the prototype
 	properties.map(([options]) => {
 		const get = function(){
+			// First check if defined methods actually return a function
+			// If not, we throw a warning because it's probably a mistake
+			if(argslist.some(args => args[0].method == options.property)){ //
+				const value = monitor.ignore(() => live.get(context.__meta.get(this).x.$, options.property)) //
+				if(typeof value != 'function'){ //
+					warn`define-method-${options.property}-not-a-function` //
+				} //
+			} //
+
 			// Ignore the monitored context so custom element properties can't
 			// participate in them.
 			// If they could, then subtle implementation changes in one component
@@ -53,6 +73,7 @@ define.register(1, 'meta', (context, argslist) => {
 			meta.x.$.$attributes[name] = null
 			meta.x.$.$attributes[`$${name}`].addEventListener('change', () => {
 				const value = live.get(meta.x.$.$attributes, name)
+				if(this.getAttribute(name) == value) return
 				if(value == null) this.removeAttribute(options.attribute)
 				else this.setAttribute(options.attribute, value)
 			})
