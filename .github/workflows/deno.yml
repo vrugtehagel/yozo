@@ -28,5 +28,5 @@ jobs:
     - name: Run tests
       run: deno test --allow-read
     - name: Verify build
-      if: "github.ref == main"
+      if: "github.ref == 'main'"
       run: deno task build
