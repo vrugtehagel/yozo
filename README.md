@@ -25,4 +25,4 @@ Some practical notes:
 
 Tests are run using `deno test --allow-read`.
 
-Tests are written in a bit of an unconventional way, because we want to be able to run them in the browser. Essentially, we've got one test per file, all under `test/`, in the same structure as the documentation pages. Inside tests, there's a global function `assert` available that just throws when it receives a falsey argument (which then fails the test). We also have browser-only tests here, which Deno can't run, but they are included in test suites on the website regardless (where they are run).
+Tests are written in a bit of an unconventional way, because we want to be able to run them in the browser. Essentially, we've got one test per file, all under `tests/`, in the same structure as the documentation pages. Inside tests, there's a global function `assert` available that just throws when it receives a falsey argument (which then fails the test). We also have browser-only tests here, which Deno can't run, but they are included in test suites on the website regardless (where they are run).
