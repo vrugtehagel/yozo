@@ -13,7 +13,7 @@ To do any development on Yozo, first make sure you have [Deno](https://deno.com/
 
 ## About the codebase
 
-I know this codebase is not the most readable; it is intricate (robust, but fragile) and designed to be small when compressed. Because sometimes, more code results in a smaller bundle size. That's why there are comments sprinkled all over the place, to try and help any brave souls trying to understand what's really happening.
+I know this codebase is not the most readable; it is intricate (robust, but fragile) and designed to be small when compressed. Oddly enough, sometimes, more code results in a smaller bundle size. That's why there are comments sprinkled all over the place, to try and help any brave souls trying to understand what's really happening.
 
 Some practical notes:
 - Lines with a comment are excluded from the `lib` build. Sometimes that means there are a few lines of code ending in `//` just so they'll get removed from the main build. This is generally useful for extra validation and better error and warning messages.
