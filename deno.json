@@ -5,7 +5,7 @@
 		"archive": "deno run -A run/archive.js"
 	},
 	"imports": {
-		"esbuild/": "https://deno.land/x/esbuild@v0.17.18/",
+		"esbuild/": "https://deno.land/x/esbuild@v0.20.2/",
 		"std/": "https://deno.land/std@0.204.0/"
 	},
 	"fmt": {
