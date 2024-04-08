@@ -17,17 +17,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Setup repo
-        uses: actions/checkout@v3
+    - name: Setup repo
+      uses: actions/checkout@v3
 
-      - name: Setup Deno
-        # uses: denoland/setup-deno@v1
-        uses: denoland/setup-deno@61fe2df320078202e33d7d5ad347e7dcfa0e8f31  # v1.1.2
-        with:
-          deno-version: v1.x
+    - name: Setup Deno
+      # uses: denoland/setup-deno@v1
+      uses: denoland/setup-deno@61fe2df320078202e33d7d5ad347e7dcfa0e8f31  # v1.1.2
+      with:
+        deno-version: v1.x
 
-      - name: Verify formatting
-        run: deno fmt --check
+    - name: Verify formatting
+      run: deno fmt --check
 
-      - name: Run tests
-        run: deno test --allow-read
+    - name: Run tests
+      run: deno test --allow-read
+
+    - name: Verify build
+      run: deno task build
