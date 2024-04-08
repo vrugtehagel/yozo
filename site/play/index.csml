@@ -1,8 +1,0 @@
-@script
-	export const title = 'Play'
-	export const exclude = ['site-footer']
-
-h1.sr-only Play around with Yozo 
-
-play-toolbar
-play-session

@@ -1,0 +1,255 @@
+[
+    {
+        "number": "0.3.8",
+        "hash": "ydIqK9v2NWQeSpsCYAu4mA==",
+        "timestamp": 1712489164222,
+        "size": {
+            "gzip": 4689,
+            "brotli": 4313
+        },
+        "changelog": {
+            "breaking": [],
+            "improvements": [
+                "Added a warning for when two properties or methods are defined on a component with the same name.",
+                "Added a warning for when a defined method turns out not to be a function."
+            ],
+            "bugs": [
+                "Fixed a bug where the attributeChanged callback fired twice per attribute change."
+            ]
+        }
+    },
+    {
+        "number": "0.3.7",
+        "hash": "8MfejNOHL3e7zp+uDSI8Gw==",
+        "timestamp": 1711877023898,
+        "size": {
+            "gzip": 4677,
+            "brotli": 4304
+        },
+        "changelog": {
+            "breaking": [],
+            "improvements": [],
+            "bugs": [
+                "Fixed an issue where the deepchange event would trigger on unchanged variables during the setting of a parent variable."
+            ]
+        }
+    },
+    {
+        "number": "0.3.6",
+        "hash": "n4ql9r8K2m/VMjS26Iybwg==",
+        "timestamp": 1711284369125,
+        "size": {
+            "gzip": 4688,
+            "brotli": 4323
+        },
+        "changelog": {
+            "breaking": [],
+            "improvements": [],
+            "bugs": [
+                "Strings and other non-objects are no longer diffed for live variables for performance reasons, and the keychange will no longer fire on them."
+            ]
+        }
+    },
+    {
+        "number": "0.3.5",
+        "hash": "15fpdmuTezSGQM9NBswD0w==",
+        "timestamp": 1711052171455,
+        "size": {
+            "gzip": 4675,
+            "brotli": 4302
+        },
+        "changelog": {
+            "breaking": [],
+            "improvements": [],
+            "bugs": [
+                "Fixed an issue where using live variables breaks in workers due to the HTMLElement class not existing."
+            ]
+        }
+    },
+    {
+        "number": "0.3.4",
+        "hash": "BzlftRt7KnoKMU8MuAdQXQ==",
+        "timestamp": 1707352207231,
+        "size": {
+            "gzip": 4669,
+            "brotli": 4302
+        },
+        "changelog": {
+            "breaking": [],
+            "improvements": [],
+            "bugs": [
+                "Fixed an issue where flow.stop() did not return the flow object it was called on if the flow was already stopped.",
+                "Flows no longer collect references to pipeline callbacks that are added after the flow has stopped."
+            ]
+        }
+    },
+    {
+        "number": "0.3.3",
+        "hash": "+FzooO1UJxnL9Y38XKpRww==",
+        "timestamp": 1704576769371,
+        "size": {
+            "gzip": 4675,
+            "brotli": 4326
+        },
+        "changelog": {
+            "breaking": [],
+            "improvements": [
+                "The until() function now returns a proper Promise object, supporting manually calling .then() on them.",
+                "Added an error message for elements with both an #if and #for attribute (development build only).",
+                "Minor performance improvements for effect(), live.link(), monitoring live variables, component internals, and in-template logic."
+            ],
+            "bugs": [
+                "When using the #for attribute on a <template> element, it now renders the template's contents rather than the template element itself.",
+                "Fixed an issue where non-element nodes between elements in an #if-else chain were not removed."
+            ]
+        }
+    },
+    {
+        "number": "0.3.2",
+        "hash": "Lcy6WvLuZaKyYYkHFcAiZw==",
+        "timestamp": 1703854014795,
+        "size": {
+            "gzip": 4636,
+            "brotli": 4256
+        },
+        "changelog": {
+            "breaking": [],
+            "improvements": [
+                "Major performance improvements to in-template logic parsing.",
+                "Added several error and warning messages for mistakes in in-template logic (development build only)."
+            ],
+            "bugs": [
+                "Fixed an issue where the 'has' trap on live variables throws an error if the value wrapped is nullish."
+            ]
+        }
+    },
+    {
+        "number": "0.3.1",
+        "hash": "t4r49tZS0QPW2aSUZLwzdw==",
+        "timestamp": 1703601909747,
+        "size": {
+            "gzip": 4742,
+            "brotli": 4344
+        },
+        "changelog": {
+            "breaking": [],
+            "improvements": [],
+            "bugs": [
+                "Fixed a memory leak where a monitor.ignore() was preventing references to internal rendering flows from being cleaned up."
+            ]
+        }
+    },
+    {
+        "number": "0.3.0",
+        "hash": "QHNKIdG8kNmCgbPo7KQ3CQ==",
+        "timestamp": 1701717589632,
+        "size": {
+            "gzip": 4770,
+            "brotli": 4369
+        },
+        "changelog": {
+            "breaking": [
+                "The elements object has been renamed and restructured to query() and query.all()."
+            ],
+            "improvements": [],
+            "bugs": []
+        }
+    },
+    {
+        "number": "0.2.2",
+        "hash": "fGtPI9RCNS8msDir+TkkEQ==",
+        "timestamp": 1700995275255,
+        "size": {
+            "gzip": 4895,
+            "brotli": 4468
+        },
+        "changelog": {
+            "breaking": [],
+            "improvements": [
+                "Dev builds are not longer minified."
+            ],
+            "bugs": [
+                "Fixed an issue where shadowless components would break after connecting for a second time."
+            ]
+        }
+    },
+    {
+        "number": "0.2.1",
+        "hash": "Yphb35XFanbhpJxyv24FuQ==",
+        "timestamp": 1700402995399,
+        "size": {
+            "gzip": 4889,
+            "brotli": 4466
+        },
+        "changelog": {
+            "breaking": [],
+            "improvements": [
+                "register() now accepts URL objects as first argument."
+            ],
+            "bugs": []
+        }
+    },
+    {
+        "number": "0.2.0",
+        "hash": "2/T48h6QQC31IPiQHEyg9A==",
+        "timestamp": 1700395579154,
+        "size": {
+            "gzip": 4925,
+            "brotli": 4494
+        },
+        "changelog": {
+            "breaking": [
+                "track() has been renamed to monitor().",
+                "Tracking shorthands like track.undo() and track.live() have been removed in favor of the more general monitor(['undo'], () => { … }) and likewise for other types. Registering new types will also no longer create shorthands."
+            ],
+            "improvements": [],
+            "bugs": []
+        }
+    },
+    {
+        "number": "0.1.0",
+        "hash": "oq7zDVgrRBFgCneubzzQUQ==",
+        "timestamp": 1699110000221,
+        "size": {
+            "gzip": 4935,
+            "brotli": 4511
+        },
+        "changelog": {
+            "breaking": [],
+            "improvements": [
+                "Added flow.await(), a method that waits for its callback before sending a trigger through to the next item in the pipline."
+            ],
+            "bugs": []
+        }
+    },
+    {
+        "number": "0.0.2",
+        "hash": "00g3t4a3n8Nrr2Sn1+Akwg==",
+        "timestamp": 1698611528789,
+        "size": {
+            "gzip": 4921,
+            "brotli": 4500
+        },
+        "changelog": {
+            "breaking": [],
+            "improvements": [],
+            "bugs": [
+                "Fixed an issue where the deepchange event did not fire on the changed live variable itself."
+            ]
+        }
+    },
+    {
+        "number": "0.0.1",
+        "hash": "hJ0l/wHXR720iSeq0JXYcQ==",
+        "timestamp": 1698012000000,
+        "size": {
+            "gzip": 4921,
+            "brotli": 4500
+        },
+        "changelog": {
+            "breaking": [],
+            "improvements": [],
+            "bugs": []
+        }
+    }
+]

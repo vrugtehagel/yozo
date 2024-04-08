@@ -1,20 +1,12 @@
 {
 	"tasks": {
-		"serve": "deno run -A run/serve.js --no-verify",
+		"watch": "deno run -A run/watch.js",
 		"build": "deno run -A run/build.js",
-		"build-site": "deno run -A run/build-site.js",
-		"build-yozo": "deno run -A run/build-yozo.js",
-		"build-version": "deno run -A run/build-version.js",
-		"deploy": "deno run -A run/deploy.js",
-		"test": "deno test --allow-read=site"
+		"archive": "deno run -A run/archive.js"
 	},
 	"imports": {
-		"csml/": "https://deno.land/x/csml@0.1.18/",
-		"esbuild/": "https://deno.land/x/esbuild@v0.17.18/",
+		"esbuild/": "https://deno.land/x/esbuild@v0.20.2/",
 		"std/": "https://deno.land/std@0.204.0/",
-
-		"src/": "./src/",
-		"site/": "./site/"
 	},
 	"lock": false
 }

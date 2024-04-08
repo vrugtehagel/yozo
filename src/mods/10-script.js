@@ -1,6 +1,8 @@
 import { define } from '../define.js'
 
 
+// <script>…</script>
+
 define.register(10, 'script', (context, [args]) => {
 	if(!args) return {}
 	// Parse the component body into a function of the "exposed properties"
