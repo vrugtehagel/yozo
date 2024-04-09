@@ -1,0 +1,24 @@
+<title>click-counter-verbose</title>
+<meta attribute="amount" type="number">
+<meta method="increment">
+
+<template mode="open">
+	<button>0 clicks</button>
+</template>
+<script>
+const button = query('button');
+
+$.increment = () => $.amount++;
+
+connected(() => {
+	when(button).clicks().then(() => {
+		$.increment();
+	});
+});
+
+connected(() => {
+	effect(() => {
+		button.textContent = $.amount + ' clicks';
+	});
+});
+</script>

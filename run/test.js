@@ -1,7 +1,7 @@
 import { walk } from 'std/fs/mod.ts'
 import '../src/index.js'
 
-// This file is not a task, it is intended for `deno test`
+
 // We import every file in tests/, except for those that start with bo- since
 // those are browser-only tests.
 

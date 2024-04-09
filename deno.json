@@ -1,8 +1,9 @@
 {
 	"tasks": {
-		"watch": "deno run -A run/watch.js",
+		"watch": "deno run -A --watch run/build.js --no-verify",
 		"build": "deno run -A run/build.js",
-		"archive": "deno run -A run/archive.js"
+		"archive": "deno run -A run/archive.js",
+		"test": "deno test --allow-read"
 	},
 	"imports": {
 		"esbuild/": "https://deno.land/x/esbuild@v0.20.2/",

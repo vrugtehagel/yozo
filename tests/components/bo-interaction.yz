@@ -1,0 +1,8 @@
+<title>click-counter-interaction</title>
+<meta attribute="amount" type="number">
+
+<template mode="open">
+	<button @click="$.amount++">
+		{{ $.amount }} clicks
+	</button>
+</template>

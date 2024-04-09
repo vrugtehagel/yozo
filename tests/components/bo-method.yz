@@ -1,0 +1,12 @@
+<title>click-counter-method</title>
+<meta attribute="amount" type="number">
+<meta method="incremenet">
+
+<template mode="open">
+	<button @click="$.increment()">
+		{{ $.amount }} clicks
+	</button>
+</template>
+<script>
+$.increment = () => $.amount++;
+</script>
