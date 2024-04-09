@@ -1,0 +1,34 @@
+<title>checkbox-example</title>
+<meta attribute="checked" type="boolean">
+<meta attribute="name" type="string">
+<meta property="value">
+<meta method="toggle">
+<meta form-associated>
+
+<template mode="open">
+	<div @click="$.toggle()"></div>
+</template>
+<script>
+$.toggle = () => {
+	$.checked = !$.checked;
+};
+
+const internals = this.attachInternals();
+when($.$checked).changes().then(() => {
+	internals.setFormValue($.checked);
+});
+</script>
+<style>
+:host {
+	display: inline-block;
+	width: 3em;
+	height: 3em;
+}
+
+div {
+	width: 100%;
+	height: 100%;
+	background: white;
+	:host([checked]) & { background: skyblue; }
+}
+</style>

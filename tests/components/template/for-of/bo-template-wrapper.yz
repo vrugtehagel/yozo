@@ -1,0 +1,13 @@
+<title>drink-template-wrapper</title>
+<meta method="add">
+<template mode="open">
+	<ul>
+		<template #for="drink of $.drinks">
+			<li>{{ drink }}</li>
+		</template>
+	</ul>
+</template>
+<script>
+$.drinks = ['water', 'tea', 'coffee', 'soda'];
+$.add = item => $.$drinks.push(item);
+</script>

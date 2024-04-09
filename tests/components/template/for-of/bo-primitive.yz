@@ -1,0 +1,13 @@
+<title>drinks-primitive</title>
+<meta method="add">
+<template mode="open">
+	<ul>
+		<li #for="drink of $.drinks">
+			{{ drink }}
+		</li>
+	</ul>
+</template>
+<script>
+$.drinks = ['water', 'tea', 'coffee', 'soda'];
+$.add = item => $.$drinks.push(item);
+</script>

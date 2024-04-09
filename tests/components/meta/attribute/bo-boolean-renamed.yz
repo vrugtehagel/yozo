@@ -1,0 +1,5 @@
+<title>health-boolean-renamed</title>
+<meta attribute="sick" type="boolean" as="isSick">
+<template mode="open">
+	You are {{ $.isSick ? 'sick :(' : 'healthy!' }}
+</template>

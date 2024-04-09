@@ -1,5 +1,4 @@
 await self.yozo.register(`./bo-method.yz`);
-
 const element = document.createElement('click-counter-method');
 document.body.append(element);
 

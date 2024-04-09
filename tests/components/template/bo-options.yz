@@ -1,0 +1,5 @@
+<title>message-options</title>
+<meta attribute="message" type="string">
+<template mode="open" delegates-focus="true" slot-assignment="manual">
+	<span>{{ $.message }}</span>
+</template>

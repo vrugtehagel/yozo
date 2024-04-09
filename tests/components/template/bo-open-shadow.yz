@@ -1,0 +1,5 @@
+<title>message-open-shadow</title>
+<meta attribute="message" type="string">
+<template mode="open">
+	<span>{{ $.message }}</span>
+</template>

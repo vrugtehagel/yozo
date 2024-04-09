@@ -1,0 +1,5 @@
+<title>age-number-default</title>
+<meta attribute="age" type="number" default="30">
+<template mode="open">
+	You are {{ $.age }} years old.
+</template>

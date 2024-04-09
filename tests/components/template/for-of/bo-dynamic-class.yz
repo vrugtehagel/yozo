@@ -1,0 +1,14 @@
+<title>drinks-dynamic-class</title>
+<template mode="open">
+	<ul>
+		<li
+			#for="drink of $.drinks"
+			.class-list.is-tea="drink == 'tea'"
+		>
+			{{ drink }}
+		</li>
+	</ul>
+</template>
+<script>
+$.drinks = ['water', 'tea', 'coffee', 'soda'];
+</script>

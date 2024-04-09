@@ -1,0 +1,11 @@
+<title>drinks-primitive-shadowless</title>
+<meta method="add">
+<template>
+	<ul>
+		<li #for="drink of $.drinks">{{ drink }}</li>
+	</ul>
+</template>
+<script>
+$.drinks = ['water', 'tea', 'coffee', 'soda'];
+$.add = item => $.$drinks.push(item);
+</script>

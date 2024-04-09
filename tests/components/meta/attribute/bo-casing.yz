@@ -1,0 +1,5 @@
+<title>hello-casing</title>
+<meta attribute="first-name" type="string">
+<template mode="open">
+	Hello {{ $.firstName }}
+</template>

@@ -1,0 +1,5 @@
+<title>message-closed-shadow</title>
+<meta attribute="message" type="string">
+<template mode="closed">
+	<span>{{ $.message }}</span>
+</template>

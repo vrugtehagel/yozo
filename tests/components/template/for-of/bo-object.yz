@@ -1,0 +1,17 @@
+<title>drinks-object</title>
+<meta method="updateFirst">
+<template mode="open">
+	<ul>
+		<li #for="$drink of $.$drinks">
+			{{ $drink.name }}
+		</li>
+	</ul>
+</template>
+<script>
+$.drinks = [
+	{ name: 'water'},
+	{ name: 'tea' }
+]
+
+$.updateFirst = name => $.$drinks.$0.name = name;
+</script>

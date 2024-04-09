@@ -1,0 +1,11 @@
+<title>query-no-shadow</title>
+<meta property="queried">
+<template>
+	<p>Some other element...</p>
+	<div>
+		<span id="query-me">Hello!</span>
+	</div>
+</template>
+<script>
+$.queried = query('#query-me');
+</script>

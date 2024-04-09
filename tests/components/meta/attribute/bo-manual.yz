@@ -1,0 +1,15 @@
+<title>birthday-manual</title>
+<meta attribute="dateofbirth">
+<meta property="dateOfBirth">
+<template mode="open">
+	Born on {{ $.dateOfBirth.toDateString() }}
+</template>
+<script>
+live.link($.$dateOfBirth, {
+	get: () => new Date($.$attributes.dateofbirth),
+	set: value => {
+		$.$attributes.dateofbirth = value.toDateString()
+	},
+	changes: when($.$attributes.$dateofbirth).changes()
+});
+</script>
