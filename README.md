@@ -1,6 +1,7 @@
 # YOZO
 
-[yozo.ooo](https://yozo.ooo/) - [github.com/vrugtehagel/yozo-site](https://github.com/vrugtehagel/yozo-site/)
+Website: [yozo.ooo](https://yozo.ooo/) \
+Website repository: [vrugtehagel/yozo-site](https://github.com/vrugtehagel/yozo-site)
 
 This is the main repository for Yozo, the tiniest no-build developer-first Web Components library.
 
