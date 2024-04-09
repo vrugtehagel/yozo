@@ -1,6 +1,6 @@
 const { live, effect } = self.yozo;
 const $ = live({ foo: 23 });
-let count = 0
+let count = 0;
 effect(() => {
 	$.foo;
 	count++;

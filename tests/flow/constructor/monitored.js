@@ -2,7 +2,7 @@ const { Flow, monitor } = self.yozo;
 let trigger, flow;
 let triggers = 0;
 const call = monitor(['undo'], () => {
-	flow = new Flow(triggerer => {
+	flow = new Flow((triggerer) => {
 		trigger = triggerer;
 	});
 });

@@ -6,5 +6,5 @@ flow.cleanup(() => cleanups++);
 flow.stop();
 assert(cleanups == 1);
 
-flow.stop()
+flow.stop();
 assert(cleanups == 1);

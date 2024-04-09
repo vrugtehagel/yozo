@@ -2,7 +2,7 @@ const { Flow } = self.yozo;
 let triggers = 0;
 const flow = new Flow();
 flow.then(() => {
-	triggers++
+	triggers++;
 });
 
 flow.now();

@@ -2,9 +2,9 @@ const { Flow, timeout } = self.yozo;
 const flow = new Flow();
 let total = 0;
 let endReached = 0;
-flow.then(number => total += number)
+flow.then((number) => total += number)
 	.throttle(80)
-	.if(number => number == 1)
+	.if((number) => number == 1)
 	.once()
 	.then(() => endReached++)
 	.now(100);
