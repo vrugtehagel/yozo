@@ -5,6 +5,8 @@ import * as esbuild from 'esbuild/mod.js'
 import { crypto } from 'std/crypto/mod.ts'
 import { encodeBase64 } from 'std/encoding/base64.ts'
 
+// Import Yozo so that Deno's --watch flag lets us rebuild on change
+import '../src/index.js'
 
 const outdir = 'dist'
 

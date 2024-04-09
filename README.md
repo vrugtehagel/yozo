@@ -10,6 +10,7 @@ To do any development on Yozo, first make sure you have [Deno](https://deno.com/
 - `deno task build` builds both Yozo's lib and dev builds, and outputs them in `dist/lib-latest.js` and `dist/dev-latest.js`. The former is minified and tiny, the latter includes better errors and warnings, and is not minified. By default, it verifies the hash against the latest version; to disable this, use the `--no-verify` flag.
 - `deno task watch` builds Yozo when a file in `src/` has changed. Unlike the build script, it does not verify the hash against the latest version (because that would be annoying).
 - `deno task archive` creates a new version. It asks a few questions, archives the versioned builds, and updates `versions.json` with the relevant data for the new version.
+- `deno task test` runs the test suite. It is equivalent to `deno test --allow-read`, but I always forget the flag when using `deno test` so there's a task for it too.
 
 ## About the codebase
 
@@ -25,4 +26,4 @@ Some practical notes:
 
 Tests are run using `deno test --allow-read`.
 
-Tests are written in a bit of an unconventional way, because we want to be able to run them in the browser. Essentially, we've got one test per file, all under `tests/`, in the same structure as the documentation pages. Inside tests, there's a global function `assert` available that just throws when it receives a falsey argument (which then fails the test). We also have browser-only tests here, which Deno can't run, but they are included in test suites on the website regardless (where they are run).
+Tests are written in a bit of an unconventional way, because we want to be able to run them in the browser. Essentially, we've got one test per file, all under `tests/`, in the same structure as the documentation pages. Inside tests, there's a global function `assert` available that just throws when it receives a falsey argument (which then fails the test). We also have browser-only tests here, which Deno can't run, but they are included in test suites on the website regardless (where they are run). They may include `.yz` files; all these tests are to be uploaded to the documentation site, so the tests can register them like normal.
