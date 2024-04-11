@@ -44,7 +44,8 @@ async function buildDev(){
 }
 
 export async function build({ noVerify } = {}){
-	await Deno.remove(outdir, {recursive: true}).catch(() => null)
+	await Deno.remove(`${outdir}/dev-latest.js`).catch(() => null)
+	await Deno.remove(`${outdir}/lib-latest.js`).catch(() => null)
 	await buildDev()
 	await buildLib()
 	if(!noVerify) await verify()
