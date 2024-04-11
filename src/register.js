@@ -14,6 +14,7 @@ export const register = async url => {
 	if(registered.has(`${url}`)) return
 	registered.add(`${url}`)
 	const response = await fetch(url)
+	if(!response.ok) return
 	const template = document.createElement('template')
 	template.innerHTML = await response.text()
 	return define(add => {
