@@ -1,6 +1,6 @@
 <title>click-counter-method</title>
 <meta attribute="amount" type="number">
-<meta method="incremenet">
+<meta method="increment">
 
 <template mode="open">
 	<button @click="$.increment()">
