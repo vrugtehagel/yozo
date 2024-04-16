@@ -96,5 +96,11 @@ const messages = {
 	'transform-for-without-of': () => `
 		Found a #for without " of ", which is the only type of #for expression supported.
 		If you need to loop over numbers, generate an array of numbers and iterate that.`
+	'template-invalid-delegates-focus-$1': value => `
+		Invalid template option delegates-focus="${value}".
+		Either omit the attribute, or set it to "true".`,
+	'template-option-incorrect-case-for-$1': name => `
+		The "${name.replaceAll('-', '')}" attribute should probably be "${name}".
+		Options need to be written in kebab-case to be properly converted to camelCase.`
 }
 
