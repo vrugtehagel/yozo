@@ -1,0 +1,5 @@
+<title>custom-link-dynamic</title>
+<meta attribute="to" type="string" default="#">
+<template mode=open>
+	<a :href="$.to"><slot></slot></a>
+</template>

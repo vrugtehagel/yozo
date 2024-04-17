@@ -1,0 +1,5 @@
+<title>custom-link-not-when-disconnected</title>
+<meta attribute="to" type="string" default="#">
+<template mode=open>
+	<a :href="$.to"><slot></slot></a>
+</template>

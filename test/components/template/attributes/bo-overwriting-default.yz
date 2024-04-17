@@ -1,0 +1,5 @@
+<title>custom-link-overwriting-default</title>
+<meta attribute="to" type="string" default="#">
+<template mode=open>
+	<a :href="$.to" href="/unused-fallback"><slot></slot></a>
+</template>

@@ -1,0 +1,13 @@
+<title>custom-link-omitting</title>
+<meta attribute="to" type="string" default="#">
+<template mode=open>
+	<a :href="$.to" :target="$.target"><slot></slot></a>
+</template>
+<script>
+live.link($.$target, () => {
+	if($.to.startsWith('.') || $.to.startsWith('/')){
+		return null;
+	}
+	return '_blank';
+});
+</script>
