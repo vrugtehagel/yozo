@@ -95,7 +95,7 @@ const messages = {
 		It's okay to have it, but it'll be ignored.`,
 	'transform-for-without-of': () => `
 		Found a #for without " of ", which is the only type of #for expression supported.
-		If you need to loop over numbers, generate an array of numbers and iterate that.`
+		If you need to loop over numbers, generate an array of numbers and iterate that.`,
 	'template-invalid-delegates-focus-$1': value => `
 		Invalid template option delegates-focus="${value}".
 		Either omit the attribute, or set it to "true".`,
