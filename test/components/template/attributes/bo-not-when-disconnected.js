@@ -8,7 +8,7 @@ await 'microtask';
 assert(a.getAttribute('href') == '#');
 
 element.remove();
-element.to = '/path/to/something'
+element.to = '/path/to/something';
 await 'microtask';
 assert(a.getAttribute('href') == '#');
 

@@ -7,7 +7,7 @@ document.body.append(element);
 await 'microtask';
 assert(a.getAttribute('href') == '#');
 
-element.to = '/path/to/something'
+element.to = '/path/to/something';
 await 'microtask';
 assert(a.getAttribute('href') == '/path/to/something');
 
