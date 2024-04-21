@@ -178,17 +178,17 @@ define.register(3, Symbol(), context => {
 
 				// First, we check that the left-over attributes make sense
 
-				const looseElse = [...node.attributes] //
-					.find(({name}) => ['#else-if', '#else'].includes(name))?.name //
+				const flowControlAttributes = [...node.attributes] //
+					.map(({name}) => name.startsWith('#')) //
+				const looseElse = flowControlAttributes //
+					.find(name => ['#else-if', '#else'].includes(name)) //
 				if(looseElse) warn`transform-if-found-loose-${looseElse}` //
-
-				if(node.hasAttribute('#elseif')) //
+				if(flowControlAttributes.includes('#elseif')) //
 					warn`transform-elseif-instead-of-else-if` //
-
-				const looseFlowControl = [...node.attributes] //
-					.find(({name}) => name.startsWith('#'))?.name //
-				if(looseFlowControl) //
-					warn`transform-loose-flow-control-${looseFlowControl}` //
+				const looseOther = flowControlAttributes //
+					.find(name => !['#else-if', '#else', '#elseif'].includes(name)) //
+				if(looseOther) //
+					warn`transform-loose-flow-control-${looseOther}` //
 
 				const usesClassList = [...node.attributes] //
 					.some(({name}) => name.startsWith('.class-list')) //
