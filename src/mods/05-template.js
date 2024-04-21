@@ -1,4 +1,5 @@
 import { define } from '../define.js'
+import { warn } from '../help.js' //
 
 
 define.register(5, 'template', (context, [args]) => {
@@ -13,6 +14,16 @@ define.register(5, 'template', (context, [args]) => {
 	template.innerHTML = args[1]
 	context.__template = template.content
 	if(args[0].mode){
+		const {delegatesFocus} = args[0] //
+		if(typeof delegatesFocus == 'string' && delegatesFocus != 'true'){ //
+			warn`template-invalid-delegates-focus-${delegatesFocus}` //
+		} //
+		if('delegatesfocus' in args[0]){ //
+			warn`template-option-incorrect-case-for-${'delegates-focus'}` //
+		} //
+		if('slotassignment' in args[0]){ //
+			warn`template-option-incorrect-case-for-${'slot-assignment'}` //
+		} //
 		return {
 			constructor: function(meta){
 				meta.root = this.attachShadow(args[0])

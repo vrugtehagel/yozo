@@ -1,21 +1,23 @@
-// Just printing the errors. Not super efficient or anything, but it doesn't
-// really need to be.
-const printer = (show = console.log, suppress) => (parts, ...subs) => {
+// Just printing the errors. We make use of template literals for brevity
+// in the actual logic.
+
+const memory = new Set
+const getMessage = (parts, ...subs) => {
 	const expanded = String.raw(parts, ...subs)
 	const id = String.raw(parts, ...subs.map((sub, index) => `$${index + 1}`))
-	if(suppress && printer.memory.has(expanded)) return
-	printer.memory.add(expanded)
 	const indentedMessage = messages[id](...subs)
-	let message = indentedMessage.replaceAll(/^\s+/gm, '').trim()
-	if(suppress) message += '\n' + suppress
-	show(message)
+	return indentedMessage.replaceAll(/^\s+/gm, '').trim()
 }
-printer.memory = new Set
+const print = callback =>
+	(parts, ...subs) => callback(getMessage(parts, ...subs))
 
-export const error = printer(message => { throw new Error(message) })
-export const warn = printer(message => console.warn(message))
-export const warnOnce = printer(message => console.warn(message),
-	'Warnings after this one will be suppressed')
+export const error = print(message => { throw new Error(message) })
+export const warn = print(message => { console.warn(message) })
+export const warnOnce = print(message => {
+	if(memory.has(message)) return
+	memory.add(message)
+	console.warn(`${message}\nSimilar warnings after this one will be suppressed`)
+})
 
 const messages = {
 	'when-arg-not-event-target': () => `
@@ -95,6 +97,11 @@ const messages = {
 		It's okay to have it, but it'll be ignored.`,
 	'transform-for-without-of': () => `
 		Found a #for without " of ", which is the only type of #for expression supported.
-		If you need to loop over numbers, generate an array of numbers and iterate that.`
+		If you need to loop over numbers, generate an array of numbers and iterate that.`,
+	'template-invalid-delegates-focus-$1': value => `
+		Invalid template option delegates-focus="${value}".
+		Either omit the attribute, or set it to "true".`,
+	'template-option-incorrect-case-for-$1': name => `
+		The "${name.replaceAll('-', '')}" attribute should probably be "${name}".
+		Options need to be written in kebab-case to be properly converted to camelCase.`
 }
-

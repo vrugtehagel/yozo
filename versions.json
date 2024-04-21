@@ -1,5 +1,25 @@
 [
     {
+        "number": "0.3.9",
+        "hash": "8mq6zPRlLRcOsknwp7ccoQ==",
+        "timestamp": 1713703810204,
+        "size": {
+            "gzip": 4700,
+            "brotli": 4324
+        },
+        "changelog": {
+            "breaking": [],
+            "improvements": [
+                "register() now also returns a promise resolving when component is defined on subsequent calls with the same URL",
+                "register() now no longer attempts to parse a component definition if the network response was not ok",
+                "Generated functions now have comments hinting where they were generated from",
+                "Minor improvements for warnings regarding unexpected flow control attributes",
+                "Added warnings for malformed options on the <template> element"
+            ],
+            "bugs": []
+        }
+    },
+    {
         "number": "0.3.8",
         "hash": "ydIqK9v2NWQeSpsCYAu4mA==",
         "timestamp": 1712489164222,

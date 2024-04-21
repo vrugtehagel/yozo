@@ -48,7 +48,11 @@ define.register(3, Symbol(), context => {
 				transforms.push(...parts.map((part, index) => {
 					node = iterator.nextNode()
 					if(index % 2 == 0) return
-					const getter = new Function(...scopeNames, `return(${part})`)
+					const getter = new Function(...scopeNames, `return(${
+						`\n\n\n// The <${context.__title}> component: an {{ inline }} expression\n\n` + //
+						part
+						+ '\n\n' //
+					})`)
 					return (meta, clone, scopes) => effect(() => {
 						clone.textContent = getter(...scopes.map(scope => scope[1]))
 					})
@@ -70,7 +74,11 @@ define.register(3, Symbol(), context => {
 				node.removeAttribute('#for')
 				node.remove()
 				const element = node.localName == 'template' ? node.content : node
-				const getter = new Function(...scopeNames, `return(${expression})`)
+				const getter = new Function(...scopeNames, `return(${
+					`\n\n\n// The <${context.__title}> component: an iterator in a #for on a ${node.localName}\n\n` + //
+					expression
+					+ '\n\n' //
+				})`)
 				transforms.push((meta, clone, scopes) => {
 					// the cloned node is just the anchor node,
 					// we only use it as an insertion point reference
@@ -127,7 +135,11 @@ define.register(3, Symbol(), context => {
 					const element = anchor.nextElementSibling
 					if(!element?.hasAttribute(attribute)) return
 					while(anchor.nextSibling != element) anchor.nextSibling.remove()
-					expressions.push(`()=>(${element.getAttribute(attribute) || true})`)
+					expressions.push(`()=>(${
+						`\n\n// An ${attribute} (on a ${element.localName})\n` + //
+						(element.getAttribute(attribute) || true)
+						+ '\n\n' //
+					})`)
 					chain.push(element.localName == 'template' ? element.content : element)
 					element.removeAttribute(attribute)
 					element.remove()
@@ -140,7 +152,11 @@ define.register(3, Symbol(), context => {
 				// We keep track of which item in the chain is rendered
 				// That way, if something changes, but the same index ends up being
 				// chosen, then we don't need to do anything
-				const getter = new Function(...scopeNames, `return[${expressions}].findIndex(e=>e())`)
+				const getter = new Function(...scopeNames, `return[${
+					`\n\n\n// The <${context.__title}> component: a whole #if-#else-if-#else chain\n\n` + //
+					expressions
+					+ '\n\n' //
+				}].findIndex(e=>e())`)
 				transforms.push((meta, clone, scopes) => {
 					let connectedIndex
 					const connected = []
@@ -162,17 +178,17 @@ define.register(3, Symbol(), context => {
 
 				// First, we check that the left-over attributes make sense
 
-				const looseElse = [...node.attributes] //
-					.find(({name}) => ['#else-if', '#else'].includes(name))?.name //
+				const flowControlAttributes = [...node.attributes] //
+					.map(({name}) => name.startsWith('#')) //
+				const looseElse = flowControlAttributes //
+					.find(name => ['#else-if', '#else'].includes(name)) //
 				if(looseElse) warn`transform-if-found-loose-${looseElse}` //
-
-				if(node.hasAttribute('#elseif')) //
+				if(flowControlAttributes.includes('#elseif')) //
 					warn`transform-elseif-instead-of-else-if` //
-
-				const looseFlowControl = [...node.attributes] //
-					.find(({name}) => name.startsWith('#'))?.name //
-				if(looseFlowControl) //
-					warn`transform-loose-flow-control-${looseFlowControl}` //
+				const looseOther = flowControlAttributes //
+					.find(name => !['#else-if', '#else', '#elseif'].includes(name)) //
+				if(looseOther) //
+					warn`transform-loose-flow-control-${looseOther}` //
 
 				const usesClassList = [...node.attributes] //
 					.some(({name}) => name.startsWith('.class-list')) //
@@ -188,7 +204,11 @@ define.register(3, Symbol(), context => {
 					if(attribute.name[0] == ':'){
 						// First, dynamic attributes
 						const name = attribute.name.slice(1)
-						const getter = new Function(...scopeNames, `return(${attribute.value})`)
+						const getter = new Function(...scopeNames, `return(${
+							`\n\n\n// The <${context.__title}> component: a dynamic ${attribute.name} attribute on a ${node.localName}\n\n` + //
+							attribute.value
+							+ '\n\n' //
+						})`)
 						node.removeAttribute(attribute.name)
 						return (meta, clone, scopes) => effect(() => {
 							const value = getter.call(clone, ...scopes.map(scope => scope[1]))
@@ -201,7 +221,11 @@ define.register(3, Symbol(), context => {
 						// So we chop it up at the periods and see what we get
 						const last = attribute.name.slice(1).split('.').at(-1)
 						const chain = attribute.name.slice(1).split('.').map(camelCase)
-						const getter = new Function(...scopeNames, `return(${attribute.value})`)
+						const getter = new Function(...scopeNames, `return(${
+							`\n\n\n// The <${context.__title}> component: a ${attribute.name} property on a ${node.localName}\n\n` + //
+							attribute.value
+							+ '\n\n' //
+						})`)
 						node.removeAttribute(attribute.name)
 						return (meta, clone, scopes) => effect(() => {
 							const value = getter.call(clone, ...scopes.map(scope => scope[1]))
@@ -219,7 +243,11 @@ define.register(3, Symbol(), context => {
 						})
 					} else if(attribute.name[0] == '@'){
 						const type = attribute.name.slice(1)
-						const getter = new Function(...scopeNames, 'event', attribute.value)
+						const getter = new Function(...scopeNames, 'event',
+							`\n\n\n// The <${context.__title}> component: an inline ${attribute.name} event handler on a ${node.localName}\n\n` + //
+							attribute.value
+							+ '\n\n' //
+						)
 						node.removeAttribute(attribute.name)
 						return (meta, clone, scopes) => {
 							const handler = event => monitor.ignore(() =>

@@ -7,24 +7,27 @@ import { camelCase } from './utils.js'
 // register() takes a URL, fetches it as text, parses it as HTML, and
 // then uses the define() function to register the component definition
 
-const registered = new Set
-export const register = async url => {
+const registered = new Map
+export const register = url => {
 	// Prevent re-registration of the same URL, regardless of whether
 	// the registration succeeded or not
-	if(registered.has(`${url}`)) return
-	registered.add(`${url}`)
-	const response = await fetch(url)
-	const template = document.createElement('template')
-	template.innerHTML = await response.text()
-	return define(add => {
-		for(const element of template.content.children){
-			add[element.localName]?.(
-				Object.fromEntries([...element.attributes].map(attribute => 
-				 	[camelCase(attribute.name), attribute.value])),
-				element.innerHTML
-			)
-		}
-	})
+	if(!registered.get(`${url}`)){
+		registered.set(`${url}`, fetch(url).then(async response => {
+			if(!response.ok) return
+			const template = document.createElement('template')
+			template.innerHTML = await response.text()
+			return define(add => {
+				for(const element of template.content.children){
+					add[element.localName]?.(
+						Object.fromEntries([...element.attributes].map(attribute =>
+							[camelCase(attribute.name), attribute.value])),
+						element.innerHTML
+					)
+				}
+			})
+		}))
+	}
+	return registered.get(`${url}`)
 }
 
 // We only allow for calling register.auto() once.
