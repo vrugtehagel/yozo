@@ -1,7 +1,7 @@
 const { frame } = self.yozo;
 
 let mostRecent;
-const flow = frame().then(timestamp => {
+const flow = frame().then((timestamp) => {
 	mostRecent = timestamp;
 });
 
