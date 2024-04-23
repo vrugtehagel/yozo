@@ -1,0 +1,15 @@
+<title>color-swatch-remove-intermediate</title>
+<meta method="next">
+<template mode="open">
+	<span #if="$.index == 0">red</span>
+	<!-- comment -->
+	foo
+	<span #else>yellow</span>
+	<!-- another comment -->
+</template>
+<script>
+$.index = 0;
+$.next = () => {
+	$.index = ($.index + 1) % 2;
+};
+</script>

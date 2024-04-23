@@ -1,0 +1,14 @@
+<title>color-swatch-conditions</title>
+<meta method="next">
+<template mode="open">
+	<span #if="$.index == 0">red</span>
+	<span #else-if="$.index == 1">blue</span>
+	<span #else-if="$.index == 2">green</span>
+	<span #else>yellow</span>
+</template>
+<script>
+$.index = 0;
+$.next = () => {
+	$.index = ($.index + 1) % 4;
+};
+</script>

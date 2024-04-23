@@ -1,0 +1,12 @@
+<title>color-swatch-recreation</title>
+<meta method="next">
+<template mode="open">
+	<span #if="$.index == 0">red</span>
+	<span #else>yellow</span>
+</template>
+<script>
+$.index = 0;
+$.next = () => {
+	$.index = ($.index + 1) % 2;
+};
+</script>
