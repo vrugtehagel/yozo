@@ -1,4 +1,4 @@
-await self.yozo.register(`./bo-conditions.yz`);
+await self.yozo.register('./bo-conditions.yz');
 const element = document.createElement('color-swatch-conditions');
 document.body.append(element);
 

@@ -1,4 +1,4 @@
-await self.yozo.register(`./bo-object.yz`);
+await self.yozo.register('./bo-object.yz');
 const element = document.createElement('drinks-object');
 document.body.append(element);
 await 'microtask';

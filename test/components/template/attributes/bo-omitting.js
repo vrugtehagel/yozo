@@ -1,4 +1,4 @@
-await self.yozo.register(`./bo-omitting.yz`);
+await self.yozo.register('./bo-omitting.yz');
 
 const element = document.createElement('custom-link-omitting');
 const a = element.shadowRoot.querySelector('a');

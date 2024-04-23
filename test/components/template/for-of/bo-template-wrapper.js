@@ -1,4 +1,4 @@
-await self.yozo.register(`./bo-template-wrapper.yz`);
+await self.yozo.register('./bo-template-wrapper.yz');
 const element = document.createElement('drink-template-wrapper');
 document.body.append(element);
 await 'microtask';

@@ -1,4 +1,4 @@
-await self.yozo.register(`./bo-overwriting-default.yz`);
+await self.yozo.register('./bo-overwriting-default.yz');
 
 const element = document.createElement('custom-link-overwriting-default');
 const a = element.shadowRoot.querySelector('a');

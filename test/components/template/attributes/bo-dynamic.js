@@ -1,4 +1,4 @@
-await self.yozo.register(`./bo-dynamic.yz`);
+await self.yozo.register('./bo-dynamic.yz');
 
 const element = document.createElement('custom-link-dynamic');
 const a = element.shadowRoot.querySelector('a');

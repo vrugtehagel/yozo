@@ -1,4 +1,4 @@
-await self.yozo.register(`./bo-options.yz`);
+await self.yozo.register('./bo-options.yz');
 const element = document.createElement('message-options');
 document.body.append(element);
 

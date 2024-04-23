@@ -1,4 +1,4 @@
-await self.yozo.register(`./bo-casing.yz`);
+await self.yozo.register('./bo-casing.yz');
 const element = document.createElement('hello-casing');
 document.body.append(element);
 element.setAttribute('first-name', 'John');

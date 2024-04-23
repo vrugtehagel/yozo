@@ -1,4 +1,4 @@
-await self.yozo.register(`./bo-checkbox-example.yz`);
+await self.yozo.register('./bo-checkbox-example.yz');
 const form = document.createElement('form');
 const element = document.createElement('checkbox-example');
 document.body.append(form);

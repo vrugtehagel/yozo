@@ -1,4 +1,4 @@
-await self.yozo.register(`./bo-open-shadow.yz`);
+await self.yozo.register('./bo-open-shadow.yz');
 const element = document.createElement('query-open-shadow');
 document.body.append(element);
 

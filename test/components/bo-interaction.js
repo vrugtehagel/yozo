@@ -1,4 +1,4 @@
-await self.yozo.register(`./bo-interaction.yz`);
+await self.yozo.register('./bo-interaction.yz');
 
 const element = document.createElement('click-counter-interaction');
 const button = element.shadowRoot.querySelector('button');

@@ -1,4 +1,4 @@
-await self.yozo.register(`./bo-verbose.yz`);
+await self.yozo.register('./bo-verbose.yz');
 const element = document.createElement('click-counter-verbose');
 const button = element.shadowRoot.querySelector('button');
 document.body.append(element);

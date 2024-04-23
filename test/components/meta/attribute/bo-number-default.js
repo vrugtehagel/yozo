@@ -1,4 +1,4 @@
-await self.yozo.register(`./bo-number-default.yz`);
+await self.yozo.register('./bo-number-default.yz');
 const element = document.createElement('age-number-default');
 document.body.append(element);
 

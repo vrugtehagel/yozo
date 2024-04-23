@@ -1,4 +1,4 @@
-await self.yozo.register(`./bo-manual.yz`);
+await self.yozo.register('./bo-manual.yz');
 const element = document.createElement('birthday-manual');
 document.body.append(element);
 

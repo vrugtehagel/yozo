@@ -1,4 +1,4 @@
-await self.yozo.register(`./bo-recreation.yz`);
+await self.yozo.register('./bo-recreation.yz');
 const element = document.createElement('color-swatch-recreation');
 document.body.append(element);
 

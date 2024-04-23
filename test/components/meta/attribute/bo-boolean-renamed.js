@@ -1,4 +1,4 @@
-await self.yozo.register(`./bo-boolean-renamed.yz`);
+await self.yozo.register('./bo-boolean-renamed.yz');
 const element = document.createElement('health-boolean-renamed');
 document.body.append(element);
 

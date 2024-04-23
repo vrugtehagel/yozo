@@ -1,4 +1,4 @@
-await self.yozo.register(`./bo-not-when-disconnected.yz`);
+await self.yozo.register('./bo-not-when-disconnected.yz');
 
 const element = document.createElement('custom-link-not-when-disconnected');
 const a = element.shadowRoot.querySelector('a');

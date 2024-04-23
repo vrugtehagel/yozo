@@ -1,4 +1,4 @@
-await self.yozo.register(`./bo-remove-intermediate.yz`);
+await self.yozo.register('./bo-remove-intermediate.yz');
 const element = document.createElement('color-swatch-remove-intermediate');
 document.body.append(element);
 
