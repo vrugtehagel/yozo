@@ -17,6 +17,6 @@ assert(triggers == 0);
 $.double = 10;
 assert(triggers == 1);
 
-// link.stop();
-// $.number = 10;
-// assert(triggers == 2);
+link.stop();
+$.number = 10;
+assert(triggers == 2);
