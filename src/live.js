@@ -222,6 +222,5 @@ live.link = ($live, thing) => {
 	change(monitor.ignore(options.get))
 	return flow
 		.then(() => change(monitor.ignore(options.get)))
-		.if(() => null)
 		.cleanup(() => $live.removeEventListener('deepchange', listener))
 }
