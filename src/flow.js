@@ -16,7 +16,7 @@ export class Flow {
 		})
 	}
 
-	flow(callback){
+	pipe(callback){
 		this.#steps?.push(callback)
 		return this
 	}
@@ -36,21 +36,21 @@ export class Flow {
 	}
 
 	then(callback){
-		return this.flow((next, ...args) => {
+		return this.pipe((next, ...args) => {
 			callback(...args)
 			next()
 		})
 	}
 
 	await(callback){
-		return this.flow(async (next, ...args) => {
+		return this.pipe(async (next, ...args) => {
 			await callback(...args)
 			next()
 		})
 	}
 
 	if(callback){
-		return this.flow((next, ...args) => {
+		return this.pipe((next, ...args) => {
 			if(callback(...args)) next()
 		})
 	}
@@ -69,7 +69,7 @@ export class Flow {
 
 	until(thing){
 		if(typeof thing == 'function')
-			return this.flow((next, ...args) => thing(...args) ? this.stop() : next())
+			return this.pipe((next, ...args) => thing(...args) ? this.stop() : next())
 		this.cleanup(() => thing.stop?.())
 		thing.then(() => this.stop())
 		return this
@@ -87,7 +87,7 @@ export class Flow {
 
 	debounce(duration){
 		let id
-		return this.flow(next => {
+		return this.pipe(next => {
 			clearTimeout(id)
 			id = setTimeout(next, duration)
 		}).cleanup(() => clearTimeout(id))
@@ -96,7 +96,7 @@ export class Flow {
 	throttle(duration){
 		let queued
 		let id
-		return this.flow(next => {
+		return this.pipe(next => {
 			if(id) return queued = next
 			next()
 			id = setInterval(() => {
