@@ -6,14 +6,14 @@ template.innerHTML = `
 `;
 document.body.append(template);
 
-let triggers = 0
-let attempt
-window.yozo.register.auto(name => {
-	triggers++
-	attempt = name
+let triggers = 0;
+let attempt;
+window.yozo.register.auto((name) => {
+	triggers++;
+	attempt = name;
 });
 
 assert(triggers == 1);
-assert(attempt == 'yet-undefined-from-template')
+assert(attempt == 'yet-undefined-from-template');
 
-export const refresh = true
+export const refresh = true;
