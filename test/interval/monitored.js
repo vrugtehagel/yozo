@@ -11,5 +11,3 @@ const call = monitor(['undo'], () => {
 call.undo();
 await new Promise((resolve) => setTimeout(resolve, 40));
 assert(triggers == 0);
-
-flow.stop();
