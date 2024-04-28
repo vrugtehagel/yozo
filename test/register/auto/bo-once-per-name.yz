@@ -1,0 +1,4 @@
+<title>register-once-per-name</title>
+<template mode="closed">
+	<yet-undefined-once-per-name></yet-undefined-once-per-name>
+</template>

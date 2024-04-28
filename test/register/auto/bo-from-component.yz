@@ -1,0 +1,6 @@
+<title>register-from-component</title>
+<template mode="closed">
+	<div #if="false">
+		<yet-undefined-from-component></yet-undefined-from-component>
+	</div>
+</template>
