@@ -1,5 +1,21 @@
 [
     {
+        "number": "0.4.1",
+        "hash": "TTRaoAmaPsBW7mWt7wFe4g==",
+        "timestamp": 1714314560136,
+        "size": {
+            "gzip": 4689,
+            "brotli": 4308
+        },
+        "changelog": {
+            "breaking": [],
+            "improvements": [
+                "Re-introduce register.auto() (with a slight behavioral differences)"
+            ],
+            "bugs": []
+        }
+    },
+    {
         "number": "0.4.0",
         "hash": "aT6Julqk8QMOXW//IqUQpA==",
         "timestamp": 1714301964546,
