@@ -3,13 +3,13 @@ const { effect, live } = self.yozo;
 const $ = live({
 	condition: true,
 	ifTrue: 'foo',
-	ifFalse: 'bar'
+	ifFalse: 'bar',
 });
 let triggers = 0;
-let current
+let current;
 effect(() => {
 	triggers++;
-	current = $.condition ? $.ifTrue : $.ifFalse
+	current = $.condition ? $.ifTrue : $.ifFalse;
 });
 
 await 'microtask';

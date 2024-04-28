@@ -5,7 +5,7 @@ let triggers = 0;
 effect(() => {
 	$.foo;
 	triggers++;
-}, updater => updater());
+}, (updater) => updater());
 
 assert(triggers == 1);
 await 'microtask';

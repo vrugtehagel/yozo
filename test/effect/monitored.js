@@ -2,7 +2,7 @@ const { effect, live, monitor } = self.yozo;
 
 const $ = live({ foo: 23 });
 let triggers = 0;
-let flow
+let flow;
 const call = monitor(['undo'], () => {
 	flow = effect(() => {
 		$.foo;

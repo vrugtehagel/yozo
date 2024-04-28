@@ -5,7 +5,7 @@ let triggers = 0;
 effect(() => {
 	$.foo;
 	triggers++;
-}, updater => setTimeout(updater, 20));
+}, (updater) => setTimeout(updater, 20));
 
 assert(triggers == 0);
 await timeout(10);
