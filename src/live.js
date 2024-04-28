@@ -193,6 +193,11 @@ live.link = ($live, thing) => {
 		}
 	}
 
+	// The returned flow; it triggers when the link syncs, and kills the link
+	// when stopped
+	const flow = new Flow
+	options.changes?.then(() => flow.now())
+
 	// We need to listen to $live for changes, so we can appropriately respond
 	// But we will also be changing $live here ourselves
 	// So we set "changing" to true whenever it is us changing it right here
@@ -215,8 +220,7 @@ live.link = ($live, thing) => {
 	}
 	$live.addEventListener('deepchange', listener)
 	change(monitor.ignore(options.get))
-	return (options.changes ?? new Flow)
+	return flow
 		.then(() => change(monitor.ignore(options.get)))
-		.if(() => null)
 		.cleanup(() => $live.removeEventListener('deepchange', listener))
 }

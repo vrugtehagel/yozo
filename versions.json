@@ -1,5 +1,25 @@
 [
     {
+        "number": "0.4.0",
+        "hash": "aT6Julqk8QMOXW//IqUQpA==",
+        "timestamp": 1714301964546,
+        "size": {
+            "gzip": 4543,
+            "brotli": 4180
+        },
+        "changelog": {
+            "breaking": [
+                "Removed register.auto()",
+                "Renamed flow.flow() to flow.pipe()"
+            ],
+            "improvements": [
+                "Return a new flow from live.link(), even if a \"changes\" option was passed",
+                "The flow returned by live.link() now triggers when the flow updates"
+            ],
+            "bugs": []
+        }
+    },
+    {
         "number": "0.3.9",
         "hash": "8mq6zPRlLRcOsknwp7ccoQ==",
         "timestamp": 1713703810204,
