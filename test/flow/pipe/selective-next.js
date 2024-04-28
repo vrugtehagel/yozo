@@ -1,12 +1,12 @@
 const { Flow } = self.yozo;
 const flow = new Flow();
 
-const nexts = []
+const nexts = [];
 let triggers = 0;
-let trigger
+let trigger;
 
 flow.pipe((next, ...args) => {
-	nexts.push(next)
+	nexts.push(next);
 }).then((...args) => {
 	triggers++;
 	trigger = args[0];
