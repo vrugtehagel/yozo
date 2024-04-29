@@ -10,7 +10,7 @@
         "changelog": {
             "breaking": [],
             "improvements": [
-                "Re-introduce register.auto() (with a slight behavioral differences)"
+                "Re-introduced register.auto() (with a slight behavioral differences)"
             ],
             "bugs": []
         }
@@ -30,7 +30,7 @@
             ],
             "improvements": [
                 "Return a new flow from live.link(), even if a \"changes\" option was passed",
-                "The flow returned by live.link() now triggers when the flow updates"
+                "The flow returned by live.link() now triggers when the link updates"
             ],
             "bugs": []
         }
