@@ -1,0 +1,10 @@
+<title>animal-sound-in-flow-control</title>
+<meta attribute="animal" type="string">
+<template>
+	<template #if="$.animal == 'cat'">
+		meow
+	</template>
+	<template #else>
+		woof
+	</template>
+</template>

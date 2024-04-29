@@ -1,0 +1,8 @@
+<title>animal-sound-in-script</title>
+<meta attribute="animal" type="string">
+<script>
+const data = { cat: 'meow', dog: 'woof' }
+effect(() => {
+	this.textContent = data[$.animal]
+});
+</script>

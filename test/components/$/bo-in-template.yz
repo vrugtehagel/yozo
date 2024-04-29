@@ -1,0 +1,8 @@
+<title>animal-sound-in-template</title>
+<meta attribute="animal" type="string">
+<template>
+	{{ $.data[$.animal] }}
+</template>
+<script>
+$.data = { cat: 'meow', dog: 'woof' }
+</script>
