@@ -1,7 +1,7 @@
 const { monitor, effect, live } = self.yozo;
 
 const $ = live({ foo: 23, bar: 7 });
-let sum
+let sum;
 effect(() => {
 	sum = $.foo + monitor.ignore(() => $.bar);
 });
