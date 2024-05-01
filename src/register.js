@@ -1,5 +1,4 @@
 import { define } from './define.js'
-import { when } from './when.js'
 import { camelCase } from './utils.js'
 
 

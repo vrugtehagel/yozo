@@ -268,7 +268,7 @@ define.register(3, Symbol(), context => {
 
 	// Now on a per-instance level, we can actually render stuff
 	const constructor = function(meta){
-		meta.__render = (tree, scopes, scheduler = update => update()) => {
+		meta.__render = (tree, scopes, scheduler = monitor.ignore) => {
 			const transforms = getTransforms(tree, ...scopes.map(scope => scope[0]))
 			// To render a parsed tree, we first get the array of transforms
 			// That's cached, so this work happens once per component registration
