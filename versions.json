@@ -26,7 +26,7 @@
         "changelog": {
             "breaking": [],
             "improvements": [
-                "Re-introduced register.auto() (with a slight behavioral differences)"
+                "Re-introduced register.auto() (with slight behavioral differences)"
             ],
             "bugs": []
         }
