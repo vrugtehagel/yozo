@@ -1,5 +1,21 @@
 [
     {
+        "number": "0.4.2",
+        "hash": "wC/R8Woaw4ODwUAN3q8P8w==",
+        "timestamp": 1714669997122,
+        "size": {
+            "gzip": 4688,
+            "brotli": 4306
+        },
+        "changelog": {
+            "breaking": [],
+            "improvements": [],
+            "bugs": [
+                "Fixed an issue where a nested template subtree could undo monitored contexts in other components"
+            ]
+        }
+    },
+    {
         "number": "0.4.1",
         "hash": "TTRaoAmaPsBW7mWt7wFe4g==",
         "timestamp": 1714314560136,
