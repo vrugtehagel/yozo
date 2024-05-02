@@ -1,0 +1,9 @@
+<title>nested-rendered-contexts</title>
+<meta attribute="level" type="number">
+<template>
+	<nested-rendered-contexts
+		#if="$.level > 0"
+		:level="$.level - 1"
+	></nested-rendered-contexts>
+	<template #else>Bottom reached!</template>
+</template>
