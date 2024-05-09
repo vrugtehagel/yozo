@@ -1,0 +1,15 @@
+<title>secret-readonly</title>
+<meta property="secret" readonly>
+<meta property="changes" readonly>
+<meta method="set">
+<script>
+$.changes = 0;
+$.secret = 'unguessable';
+when($.$secret).changes().then(() => {
+	$.changes++;
+});
+
+$.set = secret => {
+	$.secret = secret;
+};
+</script>

@@ -1,0 +1,16 @@
+<title>reset-counter-callback-runs</title>
+<meta property="value" readonly>
+<meta form-associated>
+<meta hook="formReset">
+<meta hook="formAssociated">
+<script>
+$.value = -1;
+
+formAssociated(() => {
+	$.value = 0;
+});
+
+formReset(() => {
+	$.value++;
+});
+</script>

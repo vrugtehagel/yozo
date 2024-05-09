@@ -1,0 +1,9 @@
+<title>secret-no-case-conversion</title>
+<meta property="my-secret">
+<meta property="amountOf_changes" readonly>
+<script>
+$.amountOf_changes = 0;
+when($['$my-secret']).changes().then(() => {
+	$.amountOf_changes++;
+});
+</script>

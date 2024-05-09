@@ -1,0 +1,9 @@
+<title>secret-binding</title>
+<meta property="secret">
+<meta property="changes" readonly>
+<script>
+$.changes = 0;
+when($.$secret).changes().then(() => {
+	$.changes++;
+});
+</script>

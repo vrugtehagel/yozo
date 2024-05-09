@@ -1,0 +1,10 @@
+<title>reset-counter-defined</title>
+<meta hook="formReset">
+<meta property="definedCallback">
+<script>
+if(typeof formReset == 'function'){
+	$.definedCallback = true;
+} else {
+	$.definedCallback = false;
+}
+</script>

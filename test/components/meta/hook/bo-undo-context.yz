@@ -1,0 +1,13 @@
+<title>reset-counter-undo-context</title>
+<meta property="value" readonly>
+<meta property="undos" readonly>
+<meta form-associated>
+<meta hook="formReset">
+<script>
+$.value = 0;
+$.undos = 0;
+formReset(() => {
+	$.value++;
+	monitor.add('undo', () => $.undos++);
+});
+</script>
