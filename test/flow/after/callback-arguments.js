@@ -1,6 +1,6 @@
 const { when } = self.yozo;
 
-let amount
+let amount;
 const target = new EventTarget();
 const trigger = (...args) => {
 	amount = args.length;

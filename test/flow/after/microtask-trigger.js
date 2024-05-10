@@ -2,7 +2,7 @@ const { when } = self.yozo;
 
 const target = new EventTarget();
 const trigger = async () => {
-	await 'microtask'
+	await 'microtask';
 	target.dispatchEvent(new CustomEvent('ping'));
 };
 
