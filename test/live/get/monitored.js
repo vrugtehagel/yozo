@@ -13,5 +13,4 @@ call.live.addEventListener('change', () => {
 assert(triggers == 0);
 
 $.foo = 5;
-console.log({ triggers });
 assert(triggers == 1);
