@@ -72,7 +72,7 @@ monitor.add = (name, ...things) => {
 }
 
 monitor.register = (name, registration) => {
-	if(name == 'result') warn`monitor-cannot-register-result` //
+	if(name == 'result') warn`monitor-should-not-register-result` //
 	if(registrations[name]) warn`monitor-registry-already-has-${name}` //
 	if(!registration?.toString().startsWith('class ')) //
 		warn`monitor-${name}-definition-should-be-class` //
@@ -83,10 +83,6 @@ monitor.register = (name, registration) => {
 // We can technically use monitor.register() to register 'live' and 'undo'
 // but this is fewer bytes and does the same thing
 const registrations = {
-	// Prevent "result" from being registered because it's already used
-	// for the return value of monitored calls
-	result: true,
-
 	// Monitor cleanup functions
 	undo: class {
 		#callbacks = []

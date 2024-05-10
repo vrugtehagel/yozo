@@ -32,9 +32,9 @@ const messages = {
 	'monitor-add-$1-not-in-registry': name => `
 		An item was added to "${name}", but "${name}" was not registered.
 		Register it first using monitor.register('${name}', class { … }).`,
-	'monitor-cannot-register-result': () => `
-		"result" cannot be registered as a monitorable.
-		Tracked calls already store their result under this key.`,
+	'monitor-should-not-register-result': () => `
+		"result" should not be registered as a monitorable.
+		Monitored calls already store their result under this key.`,
 	'monitor-registry-already-has-$1': name => `
 		monitor.register('${name}', …) was called, but "${name}" was already registerd.
 		You cannot overwrite an existing registration; re-registrations are ignored.`,
