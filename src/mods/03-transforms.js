@@ -158,20 +158,26 @@ define.register(3, Symbol(), context => {
 					+ '\n\n' //
 				}].findIndex(e=>e())`)
 				transforms.push((meta, clone, scopes) => {
+					let call
 					let connectedIndex
 					const connected = []
-					monitor.add('undo', () => connected.splice(0).map(node => node.remove()))
+					monitor.add('undo', () => call?.undo())
 					effect(() => {
 						const index = getter(...scopes.map(scope => scope[1]))
 						if(index == connectedIndex) return
+						call?.undo()
 						connectedIndex = index
-						connected.splice(0).map(node => node.remove())
 						// Basically just index == -1, i.e. none of the statements match
 						if(!chain[index]) return
-						const rendered = meta.__render(chain[index], scopes)
-						const nodes = rendered.nodeType == 11 ? rendered.childNodes : [rendered]
-						connected.push(...nodes)
-						clone.after(...nodes)
+						call = monitor(['undo'], () => {
+							const rendered = meta.__render(chain[index], scopes)
+							const nodes = rendered.nodeType == 11 ? rendered.childNodes : [rendered]
+							monitor.add('undo', () => {
+								return connected.splice(0).map(node => node.remove())
+							})
+							connected.push(...nodes)
+							clone.after(...nodes)
+						})
 					})
 				})
 			} else {
@@ -268,7 +274,7 @@ define.register(3, Symbol(), context => {
 
 	// Now on a per-instance level, we can actually render stuff
 	const constructor = function(meta){
-		meta.__render = (tree, scopes, scheduler = monitor.ignore) => {
+		meta.__render = (tree, scopes, scheduler = update => update()) => {
 			const transforms = getTransforms(tree, ...scopes.map(scope => scope[0]))
 			// To render a parsed tree, we first get the array of transforms
 			// That's cached, so this work happens once per component registration
