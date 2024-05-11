@@ -1,0 +1,11 @@
+<title>click-counter-internal-cleanup</title>
+<meta attribute="amount" type="number">
+<meta attribute="disabled" type="boolean">
+
+<template mode="open">
+	<template #if="!$.disabled">
+		<button @click="$.amount++">
+			{{ $.amount }} clicks
+		</button>
+	</template>
+</template>
