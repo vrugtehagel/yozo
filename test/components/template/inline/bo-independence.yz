@@ -1,0 +1,7 @@
+<title>greeter-independence</title>
+<meta attribute="greeting" type="string">
+<meta attribute="receiver" type="string">
+
+<template>
+	{{ self.yozo.monitor.ignore(() => $.greeting) }}, {{ $.receiver }}!
+</template>
