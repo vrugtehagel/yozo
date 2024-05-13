@@ -1,0 +1,10 @@
+<title>connect-return-value</title>
+<meta property="returnValue">
+<meta property="triggers">
+<script>
+$.triggers = 0;
+$.returnValue = connected();
+$.returnValue.then(() => {
+	$.triggers++;
+});
+</script>

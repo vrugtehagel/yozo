@@ -1,0 +1,8 @@
+<title>connect-monitored</title>
+<meta property="undos">
+<script>
+$.undos = 0;
+connected(() => {
+	monitor.add('undo', () => $.undos++);
+});
+</script>

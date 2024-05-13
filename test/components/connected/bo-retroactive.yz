@@ -1,0 +1,7 @@
+<title>connect-retroactive</title>
+<meta method="connected">
+<script>
+$.connected = (callback) => {
+	connected().once().then(callback);
+};
+</script>

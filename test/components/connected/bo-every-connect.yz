@@ -1,0 +1,8 @@
+<title>connect-every-connect</title>
+<meta property="count">
+<script>
+$.count = 0;
+connected(() => {
+	$.count++;
+});
+</script>
