@@ -1,0 +1,9 @@
+<title>reverser-arguments</title>
+<meta method="reverse">
+<script>
+$.reverse = (before, after) => {
+	const text = this.textContent;
+	const reversed = [...text].reverse().join('');
+	this.textContent = `${before}${reversed}${after}`;
+};
+</script>

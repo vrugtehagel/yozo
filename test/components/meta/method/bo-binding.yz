@@ -1,0 +1,8 @@
+<title>reverser-binding</title>
+<meta method="reverse">
+<script>
+$.reverse = () => {
+	const text = this.textContent;
+	this.textContent = [...text].reverse().join('');
+};
+</script>
