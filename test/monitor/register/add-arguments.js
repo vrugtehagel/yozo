@@ -1,13 +1,15 @@
 const { monitor } = self.yozo;
 
-monitor.register('customAddArguments', class {
-	result = [];
+monitor.register(
+	'customAddArguments',
+	class {
+		result = [];
 
-	add(...args){
-		this.result.push(args);
-	}
-});
-
+		add(...args) {
+			this.result.push(args);
+		}
+	},
+);
 
 const call = monitor(['customAddArguments'], () => {
 	monitor.add('customAddArguments', 23, 'foo', true);

@@ -2,14 +2,16 @@ const { monitor } = self.yozo;
 
 const reference = {};
 
-monitor.register('customResult', class {
-	result = reference;
+monitor.register(
+	'customResult',
+	class {
+		result = reference;
 
-	add(item){
-		this.result = item;
-	}
-});
-
+		add(item) {
+			this.result = item;
+		}
+	},
+);
 
 const call = monitor(['customResult'], () => {
 	monitor.add('customResult', {});

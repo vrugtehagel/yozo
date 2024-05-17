@@ -2,16 +2,18 @@ const { monitor, until } = self.yozo;
 
 let earlyStop = false;
 let triggers = 0;
-monitor.register('customUntilEarlyStop', class {
-	result = [];
+monitor.register(
+	'customUntilEarlyStop',
+	class {
+		result = [];
 
-	add(){}
+		add() {}
 
-	until(){
-		return earlyStop;
-	}
-});
-
+		until() {
+			return earlyStop;
+		}
+	},
+);
 
 monitor(['customUntilEarlyStop'], async () => {
 	await until('microtask');
