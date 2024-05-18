@@ -86,7 +86,9 @@ class LiveCore {
 		})
 		coreMap.set(this.__$value, this)
 		this.__value = this.__parent.__value?.[this.__key]
-		this.__keys = Object.keys(this.__value ?? {})
+		this.__keys = this.__value instanceof Object
+			? Object.keys(this.__value ?? {})
+			: []
 	}
 
 	__cached(key){
@@ -100,16 +102,16 @@ class LiveCore {
 		const value = this.__value = this.__parent.__value?.[this.__key]
 
 		// Diffing the keys for keychange event
-		if(typeof value == 'object'){
-			const keys = Object.keys(this.__value ?? {})
-			const diff = new Set(this.__keys)
-			this.__keys = keys
-			for(const key of keys)
-				if(diff.has(key)) diff.delete(key)
-				else diff.add(key)
-			if(diff.size)
-				this.__$value.dispatchEvent(new CustomEvent('keychange', {detail: {keys: [...diff]}}))
-		}
+		const keys = this.__value instanceof Object
+			? Object.keys(this.__value ?? {})
+			: []
+		const diff = new Set(this.__keys)
+		this.__keys = keys
+		for(const key of keys)
+			if(diff.has(key)) diff.delete(key)
+			else diff.add(key)
+		if(diff.size)
+			this.__$value.dispatchEvent(new CustomEvent('keychange', {detail: {keys: [...diff]}}))
 
 		// Comparison happens using Object.is because it's "better" than ===
 		// Specifically around NaN and -0

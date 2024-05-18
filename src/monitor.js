@@ -72,7 +72,7 @@ monitor.add = (name, ...things) => {
 }
 
 monitor.register = (name, registration) => {
-	if(name == 'result') warn`monitor-cannot-register-result` //
+	if(name == 'result') warn`monitor-should-not-register-result` //
 	if(registrations[name]) warn`monitor-registry-already-has-${name}` //
 	if(!registration?.toString().startsWith('class ')) //
 		warn`monitor-${name}-definition-should-be-class` //
@@ -83,29 +83,22 @@ monitor.register = (name, registration) => {
 // We can technically use monitor.register() to register 'live' and 'undo'
 // but this is fewer bytes and does the same thing
 const registrations = {
-	// Prevent "result" from being registered because it's already used
-	// for the return value of monitored calls
-	result: true,
-
 	// Monitor cleanup functions
 	undo: class {
 		#callbacks = []
-		#stopped
 
 		// This is what'll be returned from the monitor() calls
 		result = () => {
-			if(this.#stopped) return
-			this.#callbacks.splice(0).map(callback => callback())
-			this.#stopped = true
+			this.#callbacks?.map(callback => callback())
+			this.#callbacks = null
 		}
 		// add() is the only required method for these classes
 		// The registrations would be kinda useless without it anyway
 		add(callback){
-			if(this.#stopped) return callback()
-			this.#callbacks.push(callback)
+			return this.#callbacks?.push(callback) ?? callback()
 		}
 		// Stop until() calls from continuing if the call has been undone
-		until(){ return this.#stopped }
+		until(){ return !this.#callbacks }
 	},
 
 	// Monitor use of live variables for different event types
