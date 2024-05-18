@@ -1,5 +1,24 @@
 [
     {
+        "number": "0.4.3",
+        "hash": "xjHyesnwdXr6ve3BqLDOrg==",
+        "timestamp": 1716033289291,
+        "size": {
+            "gzip": 4677,
+            "brotli": 4293
+        },
+        "changelog": {
+            "breaking": [],
+            "improvements": [
+                "It is now possible (though not recommended) to register 'result' as monitorable type"
+            ],
+            "bugs": [
+                "Fixed an issue where flows created in nested contexts were not always properly cleaned up",
+                "The keychange event is now also fired when changing between objects and non-objects"
+            ]
+        }
+    },
+    {
         "number": "0.4.2",
         "hash": "wC/R8Woaw4ODwUAN3q8P8w==",
         "timestamp": 1714669997122,
