@@ -224,7 +224,7 @@ define.register(3, Symbol(), context => {
 						return (meta, clone, scopes) => effect(() => {
 							const value = getter.call(clone, ...scopes.map(scope => scope[1]))
 							if(name.slice(0, 6) == 'class+')
-								clone.classList.toggle(name.slice(6), value)
+								clone.classList.toggle(name.slice(6), value ?? '')
 							else if(value == null) clone.removeAttribute(name)
 							else clone.setAttribute(name, value)
 						})
