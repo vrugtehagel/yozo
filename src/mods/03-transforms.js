@@ -196,10 +196,15 @@ define.register(3, Symbol(), context => {
 				if(looseOther) //
 					warn`transform-loose-flow-control-${looseOther}` //
 
-				const usesClassList = [...node.attributes] //
-					.some(({name}) => name.startsWith('.class-list')) //
-				if(node.hasAttribute(':class') && usesClassList) //
-					warn`transform-mixing-class-and-class-list` //
+				const usesAdditiveClasses = [...node.attributes] //
+					.some(({name}) => name.startsWith(':class+')) //
+				if(node.hasAttribute(':class') && usesAdditiveClasses) //
+					warn`transform-mixing-static-class-and-additive` //
+
+				const usesStyleProperties = [...node.attributes] //
+					.some(({name}) => name.startsWith('.style.')) //
+				if(node.hasAttribute(':style') && usesStyleProperties) //
+					warn`transform-mixing-style-attribute-and-property` //
 
 				// Now we know the node is a non-flow control element
 				// That means we can start parsing the attributes!
