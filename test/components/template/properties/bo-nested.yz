@@ -1,0 +1,11 @@
+<title>colored-text-nested</title>
+<meta attribute="color" type="string" default="black">
+<meta attribute="bgcolor" type="string" default="transparent">
+<template mode="open">
+	<span
+		.first-element-child.style.color="$.color"
+		.style.background-color="$.bgcolor"
+	>
+		<slot></slot>
+	</span>
+</template>

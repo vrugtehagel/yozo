@@ -1,0 +1,7 @@
+<title>togglable-boolean</title>
+<meta attribute="visibility" type="string">
+<template mode="open">
+	<span .hidden="$.visibility == 'hidden'">
+		<slot></slot>
+	</span>
+</template>
