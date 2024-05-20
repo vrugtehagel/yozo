@@ -221,11 +221,27 @@ define.register(3, Symbol(), context => {
 							if(value == null) clone.removeAttribute(name)
 							else clone.setAttribute(name, value)
 						})
+					} else if(attribute.name[0] == '+'){
+						// Toggle individual class names.
+						// Basically to avoid complex :class expressions.
+						// Lets us do +foo="condition"
+						const name = attribute.name.slice(1)
+						const getter = new Function(...scopeNames, `return(${
+							`\n\n\n// The <${context.__title}> component: a ${attribute.name} class on a ${node.localName}\n\n` + //
+							attribute.value
+							+ '\n\n' //
+						})`)
+						node.removeAttribute(attribute.name)
+						return (meta, clone, scopes) => effect(() => {
+							clone.classList.toggle(
+								name,
+								getter.call(clone, ...scopes.map(scope => scope[1]))
+							)
+						})
 					} else if(attribute.name[0] == '.'){
 						// Property attributes. We allow for things such as
 						//	.parent-node.style.box-shadow="…"
 						// So we chop it up at the periods and see what we get
-						const last = attribute.name.slice(1).split('.').at(-1)
 						const chain = attribute.name.slice(1).split('.').map(camelCase)
 						const getter = new Function(...scopeNames, `return(${
 							`\n\n\n// The <${context.__title}> component: a ${attribute.name} property on a ${node.localName}\n\n` + //
@@ -240,12 +256,7 @@ define.register(3, Symbol(), context => {
 							let current = clone
 							properties.map(property => current = current?.[property])
 							if(current == null) return
-							// Special behavior for DOMTokenList objects (basically, just
-							// for the class and part attributes).
-							// With this, we can do .class-list.foo-bar="true" to manage
-							// individual class names
-							if(current instanceof DOMTokenList) current.toggle(last, value)
-							else current[tail] = value
+							current[tail] = value
 						})
 					} else if(attribute.name[0] == '@'){
 						const type = attribute.name.slice(1)
