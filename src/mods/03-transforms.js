@@ -218,25 +218,10 @@ define.register(3, Symbol(), context => {
 						node.removeAttribute(attribute.name)
 						return (meta, clone, scopes) => effect(() => {
 							const value = getter.call(clone, ...scopes.map(scope => scope[1]))
-							if(value == null) clone.removeAttribute(name)
+							if(name.slice(0, 6) == 'class+')
+								clone.classList.toggle(name.slice(6), value)
+							else if(value == null) clone.removeAttribute(name)
 							else clone.setAttribute(name, value)
-						})
-					} else if(attribute.name[0] == '+'){
-						// Toggle individual class names.
-						// Basically to avoid complex :class expressions.
-						// Lets us do +foo="condition"
-						const name = attribute.name.slice(1)
-						const getter = new Function(...scopeNames, `return(${
-							`\n\n\n// The <${context.__title}> component: a ${attribute.name} class on a ${node.localName}\n\n` + //
-							attribute.value
-							+ '\n\n' //
-						})`)
-						node.removeAttribute(attribute.name)
-						return (meta, clone, scopes) => effect(() => {
-							clone.classList.toggle(
-								name,
-								getter.call(clone, ...scopes.map(scope => scope[1]))
-							)
 						})
 					} else if(attribute.name[0] == '.'){
 						// Property attributes. We allow for things such as
