@@ -1,0 +1,10 @@
+<title>custom-link-classes</title>
+<meta attribute="to" type="string" default="#">
+<template mode=open>
+	<a
+		:href="$.to"
+		class="link"
+		:class+is-yozo="$.to.startsWith('https://yozo.ooo/')"
+		:class+secure="$.to.startsWith('https://')"
+	><slot></slot></a>
+</template>
