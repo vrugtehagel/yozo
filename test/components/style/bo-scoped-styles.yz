@@ -1,0 +1,9 @@
+<title>italic-scoped-styles</title>
+<template mode="open">
+	<p>Italic text</p>
+</template>
+<style>
+p {
+	font-style: italic;
+}
+</style>

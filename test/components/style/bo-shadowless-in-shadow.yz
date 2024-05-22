@@ -1,0 +1,9 @@
+<title>italic-shadowless-in-shadow</title>
+<template>
+	<p>Italic text</p>
+</template>
+<style>
+p {
+	font-style: italic;
+}
+</style>
