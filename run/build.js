@@ -8,7 +8,7 @@ import { encodeBase64 } from 'std/encoding/base64.ts'
 // Import Yozo so that Deno's --watch flag lets us rebuild on change
 import '../src/index.js'
 
-const outdir = 'dist'
+const outdir = 'latest'
 
 // For the lib build, we ignore all lines with a // comment in it.
 // That means we can have dev-only code as long as we end lines with a comment.
@@ -27,7 +27,7 @@ async function buildLib(){
 	const logLevel = 'warning'
 	const minify = true
 	const mangleProps = /^__/
-	const entryPoints = [{in: `${dir}/index.js`, out: 'lib-latest'}]
+	const entryPoints = [{in: `${dir}/index.js`, out: 'lib'}]
 	const options = {outdir, bundle, logLevel, entryPoints, minify, mangleProps}
 	await esbuild.build(options)
 	esbuild.stop()
@@ -38,21 +38,21 @@ async function buildLib(){
 async function buildDev(){
 	const bundle = true
 	const logLevel = 'warning'
-	const entryPoints = [{in: `src/index.js`, out: 'dev-latest'}]
+	const entryPoints = [{in: `src/index.js`, out: 'dev'}]
 	await esbuild.build({outdir, bundle, logLevel, entryPoints})
 	esbuild.stop()
 }
 
-export async function build({ noVerify } = {}){
-	await Deno.remove(`${outdir}/dev-latest.js`).catch(() => null)
-	await Deno.remove(`${outdir}/lib-latest.js`).catch(() => null)
+export async function build(options = {}){
+	await Deno.remove(`${outdir}/dev.js`).catch(() => null)
+	await Deno.remove(`${outdir}/lib.js`).catch(() => null)
 	await buildDev()
 	await buildLib()
-	if(!noVerify) await verify()
-	const args = ['--stdout', `${outdir}/lib-latest.js`]
+	if(options.verify) await verify()
+	const args = ['--stdout', `${outdir}/lib.js`]
 	const command = new Deno.Command('gzip', {args})
 	const result = await command.output().catch(() => null)
-	if(!result) throw Error('Failed to gzip lib-latest.js.')
+	if(!result) throw Error('Failed to gzip lib.js.')
 	const size = result.stdout.length
 	const color = size >= 5000 ? red : size >= 4750 ? yellow : green
 	const sizeText = `${color(size.toString())}b gzipped`
@@ -71,7 +71,7 @@ export async function verify(){
 	const dev = `archive/dev-${version.number}.js`
 	const devExists = await Deno.stat(dev).catch(() => null)
 	if(!devExists) throw Error(`"${dev}" doesn't exist`)
-	const bytes = await Deno.readFile(`${outdir}/lib-latest.js`)
+	const bytes = await Deno.readFile(`${outdir}/lib.js`)
 	const hash = encodeBase64(await crypto.subtle.digest('MD5', bytes))
 	const hashMatches = version.hash == hash
 	if(!hashMatches) throw Error(`Checksum mismatch for ${version.number}`)
@@ -79,6 +79,6 @@ export async function verify(){
 
 if(import.meta.main){
 	const args = parse(Deno.args)
-	const noVerify = args['no-verify']
-	await build({noVerify})
+	const verify = args['verify']
+	await build({verify})
 }

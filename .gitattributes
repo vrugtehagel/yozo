@@ -1,2 +1,3 @@
 *.yz linguist-language=html
 archive/* linguist-generated
+latest/* linguist-generated

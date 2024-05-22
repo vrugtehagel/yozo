@@ -8,10 +8,11 @@ This is the main repository for Yozo, the tiniest no-build developer-first Web C
 ## Getting started
 
 To do any development on Yozo, first make sure you have [Deno](https://deno.com/) installed. Then, there are three tasks available:
-- `deno task build` builds both Yozo's lib and dev builds, and outputs them in `dist/lib-latest.js` and `dist/dev-latest.js`. The former is minified and tiny, the latter includes better errors and warnings, and is not minified. By default, it verifies the hash against the latest version; to disable this, use the `--no-verify` flag.
-- `deno task watch` builds Yozo when a file in `src/` has changed. Unlike the build script, it does not verify the hash against the latest version (because that would be annoying).
-- `deno task archive` creates a new version. It asks a few questions, archives the versioned builds, and updates `versions.json` with the relevant data for the new version.
+- `deno task build` builds both Yozo's lib and dev builds, and outputs them in `latest/lib.js` and `latest/dev.js`. The former is minified and tiny, the latter includes better errors and warnings, and is not minified. There's an option `--verify` flag which verifies the hash against the latest version; this is mostly useful for automated processes, not so much for local development.
+- `deno task watch` runs the build process for Yozo whenever a file in `src/` has changed.
+- `deno task archive` creates a new version. It asks a few questions, archives the versioned builds, and updates `versions.json` with the relevant data for the new version. When creating a new version, both the new versions in `archive/` and `latest/` _and_ the updated `versions.json` must be pushed (usually to the `canary` branch).
 - `deno task test` runs the test suite. It is equivalent to `deno test --allow-read`, but I always forget the flag when using `deno test` so there's a task for it too.
+- `deno fmt` formats `test/` to a consistent format, since they are to be displayed on the site and are supposed to be readable. The source is not formatted because it would become an unreadable mess if it was (more than it already is).
 
 ## About the codebase
 
@@ -22,6 +23,7 @@ Some practical notes:
 - Properties starting with `__` will be mangled, i.e. rewritten by esbuild. Use to your advantage whenever possible.
 - Error and warning messages are extracted to `src/help.js`, so that verbose messages don't clutter up the logic.
 - Yozo's individual utilities are essentially one-per-file; everything under `live` is defined in `src/live.js`, then `when` is defined in `src/when.js`, etcetera. "Mods" are for component definitions specifically; each mod concerns itself with one (or more) aspects of how users may define custom elements.
+- The latest Yozo build is kept in `latest/`. This version should generally be the same as the latest one found in `archive/`, though may deviate when doing local development on Yozo. This allows for local development for both Yozo and the site simltaneously, as well as running the site's build process in a sandboxed environment (such as a GitHub action) without needing to rebuild Yozo.
 
 ## Tests
 

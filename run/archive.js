@@ -10,8 +10,8 @@ if(!import.meta.main)
 	throw Error('The archive script should be run as "deno task archive"')
 
 // Must match with what the build script does
-const lib = 'dist/lib-latest.js'
-const dev = 'dist/dev-latest.js'
+const lib = 'latest/lib.js'
+const dev = 'latest/dev.js'
 
 const printOk = message => console.log(`${green('✓')} ${message}`)
 const printInfo = message => console.log(`${gray('?')} ${message}`)

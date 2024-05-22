@@ -1,6 +1,6 @@
 {
 	"tasks": {
-		"watch": "deno run -A --watch run/build.js --no-verify",
+		"watch": "deno run -A --watch run/build.js",
 		"build": "deno run -A run/build.js",
 		"archive": "deno run -A run/archive.js",
 		"test": "deno test --allow-read"
