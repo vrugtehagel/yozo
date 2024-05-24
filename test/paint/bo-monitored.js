@@ -12,5 +12,5 @@ await 'microtask'
 call.undo();
 
 await new Promise(window.requestAnimationFrame);
+await new Promise(window.requestAnimationFrame);
 assert(triggers == 0);
-
