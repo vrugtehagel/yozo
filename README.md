@@ -8,7 +8,7 @@ This is the main repository for Yozo, the tiniest no-build developer-first Web C
 ## Getting started
 
 To do any development on Yozo, first make sure you have [Deno](https://deno.com/) installed. Then, there are three tasks available:
-- `deno task build` builds both Yozo's lib and dev builds, and outputs them in `latest/lib.js` and `latest/dev.js`. The former is minified and tiny, the latter includes better errors and warnings, and is not minified. There's an option `--verify` flag which verifies the hash against the latest version; this is mostly useful for automated processes, not so much for local development.
+- `deno task build` builds both Yozo's lib and dev builds, and outputs them in `latest/lib.js` and `latest/dev.js`. The former is minified and tiny, the latter includes better errors and warnings, and is not minified. There's an optional `--verify` flag which verifies the hash against the latest version; this is mostly useful for automated processes, not so much for local development.
 - `deno task watch` runs the build process for Yozo whenever a file in `src/` has changed.
 - `deno task archive` creates a new version. It asks a few questions, archives the versioned builds, and updates `versions.json` with the relevant data for the new version. When creating a new version, both the new versions in `archive/` and `latest/` _and_ the updated `versions.json` must be pushed (usually to the `canary` branch).
 - `deno task test` runs the test suite. It is equivalent to `deno test --allow-read`, but I always forget the flag when using `deno test` so there's a task for it too.
