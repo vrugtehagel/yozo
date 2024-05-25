@@ -8,9 +8,8 @@ const call = monitor(['undo'], () => {
 	});
 });
 
-await 'microtask'
+await 'microtask';
 call.undo();
 
 await new Promise(window.requestAnimationFrame);
 assert(triggers == 0);
-
