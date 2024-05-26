@@ -1,5 +1,23 @@
 [
     {
+        "number": "0.5.0",
+        "hash": "52VW5+sQB9t4EePHgbMIXw==",
+        "timestamp": 1716717201504,
+        "size": {
+            "gzip": 4673,
+            "brotli": 4293
+        },
+        "changelog": {
+            "breaking": [
+                "Changed class syntax from .class-list.name to :class+name"
+            ],
+            "improvements": [
+                "Better warning messages for mixing incompatible attributes (dev build only)"
+            ],
+            "bugs": []
+        }
+    },
+    {
         "number": "0.4.3",
         "hash": "xjHyesnwdXr6ve3BqLDOrg==",
         "timestamp": 1716033289291,
