@@ -19,5 +19,5 @@ jobs:
       with:
         deno-version: v1.x
     - run: deno task test
-    - if: ${{ github.ref == 'main' }}
+    - if: github.ref == 'refs/heads/main'
       run: deno task build --verify
