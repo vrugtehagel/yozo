@@ -14,6 +14,7 @@ import { monitor } from './monitor.js'
 // So, all that to say; the definer argument is a function that'll receive
 // a map of element name -> collector functions.
 
+
 export const define = definer => {
 	const context = {
 		// The exposed properties to be used in the component logic

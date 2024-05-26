@@ -2,11 +2,11 @@ import { define } from './define.js'
 import { camelCase } from './utils.js'
 
 
-// register() and register.auto()
-// register() takes a URL, fetches it as text, parses it as HTML, and
-// then uses the define() function to register the component definition
-
 const registered = new Map
+/**
+ * Register a component from a URL to a component definition.
+ * {@link https://yozo.ooo/docs/register/}
+ */
 export const register = url => {
 	// Prevent re-registration of the same URL, regardless of whether
 	// the registration succeeded or not
@@ -34,6 +34,11 @@ export const register = url => {
 // meddling with a setup. Library authors should register() directly.
 const autoRegistered = new Set
 let find
+
+/**
+ * Automatically discover and register new elements.
+ * {@link https://yozo.ooo/docs/register/auto/}
+ */
 register.auto = finder => {
 	if(find) return
 	find = finder

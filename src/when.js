@@ -3,8 +3,15 @@ import { Flow } from './flow.js'
 import { camelCase } from './utils.js'
 
 
-// Turn event listeners and observers into flows
+/**
+ * Turn event listeners and observers into flows
+ * {@link https://yozo.ooo/docs/when/}
+ */
 export const when = (...targets) => new Proxy({
+	/**
+	 * Turn event listeners into flows
+	 * {@link https://yozo.ooo/docs/when/}
+	 */
 	does: (type, options) => {
 		let handler
 		return new Flow(trigger => {
@@ -15,6 +22,10 @@ export const when = (...targets) => new Proxy({
 		}).cleanup(() => targets
 			.map(target => target.removeEventListener(type, handler, options)))
 	},
+	/**
+	 * Turn observers into flows
+	 * {@link https://yozo.ooo/docs/when/observes/}
+	 */
 	observes: (type, options) => {
 		let observer
 		return new Flow(trigger => {

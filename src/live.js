@@ -14,6 +14,11 @@ import { monitor } from './monitor.js'
 // second. The root ones obviously don't have parents so we're faking the
 // parent LiveCore with just {__value: {$: …}}
 // The $ key is not really required, could be anything
+
+/**
+ * Create a live variable.
+ * {@link https://yozo.ooo/docs/live/}
+ */
 export const live = thing =>
 	new LiveCore({__value: {$: live.get(thing)}}, '$').__$value
 
@@ -141,6 +146,10 @@ class LiveCore {
 	}
 }
 
+/**
+ * Unwrap a live variable to retrieve its value.
+ * {@link https://yozo.ooo/docs/live/get/}
+ */
 live.get = ($live, key) => {
 	const core = coreMap.get($live)
 	if(!core) return key == null ? $live : $live[key]
@@ -155,6 +164,10 @@ live.get = ($live, key) => {
 	return core.__value
 }
 
+/**
+ * Set the underlying value of a live variable.
+ * {@link https://yozo.ooo/docs/live/set/}
+ */
 live.set = ($live, value) => {
 	const core = coreMap.get($live)
 	return !!core?.__alter(() => {
@@ -164,6 +177,10 @@ live.set = ($live, value) => {
 	})
 }
 
+/**
+ * Delete a live variable from its parent object.
+ * {@link https://yozo.ooo/docs/live/delete/}
+ */
 live.delete = ($live, value) => {
 	const core = coreMap.get($live)
 	return !!core?.__alter(() => {
@@ -172,7 +189,10 @@ live.delete = ($live, value) => {
 	})
 }
 
-// Link one live variable to another, to keep state in-sync
+/**
+ * Link a live variable to a a calculation, input element, or other data.
+ * {@link https://yozo.ooo/docs/live/link/}
+ */
 live.link = ($live, thing) => {
 	if(!coreMap.has($live)) //
 		if(access.recent) error`live-link-target-${access.recent}-not-live` //

@@ -7,7 +7,10 @@ import { live } from './live.js'
 // This is where monitored contexts go
 let context
 
-// Set up a monitored context for certain types
+/**
+ * Set up a monitored context for certain types.
+ * {@link https://yozo.ooo/docs/monitor/}
+ */
 export const monitor = (names, callback) => {
 	// We need to be mindful of the current monitored context
 	// and restore it after this one is done
@@ -32,6 +35,10 @@ export const monitor = (names, callback) => {
 	return call
 }
 
+/**
+ * Resumes the monitored context after its argument resolves.
+ * {@link https://yozo.ooo/docs/monitor/until/}
+ */
 export const until = thing => {
 	if(!context) return thing
 	// It's a bit difficult for until() to "catch" the monitored context
@@ -60,17 +67,25 @@ export const until = thing => {
 	})
 }
 
-// Basically equivalent to monitoring for nothing
-// because it creates a new monitoring context until it returns
+/**
+ * Ignore the current monitored context for the duration of the callback.
+ * {@link https://yozo.ooo/docs/monitor/ignore/}
+ */
 monitor.ignore = callback => monitor([], callback).result
 
-// context holds the instances for registered classes, aggregating the
-// monitored data. We can add an item by calling .add() on those
+/**
+ * Adds an item of a certain type to the current monitored context.
+ * {@link https://yozo.ooo/docs/monitor/add/}
+ */
 monitor.add = (name, ...things) => {
 	if(!registrations[name]) warn`monitor-add-${name}-not-in-registry` //
 	context?.[name]?.add(...things)
 }
 
+/**
+ * Register a new type to be monitored.
+ * {@link https://yozo.ooo/docs/monitor/register/}
+ */
 monitor.register = (name, registration) => {
 	if(name == 'result') warn`monitor-should-not-register-result` //
 	if(registrations[name]) warn`monitor-registry-already-has-${name}` //

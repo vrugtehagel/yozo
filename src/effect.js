@@ -3,7 +3,10 @@ import { monitor } from './monitor.js'
 import { when } from './when.js'
 
 
-// Listen for changes in live variable and re-run when something changes
+/**
+ * Run an effect, which re-runs whenever its live dependencies change.
+ * {@link https://yozo.ooo/docs/effect/}
+ */
 export const effect = (callback, schedule = queueMicrotask) => {
 	let call
 	const run = () => schedule(() => flow.now())

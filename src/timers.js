@@ -1,16 +1,26 @@
 import { Flow } from './flow.js'
 
 
-// Converting timers to flows
+/**
+ * Create a `Flow` equivalent to a `setInterval()`.
+ * {@link https://yozo.ooo/docs/interval/}
+ */
 export const interval = duration => {
 	let id
 	return new Flow(trigger => id = setInterval(trigger, duration))
 		.cleanup(() => clearInterval(id))
 }
 
+/**
+ * Create a `Flow` equivalent to a `setTimeout()`.
+ * {@link https://yozo.ooo/docs/timeout/}
+ */
 export const timeout = duration => interval(duration).once()
 
-// Wrapper for a nested requestAnimationFrame()
+/**
+ * Create a `Flow` equivalent to a nested `requestAnimationFrame()`.
+ * {@link https://yozo.ooo/docs/frame/}
+ */
 export const frame = () => {
 	let id
 	return new Flow(trigger => {
@@ -22,7 +32,10 @@ export const frame = () => {
 	}).cleanup(() => cancelAnimationFrame(id))
 }
 
-// Wait for browser to have painted; specifically, wait two animation frames
+/**
+ * Create a `Flow` that triggers once after the browser has painted.
+ * {@link https://yozo.ooo/docs/paint/}
+ */
 export const paint = () => {
 	// Bit of a weird way to do it but this basically means frame().twice()
 	let count = 0
