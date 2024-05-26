@@ -89,9 +89,12 @@ Similar warnings after this one will be suppressed`);
     "transform-if-found-loose-$1": (statement) => `
 		Found an "${statement}" attribute without an #if.
 		Make sure the element follows an element with an #if or #else-if.`,
-    "transform-mixing-class-and-class-list": () => `
-		Found both a .class-list and a :class attribute on a single element.
+    "transform-mixing-static-class-and-additive": () => `
+		Found both a :class+name and a :class expression on a single element.
 		:class overwrites all classes when it updates, so mixing them is not advised.`,
+    "transform-mixing-style-attribute-and-property": () => `
+		Found both a .style.property and a :style expression on a single element.
+		:style overwrites all inline styles when it updates, so mixing them is not advised.`,
     "transform-elseif-instead-of-else-if": () => `
 		Found an "#elseif" attribute; that should probably be "#else-if".`,
     "transform-loose-flow-control-$1": (flowControl) => `
@@ -940,9 +943,12 @@ Similar warnings after this one will be suppressed`);
           const looseOther = flowControlAttributes.find((name) => !["#else-if", "#else", "#elseif"].includes(name));
           if (looseOther)
             warn`transform-loose-flow-control-${looseOther}`;
-          const usesClassList = [...node.attributes].some(({ name }) => name.startsWith(".class-list"));
-          if (node.hasAttribute(":class") && usesClassList)
-            warn`transform-mixing-class-and-class-list`;
+          const usesAdditiveClasses = [...node.attributes].some(({ name }) => name.startsWith(":class+"));
+          if (node.hasAttribute(":class") && usesAdditiveClasses)
+            warn`transform-mixing-static-class-and-additive`;
+          const usesStyleProperties = [...node.attributes].some(({ name }) => name.startsWith(".style."));
+          if (node.hasAttribute(":style") && usesStyleProperties)
+            warn`transform-mixing-style-attribute-and-property`;
           const shorthands = [...node.attributes].map((attribute) => {
             if (attribute.name[0] == ":") {
               const name = attribute.name.slice(1);
@@ -956,13 +962,14 @@ Similar warnings after this one will be suppressed`);
               node.removeAttribute(attribute.name);
               return (meta, clone, scopes) => effect(() => {
                 const value = getter.call(clone, ...scopes.map((scope) => scope[1]));
-                if (value == null)
+                if (name.slice(0, 6) == "class+")
+                  clone.classList.toggle(name.slice(6), value ?? "");
+                else if (value == null)
                   clone.removeAttribute(name);
                 else
                   clone.setAttribute(name, value);
               });
             } else if (attribute.name[0] == ".") {
-              const last = attribute.name.slice(1).split(".").at(-1);
               const chain = attribute.name.slice(1).split(".").map(camelCase);
               const getter = new Function(...scopeNames, `return(${`
 
@@ -980,10 +987,7 @@ Similar warnings after this one will be suppressed`);
                 properties.map((property) => current = current?.[property]);
                 if (current == null)
                   return;
-                if (current instanceof DOMTokenList)
-                  current.toggle(last, value);
-                else
-                  current[tail] = value;
+                current[tail] = value;
               });
             } else if (attribute.name[0] == "@") {
               const type = attribute.name.slice(1);
