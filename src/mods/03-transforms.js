@@ -196,10 +196,15 @@ define.register(3, Symbol(), context => {
 				if(looseOther) //
 					warn`transform-loose-flow-control-${looseOther}` //
 
-				const usesClassList = [...node.attributes] //
-					.some(({name}) => name.startsWith('.class-list')) //
-				if(node.hasAttribute(':class') && usesClassList) //
-					warn`transform-mixing-class-and-class-list` //
+				const usesAdditiveClasses = [...node.attributes] //
+					.some(({name}) => name.startsWith(':class+')) //
+				if(node.hasAttribute(':class') && usesAdditiveClasses) //
+					warn`transform-mixing-static-class-and-additive` //
+
+				const usesStyleProperties = [...node.attributes] //
+					.some(({name}) => name.startsWith('.style.')) //
+				if(node.hasAttribute(':style') && usesStyleProperties) //
+					warn`transform-mixing-style-attribute-and-property` //
 
 				// Now we know the node is a non-flow control element
 				// That means we can start parsing the attributes!
@@ -218,14 +223,15 @@ define.register(3, Symbol(), context => {
 						node.removeAttribute(attribute.name)
 						return (meta, clone, scopes) => effect(() => {
 							const value = getter.call(clone, ...scopes.map(scope => scope[1]))
-							if(value == null) clone.removeAttribute(name)
+							if(name.slice(0, 6) == 'class+')
+								clone.classList.toggle(name.slice(6), value ?? '')
+							else if(value == null) clone.removeAttribute(name)
 							else clone.setAttribute(name, value)
 						})
 					} else if(attribute.name[0] == '.'){
 						// Property attributes. We allow for things such as
 						//	.parent-node.style.box-shadow="…"
 						// So we chop it up at the periods and see what we get
-						const last = attribute.name.slice(1).split('.').at(-1)
 						const chain = attribute.name.slice(1).split('.').map(camelCase)
 						const getter = new Function(...scopeNames, `return(${
 							`\n\n\n// The <${context.__title}> component: a ${attribute.name} property on a ${node.localName}\n\n` + //
@@ -240,12 +246,7 @@ define.register(3, Symbol(), context => {
 							let current = clone
 							properties.map(property => current = current?.[property])
 							if(current == null) return
-							// Special behavior for DOMTokenList objects (basically, just
-							// for the class and part attributes).
-							// With this, we can do .class-list.foo-bar="true" to manage
-							// individual class names
-							if(current instanceof DOMTokenList) current.toggle(last, value)
-							else current[tail] = value
+							current[tail] = value
 						})
 					} else if(attribute.name[0] == '@'){
 						const type = attribute.name.slice(1)

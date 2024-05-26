@@ -87,9 +87,12 @@ const messages = {
 	'transform-if-found-loose-$1': statement => `
 		Found an "${statement}" attribute without an #if.
 		Make sure the element follows an element with an #if or #else-if.`,
-	'transform-mixing-class-and-class-list': () => `
-		Found both a .class-list and a :class attribute on a single element.
+	'transform-mixing-static-class-and-additive': () => `
+		Found both a :class+name and a :class expression on a single element.
 		:class overwrites all classes when it updates, so mixing them is not advised.`,
+	'transform-mixing-style-attribute-and-property': () => `
+		Found both a .style.property and a :style expression on a single element.
+		:style overwrites all inline styles when it updates, so mixing them is not advised.`,
 	'transform-elseif-instead-of-else-if': () => `
 		Found an "#elseif" attribute; that should probably be "#else-if".`,
 	'transform-loose-flow-control-$1': flowControl => `
