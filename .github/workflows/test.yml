@@ -1,0 +1,23 @@
+name: Test
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Run tests
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: denoland/setup-deno@v1
+      with:
+        deno-version: v1.x
+    - run: deno task test
+    - if: "github.ref == 'main'"
+      run: deno task build --verify
