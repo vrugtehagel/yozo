@@ -8,7 +8,10 @@ effect(() => {
 await 'microtask';
 assert(count == 1);
 
-$.foo = 24;
+$.foo = { bar: 'qux' };
 await 'microtask';
+assert(count == 2);
 
+$.$foo.bar = 'quux';
+await 'microtask';
 assert(count == 2);

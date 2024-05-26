@@ -53,7 +53,7 @@ class LiveCore {
 				if(target[key]) return target[key].bind(target)
 
 				// Since a value was directly read, we add for 'deepchange' events
-				monitor.add('live', this.__cached(key).__$value, 'deepchange')
+				monitor.add('live', this.__cached(key).__$value, 'change')
 				if(coreMap.has(this.__value?.[key])) //
 					warnOnce`live-property-${key}-doubled` //
 				return this.__value?.[key]
@@ -150,7 +150,7 @@ live.get = ($live, key) => {
 			warnOnce`live-property-${key}-doubled` //
 		return core.__cached(key).__value
 	}
-	monitor.add('live', $live, 'deepchange')
+	monitor.add('live', $live, 'change')
 	if(coreMap.has(core.__value)) warnOnce`live-property-${key}-doubled` //
 	return core.__value
 }
