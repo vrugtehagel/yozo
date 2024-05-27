@@ -1,6 +1,6 @@
 const { live } = self.yozo;
 
-const object = { foo: 23 }
+const object = { foo: 23 };
 Object.defineProperty(object, 'qux', { value: 7 });
 
 const $ = live(object);

@@ -1,0 +1,9 @@
+<title>spoiler-not-when-disconnected</title>
+<template mode="open">
+	<span
+		@click="$.revealed = true"
+		:class+revealed="$.revealed"
+	>
+		<slot></slot>
+	</span>
+</template>

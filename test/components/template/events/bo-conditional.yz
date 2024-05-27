@@ -1,0 +1,10 @@
+<title>spoiler-conditional</title>
+<template mode="open">
+	<span
+		#if="true"
+		@click="if(!$.revealed){ $.revealed = true }"
+		:class+revealed="$.revealed"
+	>
+		<slot></slot>
+	</span>
+</template>

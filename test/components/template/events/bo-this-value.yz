@@ -1,0 +1,9 @@
+<title>spoiler-this-value</title>
+<template mode="open">
+	<span
+		@click="$.revealed = this.dataset.reveal"
+		:class+revealed="$.revealed"
+	>
+		<slot></slot>
+	</span>
+</template>

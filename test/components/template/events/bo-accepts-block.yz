@@ -1,0 +1,9 @@
+<title>spoiler-accepts-block</title>
+<template mode="open">
+	<span
+		@click="if(!$.revealed){ $.revealed = true }"
+		:class+revealed="$.revealed"
+	>
+		<slot></slot>
+	</span>
+</template>

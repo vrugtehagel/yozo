@@ -1,0 +1,9 @@
+<title>spoiler-event-argument</title>
+<template mode="open">
+	<span
+		@reveal="$.revealed = event.detail"
+		:class+revealed="$.revealed"
+	>
+		<slot></slot>
+	</span>
+</template>
