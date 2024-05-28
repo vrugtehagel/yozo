@@ -3,7 +3,7 @@
 	<ul>
 		<li
 			#for="drink of $.drinks"
-			.class-list.is-tea="drink == 'tea'"
+			:class+is-tea="drink == 'tea'"
 		>
 			{{ drink }}
 		</li>
