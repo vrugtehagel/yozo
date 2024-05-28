@@ -1,6 +1,6 @@
-import { red, green, gray } from 'std/fmt/colors.ts'
-import { crypto } from 'std/crypto/mod.ts'
-import { encodeBase64 } from 'std/encoding/base64.ts'
+import { red, green, gray } from '@std/fmt/colors'
+import { crypto } from '@std/crypto'
+import { encodeBase64 } from '@std/encoding'
 import { build } from './build.js'
 
 

@@ -1,4 +1,4 @@
-import { walk } from 'std/fs/mod.ts'
+import { walk } from '@std/fs'
 import '../src/index.js'
 
 

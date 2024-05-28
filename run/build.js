@@ -1,9 +1,9 @@
-import { green, yellow, red } from 'std/fmt/colors.ts'
-import { walk, copy } from 'std/fs/mod.ts'
-import { parse } from 'std/flags/mod.ts'
-import * as esbuild from 'esbuild/mod.js'
-import { crypto } from 'std/crypto/mod.ts'
-import { encodeBase64 } from 'std/encoding/base64.ts'
+import { green, yellow, red } from '@std/fmt/colors'
+import { walk, copy } from '@std/fs'
+import { parseArgs } from '@std/cli'
+import * as esbuild from 'esbuild'
+import { crypto } from '@std/crypto'
+import { encodeBase64 } from '@std/encoding'
 
 // Import Yozo so that Deno's --watch flag lets us rebuild on change
 import '../src/index.js'
@@ -78,7 +78,7 @@ export async function verify(){
 }
 
 if(import.meta.main){
-	const args = parse(Deno.args)
+	const args = parseArgs(Deno.args)
 	const verify = args['verify']
 	await build({verify})
 }
