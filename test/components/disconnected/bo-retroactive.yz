@@ -1,0 +1,7 @@
+<title>disconnect-retroactive</title>
+<meta method="disconnected">
+<script>
+$.disconnected = (callback) => {
+	disconnected().once().then(callback);
+};
+</script>

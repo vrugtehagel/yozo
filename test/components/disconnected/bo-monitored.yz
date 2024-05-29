@@ -1,0 +1,8 @@
+<title>disconnect-monitored</title>
+<meta property="undos">
+<script>
+$.undos = 0;
+disconnected(() => {
+	monitor.add('undo', () => $.undos++);
+});
+</script>

@@ -1,0 +1,8 @@
+<title>disconnect-every-disconnect</title>
+<meta property="count">
+<script>
+$.count = 0;
+disconnected(() => {
+	$.count++;
+});
+</script>
