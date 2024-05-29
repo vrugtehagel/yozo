@@ -55,7 +55,9 @@ export class Flow {
 	 * {@link https://yozo.ooo/docs/flow/then/}
 	 */
 	then(callback){
+		const isAwaited = callback.toString().includes('[native code]') //
 		return this.pipe((next, ...args) => {
+			if(!this.#stopping && isAwaited) warn`flow-awaited-without-once` //
 			callback(...args)
 			next()
 		})
