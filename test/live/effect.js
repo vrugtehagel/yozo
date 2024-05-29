@@ -14,4 +14,4 @@ assert(count == 2);
 
 $.$foo.bar = 'quux';
 await 'microtask';
-assert(count == 2);
+assert(count == 3);
