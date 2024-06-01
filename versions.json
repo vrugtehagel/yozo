@@ -1,5 +1,21 @@
 [
     {
+        "number": "0.5.2",
+        "hash": "fn7+yg/Vdy8dlF6HytMudw==",
+        "timestamp": 1717254692301,
+        "size": {
+            "gzip": 4663,
+            "brotli": 4301
+        },
+        "changelog": {
+            "breaking": [],
+            "improvements": [],
+            "bugs": [
+                "The \"this\" value is now properly passed on to purify() callbacks"
+            ]
+        }
+    },
+    {
         "number": "0.5.1",
         "hash": "G9Vd/zvyRQMoSHSZa1R8BA==",
         "timestamp": 1717248566435,
