@@ -42,7 +42,7 @@ define.register(2, 'meta', (context, argslist) => {
 					meta[items].delete(item)
 				})]
 				meta[items].add(item)
-				// Fire "immediately" if somehow the hook has already fired before
+				// Fire "immediately" if the hook has already fired before
 				// calling the hook itself
 				if(meta[queuedArgs])
 					queueMicrotask(() => item[0].now(...meta[queuedArgs]))
@@ -52,14 +52,21 @@ define.register(2, 'meta', (context, argslist) => {
 			// This is where we dump all the [Flow, ?{undo}] pairs that are still alive
 			meta[items] = new Set
 		}
-		const hookCallback = function(meta, ...args){
-			meta[queuedArgs] = args
-			for(const item of meta[items]) item[0].now(...args)
+
+		if(!unhook) return {
+			constructor,
+			[`${hook}Callback`]: function(meta, ...args){
+				meta[queuedArgs] = args
+				for(const item of meta[items]) item[0].now(...args)
+			}
 		}
-		if(!unhook) return {constructor, [`${hook}Callback`]: hookCallback}
+
 		return {
 			constructor,
-			[`${hook}Callback`]: hookCallback,
+			[`${hook}Callback`]: function(meta, ...args){
+				meta[queuedArgs] = args
+				for(const item of meta[items]) item[0].now(...args)
+			},
 			[`${unhook}Callback`]: function(meta, ...args){
 				meta[queuedArgs] = null
 				for(const item of meta[items]) item[1]?.undo()

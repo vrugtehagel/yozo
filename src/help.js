@@ -44,6 +44,9 @@ const messages = {
 	'flow-stopped-but-triggered': () => `
 		A flow was triggered after it stopped. Often, this indicates a memory leak.
 		Make sure you use .cleanup(…) to undo everything triggering the flow.`,
+	'flow-awaited-without-once': () => `
+		A flow seems to have been awaited without .once().
+		This is indicative of a memory leak. Using .once() prevents this.`,
 	'live-property-$1-not-iterable': key => `
 		Cannot iterate over .$${key} because its value is not iterable.`,
 	'live-link-target-$1-not-live': guess => `

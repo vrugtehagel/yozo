@@ -1,10 +1,13 @@
-// Also occasionally used for PascalCase through camelCase(`-${}`)
+/**
+ * Turn a kebab-case string into a camelCase one.
+ * Also occasionally used for PascalCase through camelCase(`-${}`).
+ */
 export const camelCase = string => string.replace(/-+(\w?)/g,
 	(full, character) => character.toUpperCase())
 
-
-// Takes objects with function values, and aggregates all of them
-// into one object with function values
+/**
+ * Aggregates many objects with function values into one.
+ */
 export const compose = objects => {
 	// If we just start with {} then constructors cannot be aggregated
 	// because result.constructor will be Object (and thus ??= will fail)
@@ -15,6 +18,3 @@ export const compose = objects => {
 		}
 	return result
 }
-
-
-

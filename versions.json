@@ -1,5 +1,24 @@
 [
     {
+        "number": "0.5.1",
+        "hash": "G9Vd/zvyRQMoSHSZa1R8BA==",
+        "timestamp": 1717248566435,
+        "size": {
+            "gzip": 4659,
+            "brotli": 4289
+        },
+        "changelog": {
+            "breaking": [],
+            "improvements": [
+                "Added warning message for awaiting flows without .once().",
+                "Added simple JSDoc comments for all exports.\""
+            ],
+            "bugs": [
+                "Hooks without unhook (such as disconnected()) are no longer retroactively fired."
+            ]
+        }
+    },
+    {
         "number": "0.5.0",
         "hash": "52VW5+sQB9t4EePHgbMIXw==",
         "timestamp": 1716717201504,

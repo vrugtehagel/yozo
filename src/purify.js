@@ -1,9 +1,10 @@
 import { monitor } from './monitor.js'
 
 
-
-// Essentially, wrap a function into another that monitors for 'undo'
-// and runs cleanup callbacks before re-running
+/**
+ * Modify a function to clean up its side effects on subsequent calls.
+ * {@link https://yozo.ooo/docs/purify/}
+ */
 export const purify = callback => {
 	let call
 	return (...args) => {
