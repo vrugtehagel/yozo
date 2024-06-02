@@ -1,0 +1,5 @@
+<title>construct-is-constructor</title>
+<meta property="constructed">
+<script>
+$.constructed = true;
+</script>

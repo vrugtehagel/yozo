@@ -1,0 +1,4 @@
+<title>construct-no-top-await</title>
+<script>
+await 'microtask';
+</script>

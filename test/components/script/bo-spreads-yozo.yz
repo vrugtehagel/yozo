@@ -1,0 +1,9 @@
+<title>construct-spreads-yozo</title>
+<meta property="liveDefined">
+<meta property="whenDefined">
+<meta property="registerDefined">
+<script>
+$.liveDefined = typeof live != 'undefined';
+$.whenDefined = typeof when != 'undefined';
+$.registerDefined = typeof register != 'undefined';
+</script>
