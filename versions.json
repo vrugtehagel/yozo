@@ -1,5 +1,21 @@
 [
     {
+        "number": "0.5.3",
+        "hash": "apkatN5hTfs1YSS9ZJz5mA==",
+        "timestamp": 1717623780888,
+        "size": {
+            "gzip": 4670,
+            "brotli": 4298
+        },
+        "changelog": {
+            "breaking": [],
+            "improvements": [],
+            "bugs": [
+                "Fixed issue where live.get() would not be monitored when used with a key argument."
+            ]
+        }
+    },
+    {
         "number": "0.5.2",
         "hash": "fn7+yg/Vdy8dlF6HytMudw==",
         "timestamp": 1717254692301,
