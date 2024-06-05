@@ -1,8 +1,9 @@
 const { live, monitor } = self.yozo;
 
-const $ = live({ foo: 23 });
+const $ = live({ foo: 23, bar: 10 });
 const call = monitor(['live'], () => {
 	live.get($.$foo);
+	live.get($, 'bar');
 });
 
 let triggers = 0;
@@ -14,3 +15,6 @@ assert(triggers == 0);
 
 $.foo = 5;
 assert(triggers == 1);
+
+$.bar = 7;
+assert(triggers == 2);
