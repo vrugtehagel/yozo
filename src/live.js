@@ -151,16 +151,13 @@ class LiveCore {
  * {@link https://yozo.ooo/docs/live/get/}
  */
 live.get = ($live, key) => {
-	const core = coreMap.get($live)
-	if(!core) return key == null ? $live : $live[key]
-	access(key == null ? core.__key : key) //
-	if(key != null){
-		if(coreMap.has(core.__cached(key).__value)) //
-			warnOnce`live-property-${key}-doubled` //
-		return core.__cached(key).__value
-	}
-	monitor.add('live', $live, 'deepchange')
-	if(coreMap.has(core.__value)) warnOnce`live-property-${key}-doubled` //
+	const base = coreMap.get($live)
+	if(!base) return key == null ? $live : $live[key]
+	const core = key == null ? base : base.__cached(key)
+	monitor.add('live', core.__$value, 'deepchange')
+	access(core.__key) //
+	if(coreMap.has(core.__value)) //
+		warnOnce`live-property-${key}-doubled` //
 	return core.__value
 }
 
