@@ -10,3 +10,5 @@ await paint();
 
 assert(getComputedStyle(p).fontStyle != 'italic');
 assert(getComputedStyle(innerP).fontStyle == 'italic');
+
+export const refresh = true

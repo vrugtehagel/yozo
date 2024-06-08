@@ -8,3 +8,5 @@ document.body.append(element, p);
 await paint();
 
 assert(getComputedStyle(p).fontStyle == 'italic');
+
+export const refresh = true
