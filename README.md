@@ -5,6 +5,9 @@ Website repository: [vrugtehagel/yozo.ooo](https://github.com/vrugtehagel/yozo.o
 
 This is the main repository for Yozo, the tiniest no-build developer-first Web Components library.
 
+> [!IMPORTANT]
+> The [website](https://yozo.ooo/) documents all of Yozo's features in detail. This README instead describes the codebase, for those looking to fork it and/or contribute.
+
 ## Getting started
 
 To do any development on Yozo, first make sure you have [Deno](https://deno.com/) installed. Then, there are three tasks available:
