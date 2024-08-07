@@ -95,7 +95,7 @@ define.register(3, Symbol(), context => {
 						const array =
 							true ? (() => { //
 								const value = getter(...scopes.map(scope => scope[1])) //
-								if(typeof value[Symbol.iterator] == 'function') return [...value] //
+								if(typeof value?.[Symbol.iterator] == 'function') return [...value] //
 								error`transform-for-${expression}-not-iterable` //
 							})() : //
 							[...getter(...scopes.map(scope => scope[1]))]
