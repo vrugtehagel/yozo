@@ -43,7 +43,7 @@
             "breaking": [],
             "improvements": [
                 "Added warning message for awaiting flows without .once().",
-                "Added simple JSDoc comments for all exports.\""
+                "Added simple JSDoc comments for all exports."
             ],
             "bugs": [
                 "Hooks without unhook (such as disconnected()) are no longer retroactively fired."
