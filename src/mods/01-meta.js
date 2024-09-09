@@ -106,7 +106,7 @@ define.register(1, 'meta', (context, argslist) => {
 		})
 
 		// Attach internals (exposed in <script>)
-		meta.x.internals = this.attachInternals()
+		meta.x.internals = this.attachInternals?.()
 
 		// If a component has own properties before it was defined, but we
 		// also defined the same property on the prototype, then we need to
