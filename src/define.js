@@ -18,7 +18,7 @@ import { monitor } from './monitor.js'
 export const define = definer => {
 	const context = {
 		// The exposed properties to be used in the component logic
-		x: new Set(['query', '$']),
+		x: new Set(['query', '$', 'internals']),
 		// A lookup map: component instance -> metadata
 		// We basically dump all instance-related things in there
 		__meta: new WeakMap,
