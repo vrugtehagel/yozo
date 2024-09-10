@@ -15,8 +15,12 @@ define.register(10, 'script', (context, [args]) => {
 	)
 	return {
 		constructor: function(meta){
-			// Allows us to do use "this" and point it at the component
-			callback.call(this, meta.x)
+			try { //
+				// Allows us to do use "this" and point it at the component
+				callback.call(this, meta.x)
+			} catch(error){ //
+				throw Error(`<${context.__title}>: ${error.message}`) //
+			} //
 		}
 	}
 })
