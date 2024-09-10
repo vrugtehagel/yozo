@@ -277,13 +277,14 @@ define.register(3, Symbol(), context => {
 	return {
 		constructor: function(meta){
 			meta.__render = (tree, scopes, scheduler = update => update()) => {
+				const transforms = getTransforms(tree, ...scopes.map(scope => scope[0]))
 				// To render a parsed tree, we first get the array of transforms
 				// That's cached, so this work happens once per component registration
 				// Then, we iterate the tree, and transforms map one-to-one onto the
 				// items from the node iterator
 				const clone = tree.cloneNode(true)
 				const iterator = document.createNodeIterator(clone, 5)
-				const pairs = getTransforms(tree, ...scopes.map(scope => scope[0]))
+				const pairs = transforms
 					.map(transform => [iterator.nextNode(), transform])
 					.filter(([node, transform]) => transform)
 				scheduler(() => {
