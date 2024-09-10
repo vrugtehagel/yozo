@@ -107,12 +107,11 @@ class LiveCore {
 		const value = this.__value = this.__parent.__value?.[this.__key]
 
 		// Diffing the keys for keychange event
-		const keys = this.__value instanceof Object
+		const diff = new Set(this.__keys)
+		this.__keys = this.__value instanceof Object
 			? Object.keys(this.__value ?? {})
 			: []
-		const diff = new Set(this.__keys)
-		this.__keys = keys
-		for(const key of keys)
+		for(const key of this.__keys)
 			if(diff.has(key)) diff.delete(key)
 			else diff.add(key)
 		if(diff.size)
