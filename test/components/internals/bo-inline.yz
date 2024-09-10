@@ -1,0 +1,4 @@
+<title>internals-inline</title>
+<template>
+	{{ internals.constructor.name }}
+</template>

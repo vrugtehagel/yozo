@@ -1,0 +1,5 @@
+<title>internals-exists</title>
+<meta property="internals">
+<script>
+$.internals = internals;
+</script>
