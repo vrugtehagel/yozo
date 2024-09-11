@@ -2,6 +2,5 @@
 <meta form-associated>
 
 <script>
-const internals = this.attachInternals();
 internals.setFormValue(7);
 </script>
