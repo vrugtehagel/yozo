@@ -1,5 +1,25 @@
 [
     {
+        "number": "0.6.0",
+        "hash": "ERjaEG9HlASHD/myBkInFw==",
+        "timestamp": 1726044027566,
+        "size": {
+            "gzip": 4687,
+            "brotli": 4311
+        },
+        "changelog": {
+            "breaking": [
+                "Added \"internals\" variable for ElementInternals. Manually running .attachInternals() will now throw an error."
+            ],
+            "improvements": [
+                "Errors thrown in a component's <script> now include the component name."
+            ],
+            "bugs": [
+                "Clarify a cryptic error when attempting to loop over a nullish value in #for."
+            ]
+        }
+    },
+    {
         "number": "0.5.3",
         "hash": "apkatN5hTfs1YSS9ZJz5mA==",
         "timestamp": 1717623780888,

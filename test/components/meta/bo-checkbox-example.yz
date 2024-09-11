@@ -13,7 +13,6 @@ $.toggle = () => {
 	$.checked = !$.checked;
 };
 
-const internals = this.attachInternals();
 when($.$checked).changes().then(() => {
 	internals.setFormValue($.checked);
 });

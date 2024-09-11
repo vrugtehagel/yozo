@@ -1,0 +1,6 @@
+<title>internals-shadow-root</title>
+<meta property="internals">
+<template mode="open"></template>
+<script>
+$.internals = internals;
+</script>
