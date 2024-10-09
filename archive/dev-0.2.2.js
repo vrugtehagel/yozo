@@ -1,3 +1,4 @@
+// Yozo version: 0.2.2
 (() => {
   // src/help.js
   var printer = (show = console.log, suppress) => (parts, ...subs) => {

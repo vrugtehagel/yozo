@@ -84,7 +84,9 @@ await (async () => {
 	const sure = confirm('  Are you sure you want to archive a new version?')
 	if(!sure) return printFail('Operation cancelled. Exiting…')
 	await Deno.copyFile(lib, `archive/lib-${version.number}.js`)
-	await Deno.copyFile(dev, `archive/dev-${version.number}.js`)
+	const devSource = `// Yozo version: ${version.number}\n`
+		+ (await Deno.readTextFile(dev))
+	await Deno.writeTextFile(`archive/dev-${version.number}.js`, devSource)
 	versions.unshift(version)
 	const stringified = JSON.stringify(versions, null, 4)
 	await Deno.writeTextFile('versions.json', stringified)

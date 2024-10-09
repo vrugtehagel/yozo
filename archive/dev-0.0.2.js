@@ -1,3 +1,4 @@
+// Yozo version: 0.0.2
 (()=>{var C=(e=console.log,t)=>(r,...n)=>{let o=String.raw(r,...n),i=String.raw(r,...n.map((a,u)=>`$${u+1}`));if(t&&C.memory.has(o))return;C.memory.add(o);let c=W[i](...n).replaceAll(/^\s+/gm,"").trim();t&&(c+=`
 `+t),e(c)};C.memory=new Set;var k=C(e=>{throw new Error(e)}),w=C(e=>console.warn(e)),U=C(e=>console.warn(e),"Warnings after this one will be suppressed"),W={"when-arg-not-event-target":()=>`
 		Could not attach event listener(s) with when(\u2026);

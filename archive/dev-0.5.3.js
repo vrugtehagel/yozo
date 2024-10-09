@@ -1,3 +1,4 @@
+// Yozo version: 0.5.3
 (() => {
   // src/help.js
   var memory = /* @__PURE__ */ new Set();
