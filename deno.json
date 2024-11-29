@@ -1,9 +1,21 @@
 {
 	"tasks": {
-		"watch": "deno run -A --watch run/build.js",
-		"build": "deno run -A run/build.js",
-		"archive": "deno run -A run/archive.js",
-		"test": "deno test --allow-read"
+		"build": {
+			"command": "deno run -A run/build.js",
+			"description": "Builds both Yozo's lib and dev builds, outputting them in `latest/lib.js` and `latest/dev.js`"
+		},
+		"watch": {
+			"command": "deno run -A --watch run/build.js",
+			"description": "Runs a watcher to build the bundles whenever something changes"
+		},
+		"archive": {
+			"command": "deno run -A run/archive.js",
+			"description": "Create a new version, archiving the bundles and updating `versions.json`"
+		},
+		"test": {
+			"command": "deno test --allow-read",
+			"description": "A flagless alias for running the tests"
+		}
 	},
 	"imports": {
 		"@std/cli": "jsr:@std/cli@0.224.3",
