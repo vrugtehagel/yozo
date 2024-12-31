@@ -89,7 +89,9 @@ export class Flow {
 	 * {@link https://yozo.ooo/docs/flow/or/}
 	 */
 	or(flow){
-		flow.then((...args) => this.now(...args))
+		flow.then((...args) => {
+			this.now(...args)
+		})
 		return this.cleanup(() => flow.stop?.())
 	}
 

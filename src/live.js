@@ -28,7 +28,7 @@ const coreMap = new WeakMap
 // Keep track of what was last accessed so we can give better error messages
 const access = async key => { //
 	access.recent = key //
-	await 'mircrotask' //
+	await 'microtask' //
 	access.recent = null //
 } //
 
