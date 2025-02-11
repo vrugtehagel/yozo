@@ -2,7 +2,7 @@ import { define } from '../define.js'
 import { warn } from '../help.js' //
 
 
-define.register(5, 'template', (context, [args]) => {
+define.register(4, 'template', (context, [args]) => {
 	if(!args){
 		return {
 			constructor: function(meta){
