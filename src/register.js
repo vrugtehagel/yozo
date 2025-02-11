@@ -64,7 +64,7 @@ register.auto = finder => {
 
 	// We sneakily define another mod here, to define custom elements in the
 	// template
-	define.register(6, Symbol(), context => {
+	define.register(5, Symbol(), context => {
 		if(context.__template) from(context.__template)
 		return {}
 	})
@@ -78,4 +78,21 @@ register.auto = finder => {
 	} else {
 		from(document)
 	}
+}
+
+register.style = url => {
+	const sheet = new CSSStyleSheet
+	define.register(6, Symbol(), context => {
+		return {
+			connectedCallback: function(meta){
+				const root = meta.root.mode ? meta.root : this.getRootNode()
+				const sheets = root.adoptedStyleSheets
+				if(sheets.includes(sheet)) return
+				root.adoptedStyleSheets = [...sheets, sheet]
+			}
+		}
+	})
+	return fetch(url)
+		.then(response => response.text())
+		.then(styles => sheet.replace(styles))
 }
