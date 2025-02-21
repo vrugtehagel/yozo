@@ -47,14 +47,15 @@ define.register(3, Symbol(), context => {
 				// (since they have to map one-by-one to the iterated nodes)
 				transforms.push(...parts.map((part, index) => {
 					node = iterator.nextNode()
-					if(index % 2 == 0) return
+					if(!index || index & 1) return
 					const getter = new Function(...scopeNames, `return(${
 						`\n\n\n// The <${context.__title}> component: an {{ inline }} expression\n\n` + //
-						part
+						parts[index - 1]
 						+ '\n\n' //
 					})`)
 					return (meta, clone, scopes) => effect(() => {
-						clone.textContent = getter(...scopes.map(scope => scope[1]))
+						clone.previousSibling.remove()
+						clone.before(getter(...scopes.map(scope => scope[1])))
 					})
 				}))
 			} else if(node.getAttribute('#for')){
