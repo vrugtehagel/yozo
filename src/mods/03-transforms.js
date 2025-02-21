@@ -54,8 +54,9 @@ define.register(3, Symbol(), context => {
 						+ '\n\n' //
 					})`)
 					return (meta, clone, scopes) => effect(() => {
+						const replacement = getter(...scopes.map(scope => scope[1]))
 						clone.previousSibling.remove()
-						clone.before(getter(...scopes.map(scope => scope[1])))
+						clone.before(replacement)
 					})
 				}))
 			} else if(node.getAttribute('#for')){
