@@ -55,6 +55,9 @@ define.register(3, Symbol(), context => {
 					})`)
 					return (meta, clone, scopes) => effect(() => {
 						const replacement = getter(...scopes.map(scope => scope[1]))
+						if(replacement?.nodeType == Node.DOCUMENT_FRAGMENT_NODE){ //
+							warn`transform-inline-no-document-fragments-${parts[index - 1]}` //
+						} //
 						clone.previousSibling.remove()
 						clone.before(replacement)
 					})

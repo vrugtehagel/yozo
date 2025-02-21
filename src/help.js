@@ -82,6 +82,9 @@ const messages = {
 	'define-method-$1-not-a-function': name => `
 		A method "${name}" was defined, but it wasn't a function.
 		Please define $.${name} and make sure it is a function.`,
+	'transform-inline-no-document-fragments-$1': expression => `
+		Expression "{{${expression}}}" resulted in a document fragment.
+		This is likely to break; use the fragment's .firstElementChild instead.`,
 	'transform-for-$1-not-iterable': expression => `
 		Expression "${expression}" in #for is not iterable.`,
 	'transform-for-and-if-simultaneously': () => `
