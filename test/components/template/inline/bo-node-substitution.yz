@@ -1,0 +1,7 @@
+<title>greeter-node-substitution</title>
+<meta property="greeting">
+<meta property="receiver">
+
+<template>
+	{{ $.greeting }}, {{ $.receiver }}!
+</template>
