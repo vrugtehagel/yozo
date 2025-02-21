@@ -1,5 +1,23 @@
 [
     {
+        "number": "0.6.1",
+        "hash": "RF/QWW33IaSouHTwT2B98w==",
+        "timestamp": 1740177572350,
+        "size": {
+            "gzip": 4690,
+            "brotli": 4303
+        },
+        "changelog": {
+            "breaking": [],
+            "improvements": [
+                "Inline expressions can now render element nodes."
+            ],
+            "bugs": [
+                "Fixed false reporting of leaking flow when using .or(promise)."
+            ]
+        }
+    },
+    {
         "number": "0.6.0",
         "hash": "ERjaEG9HlASHD/myBkInFw==",
         "timestamp": 1726044027566,
