@@ -1,5 +1,24 @@
 [
     {
+        "number": "0.6.2",
+        "hash": "iFdGVrne7T0ZAMkjJcayEw==",
+        "timestamp": 1754319361246,
+        "size": {
+            "gzip": 4699,
+            "brotli": 4322
+        },
+        "changelog": {
+            "breaking": [],
+            "improvements": [
+                "Added a warning for when an inline expression computes to a document fragment"
+            ],
+            "bugs": [
+                "Fixed an issue where stylesheets weren't loaded yet within connected() callbacks",
+                "Fixed an issue where large stylesheets could cause transitions from default user agent styles"
+            ]
+        }
+    },
+    {
         "number": "0.6.1",
         "hash": "RF/QWW33IaSouHTwT2B98w==",
         "timestamp": 1740177572350,
