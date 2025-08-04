@@ -1,0 +1,12 @@
+<title>detect-style-timing</title>
+<meta property="borderStyle">
+<template mode="closed"></template>
+<script>
+connected(() => {
+	const style = getComputedStyle(this)
+	$.borderStyle = style.getPropertyValue('border-style')
+})
+</script>
+<style>
+:host { border-style: dotted; }
+</style>
