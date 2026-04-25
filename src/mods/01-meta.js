@@ -71,8 +71,8 @@ define.register(1, 'meta', (context, argslist) => {
 			// We can't use live.link() here because the change callback is
 			// the attributeChangedCallback lifecycle callback
 			meta.x.$.$attributes[name] = null
-			meta.x.$.$attributes[`$${name}`].addEventListener('change', () => {
-				const value = live.get(meta.x.$.$attributes, name)
+			meta.x.$.$attributes[`$${name}`].addEventListener('change', event => {
+				const value = event.detail.value
 				if(this.getAttribute(name) == value) return
 				if(value == null) this.removeAttribute(options.attribute)
 				else this.setAttribute(options.attribute, value)
@@ -81,7 +81,7 @@ define.register(1, 'meta', (context, argslist) => {
 			// Then we also link it to the property types
 			if(options.type == 'boolean'){
 				live.link(meta.x.$[`$${options.as ?? name}`], {
-					get: () => live.get(meta.x.$.$attributes, name) != null,
+					get: () => monitor.ignore(() => live.get(meta.x.$.$attributes, name) != null),
 					set: value => meta.x.$.$attributes[name] = value ? '' : null,
 					changes: when(meta.x.$.$attributes[`$${name}`]).change()
 				})
@@ -98,7 +98,7 @@ define.register(1, 'meta', (context, argslist) => {
 				else if(!type) //
 					error`define-attribute-${options.attribute}-type-${options.type}-does-not-exist` //
 				live.link(meta.x.$[`$${options.as ?? name}`], {
-					get: () => type(live.get(meta.x.$.$attributes, name) ?? options.default ?? ''),
+					get: () => monitor.ignore(() => type(live.get(meta.x.$.$attributes, name) ?? options.default ?? '')),
 					set: value => meta.x.$.$attributes[name] = value == null ? null : `${value}`,
 					changes: when(meta.x.$.$attributes[`$${name}`]).change()
 				})
