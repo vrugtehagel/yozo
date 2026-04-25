@@ -1,5 +1,21 @@
 [
     {
+        "number": "0.6.3",
+        "hash": "V/qbMvaUBqXac5zfQYLBWg==",
+        "timestamp": 1777140680648,
+        "size": {
+            "gzip": 4701,
+            "brotli": 4320
+        },
+        "changelog": {
+            "breaking": [],
+            "improvements": [],
+            "bugs": [
+                "Live variables under $.$attributes no longer bleed into the monitored context when setting a property on a custom element within a monitored context."
+            ]
+        }
+    },
+    {
         "number": "0.6.2",
         "hash": "iFdGVrne7T0ZAMkjJcayEw==",
         "timestamp": 1754319361246,
