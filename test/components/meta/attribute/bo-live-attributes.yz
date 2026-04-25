@@ -1,0 +1,5 @@
+<title>mood-live-attributes</title>
+<meta attribute="mood" type="string">
+<template mode="open">
+	Feeling {{ $.mood }}
+</template>
