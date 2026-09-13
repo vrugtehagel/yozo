@@ -1,5 +1,21 @@
 [
     {
+        "number": "0.6.4",
+        "hash": "V/qbMvaUBqXac5zfQYLBWg==",
+        "timestamp": 1789325563611,
+        "size": {
+            "gzip": 4701,
+            "brotli": 4320
+        },
+        "changelog": {
+            "breaking": [],
+            "improvements": [],
+            "bugs": [
+                "Fixed several warnings for incorrect or unknown flow control attributes"
+            ]
+        }
+    },
+    {
         "number": "0.6.3",
         "hash": "V/qbMvaUBqXac5zfQYLBWg==",
         "timestamp": 1777140680648,
