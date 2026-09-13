@@ -190,7 +190,8 @@ define.register(3, Symbol(), context => {
 				// First, we check that the left-over attributes make sense
 
 				const flowControlAttributes = [...node.attributes] //
-					.map(({name}) => name.startsWith('#')) //
+					.map(attribute => attribute.name) //
+					.filter(name => name.startsWith('#')) //
 				const looseElse = flowControlAttributes //
 					.find(name => ['#else-if', '#else'].includes(name)) //
 				if(looseElse) warn`transform-if-found-loose-${looseElse}` //
