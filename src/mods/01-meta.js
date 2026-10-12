@@ -90,7 +90,7 @@ define.register(1, 'meta', (context, argslist) => {
 				// to PascalCase and then looking it up on the window object
 				// For example, big-int -> BigInt -> window.BigInt()
 				// That way we don't need to manually handle each case
-				const type = self[camelCase(`-${options.type}`)]
+				const type = globalThis[camelCase(`-${options.type}`)]
 				if(options.type == 'bigint') //
 					warn`define-attribute-${options.attribute}-is-type-bigint-instead-of-big-int` //
 				else if(!['boolean', 'string', 'number', 'big-int'].includes(options.type)) //

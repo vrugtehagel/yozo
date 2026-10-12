@@ -1,4 +1,4 @@
-const { effect, live, timeout } = self.yozo;
+const { effect, live, timeout } = globalThis.yozo;
 
 const $ = live({ foo: 23 });
 let triggers = 0;

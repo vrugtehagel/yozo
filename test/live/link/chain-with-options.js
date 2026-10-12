@@ -1,4 +1,4 @@
-const { live, when } = self.yozo;
+const { live, when } = globalThis.yozo;
 
 const $ = live({ name: 'Sam' });
 live.link($.$capitalized, {

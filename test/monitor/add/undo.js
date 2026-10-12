@@ -1,4 +1,4 @@
-const { monitor } = self.yozo;
+const { monitor } = globalThis.yozo;
 
 let undone = false;
 const call = monitor(['undo'], () => {

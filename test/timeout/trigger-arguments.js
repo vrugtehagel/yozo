@@ -1,4 +1,4 @@
-const { timeout } = self.yozo;
+const { timeout } = globalThis.yozo;
 
 let amount;
 const flow = timeout(10).then((...args) => {

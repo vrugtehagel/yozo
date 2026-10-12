@@ -1,4 +1,4 @@
-const { when } = self.yozo;
+const { when } = globalThis.yozo;
 
 const target = new EventTarget();
 const trigger = () => {

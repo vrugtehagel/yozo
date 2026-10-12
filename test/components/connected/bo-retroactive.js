@@ -1,5 +1,5 @@
-const { Flow } = self.yozo;
-await self.yozo.register('./bo-retroactive.yz');
+const { Flow } = globalThis.yozo;
+await globalThis.yozo.register('./bo-retroactive.yz');
 
 const element = document.createElement('connect-retroactive');
 document.body.append(element);

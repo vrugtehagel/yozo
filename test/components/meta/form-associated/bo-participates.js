@@ -1,4 +1,4 @@
-await self.yozo.register('./bo-participates.yz');
+await globalThis.yozo.register('./bo-participates.yz');
 const form = document.createElement('form');
 const element = document.createElement('seven-participates');
 document.body.append(form);

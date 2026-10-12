@@ -1,4 +1,4 @@
-const { monitor, until } = self.yozo;
+const { monitor, until } = globalThis.yozo;
 
 let earlyStop = false;
 let triggers = 0;

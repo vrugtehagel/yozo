@@ -1,4 +1,4 @@
-const { effect, live, when } = self.yozo;
+const { effect, live, when } = globalThis.yozo;
 
 const target = new EventTarget();
 const $ = live({ type: 'ping' });

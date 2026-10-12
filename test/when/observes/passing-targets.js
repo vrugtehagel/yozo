@@ -1,8 +1,8 @@
-const { when } = self.yozo;
+const { when } = globalThis.yozo;
 
 const targets = [];
 let constructed = 0;
-self.FooObserver = class FooObserver {
+globalThis.FooObserver = class FooObserver {
 	constructor() {
 		constructed++;
 	}
@@ -19,4 +19,4 @@ assert(targets.length == 2);
 assert(targets[0] == 5 && targets[1] == 23);
 
 flow.stop();
-delete self.FooObserver;
+delete globalThis.FooObserver;

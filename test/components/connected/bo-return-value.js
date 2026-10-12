@@ -1,5 +1,5 @@
-const { Flow } = self.yozo;
-await self.yozo.register('./bo-return-value.yz');
+const { Flow } = globalThis.yozo;
+await globalThis.yozo.register('./bo-return-value.yz');
 
 const element = document.createElement('connect-return-value');
 

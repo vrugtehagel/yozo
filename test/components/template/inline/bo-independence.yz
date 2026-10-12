@@ -3,5 +3,5 @@
 <meta attribute="receiver" type="string">
 
 <template>
-	{{ self.yozo.monitor.ignore(() => $.greeting) }}, {{ $.receiver }}!
+	{{ globalThis.yozo.monitor.ignore(() => $.greeting) }}, {{ $.receiver }}!
 </template>

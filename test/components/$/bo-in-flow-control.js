@@ -1,4 +1,4 @@
-await self.yozo.register('./bo-in-flow-control.yz');
+await globalThis.yozo.register('./bo-in-flow-control.yz');
 
 const element = document.createElement('animal-sound-in-flow-control');
 document.body.append(element);

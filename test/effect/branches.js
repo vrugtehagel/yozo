@@ -1,4 +1,4 @@
-const { effect, live } = self.yozo;
+const { effect, live } = globalThis.yozo;
 
 const $ = live({
 	condition: true,

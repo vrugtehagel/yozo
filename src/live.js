@@ -196,7 +196,7 @@ live.link = ($live, thing) => {
 	// The "current" value, sometimes needs to be validated
 	let cache
 	let options = thing
-	if(self.HTMLElement && thing instanceof HTMLElement){
+	if(globalThis.HTMLElement && thing instanceof HTMLElement){
 		// Allow shorthand live.link($live, input)
 		options = {
 			get: () => thing.value,

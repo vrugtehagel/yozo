@@ -1,4 +1,4 @@
-const { monitor, live } = self.yozo;
+const { monitor, live } = globalThis.yozo;
 
 const $data = live({ foo: 23 });
 const call = monitor(['live'], () => {

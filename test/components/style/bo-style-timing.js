@@ -1,5 +1,5 @@
-const { paint } = self.yozo;
-await self.yozo.register('./bo-style-timing.yz');
+const { paint } = globalThis.yozo;
+await globalThis.yozo.register('./bo-style-timing.yz');
 const element = document.createElement('detect-style-timing');
 
 assert(element.borderStyle != 'dotted');

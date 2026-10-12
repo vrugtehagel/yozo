@@ -1,4 +1,4 @@
-await self.yozo.register('./bo-node-substitution.yz');
+await globalThis.yozo.register('./bo-node-substitution.yz');
 const element = document.createElement('greeter-node-substitution');
 
 const span = document.createElement('span');

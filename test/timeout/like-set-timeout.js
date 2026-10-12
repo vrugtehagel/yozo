@@ -1,4 +1,4 @@
-const { timeout } = self.yozo;
+const { timeout } = globalThis.yozo;
 
 let triggers = 0;
 const flow = timeout(100).then(() => {

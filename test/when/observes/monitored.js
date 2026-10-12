@@ -1,7 +1,7 @@
-const { when, monitor } = self.yozo;
+const { when, monitor } = globalThis.yozo;
 
 let disconnected = 0;
-self.FooObserver = class FooObserver {
+globalThis.FooObserver = class FooObserver {
 	observe() {}
 	disconnect() {
 		disconnected++;
@@ -17,4 +17,4 @@ call.undo();
 
 assert(disconnected == 1);
 
-delete self.FooObserver;
+delete globalThis.FooObserver;

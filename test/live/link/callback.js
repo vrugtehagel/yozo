@@ -1,4 +1,4 @@
-const { live } = self.yozo;
+const { live } = globalThis.yozo;
 
 const $ = live({ a: 2, b: 3 });
 live.link($.$sum, () => $.a + $.b);

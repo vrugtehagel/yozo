@@ -1,4 +1,4 @@
-const { live, monitor, until } = self.yozo;
+const { live, monitor, until } = globalThis.yozo;
 
 const $ = live({ foo: 23 });
 const call = monitor(['live'], async () => {

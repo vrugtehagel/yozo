@@ -1,4 +1,4 @@
-const { when, monitor } = self.yozo;
+const { when, monitor } = globalThis.yozo;
 
 const target = new EventTarget();
 let pings = 0;

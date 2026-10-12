@@ -1,4 +1,4 @@
-const { live } = self.yozo;
+const { live } = globalThis.yozo;
 
 const $ = live({ name: 'Sam' });
 live.link($.$capitalized, () => $.name.toUpperCase());

@@ -1,4 +1,4 @@
-await self.yozo.register('./bo-binding.yz');
+await globalThis.yozo.register('./bo-binding.yz');
 const element = document.createElement('reverser-binding');
 document.body.append(element);
 

@@ -1,4 +1,4 @@
-const { purify, monitor, until, timeout } = self.yozo;
+const { purify, monitor, until, timeout } = globalThis.yozo;
 
 let before = 0;
 let after = 0;

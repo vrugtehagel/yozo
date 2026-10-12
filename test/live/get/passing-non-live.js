@@ -1,5 +1,5 @@
-const { live } = self.yozo;
+const { live } = globalThis.yozo;
 
 assert(live.get(null) == null);
 assert(live.get(23) == 23);
-assert(live.get(self) == self);
+assert(live.get(globalThis) == globalThis);

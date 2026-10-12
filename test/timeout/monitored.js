@@ -1,4 +1,4 @@
-const { timeout, monitor } = self.yozo;
+const { timeout, monitor } = globalThis.yozo;
 
 let triggers = 0;
 let flow;

@@ -1,4 +1,4 @@
-const { live } = self.yozo;
+const { live } = globalThis.yozo;
 const $ = live([23, 5, -1]);
 const iterable = [...$];
 

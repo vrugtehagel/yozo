@@ -1,8 +1,8 @@
-const { when } = self.yozo;
+const { when } = globalThis.yozo;
 
 let constructed = 0;
 let disconnected = 0;
-self.FooObserver = class FooObserver {
+globalThis.FooObserver = class FooObserver {
 	constructor() {
 		constructed++;
 	}
@@ -22,4 +22,4 @@ flow.stop();
 assert(constructed == 1);
 assert(disconnected == 1);
 
-delete self.FooObserver;
+delete globalThis.FooObserver;

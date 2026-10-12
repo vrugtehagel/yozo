@@ -1,4 +1,4 @@
-await self.yozo.register('./bo-callback-runs.yz');
+await globalThis.yozo.register('./bo-callback-runs.yz');
 const element = document.createElement('reset-counter-callback-runs');
 const form1 = document.createElement('form');
 const form2 = document.createElement('form');

@@ -1,4 +1,4 @@
-await self.yozo.register('./bo-classes.yz');
+await globalThis.yozo.register('./bo-classes.yz');
 
 const element = document.createElement('custom-link-classes');
 const a = element.shadowRoot.querySelector('a');

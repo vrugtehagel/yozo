@@ -1,4 +1,4 @@
-const { interval } = self.yozo;
+const { interval } = globalThis.yozo;
 
 let amount;
 const flow = interval(10).then((...args) => {

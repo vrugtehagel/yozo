@@ -1,8 +1,8 @@
-const { when } = self.yozo;
+const { when } = globalThis.yozo;
 
 let constructorOptions;
 let observeOptions;
-self.FooObserver = class FooObserver {
+globalThis.FooObserver = class FooObserver {
 	constructor(callback, options) {
 		constructorOptions = options;
 	}
@@ -13,10 +13,10 @@ self.FooObserver = class FooObserver {
 };
 
 const options = { foo: 23 };
-const flow = when(self).observes('foo', options);
+const flow = when(globalThis).observes('foo', options);
 
 assert(constructorOptions == options);
 assert(observeOptions == options);
 
 flow.stop();
-delete self.FooObserver;
+delete globalThis.FooObserver;

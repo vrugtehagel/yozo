@@ -1,4 +1,4 @@
-const { paint } = self.yozo;
+const { paint } = globalThis.yozo;
 
 let mostRecent;
 const flow = paint().then((timestamp) => {

@@ -1,4 +1,4 @@
-const { timeout, Flow } = self.yozo;
+const { timeout, Flow } = globalThis.yozo;
 const flow = timeout(100);
 
 assert(flow instanceof Flow);

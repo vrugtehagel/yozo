@@ -1,4 +1,4 @@
-const { monitor } = self.yozo;
+const { monitor } = globalThis.yozo;
 
 let instances = 0;
 monitor.register(

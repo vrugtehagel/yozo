@@ -1,4 +1,4 @@
-const { live } = self.yozo;
+const { live } = globalThis.yozo;
 
 const object = { foo: 23 };
 Object.defineProperty(object, 'qux', { value: 7 });

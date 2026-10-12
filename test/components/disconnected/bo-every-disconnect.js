@@ -1,4 +1,4 @@
-await self.yozo.register('./bo-every-disconnect.yz');
+await globalThis.yozo.register('./bo-every-disconnect.yz');
 
 const element = document.createElement('disconnect-every-disconnect');
 document.body.append(element);

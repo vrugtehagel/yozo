@@ -1,4 +1,4 @@
-const { live, when } = self.yozo;
+const { live, when } = globalThis.yozo;
 
 const $ = live({ a: 2, b: 3 });
 let triggers = 0;

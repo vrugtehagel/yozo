@@ -1,4 +1,4 @@
-const { live, effect, when } = self.yozo;
+const { live, effect, when } = globalThis.yozo;
 const $data = live({
 	activeIndex: 0,
 	array: ['foo', 'bar', 'baz'],

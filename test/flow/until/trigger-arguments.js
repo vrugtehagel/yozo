@@ -1,4 +1,4 @@
-const { Flow } = self.yozo;
+const { Flow } = globalThis.yozo;
 const flow = new Flow();
 let stopped = false;
 flow.until((a, b) => a + b).cleanup(() => stopped = true);

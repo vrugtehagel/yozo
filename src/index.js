@@ -16,7 +16,7 @@ import './mods/07-query.js'
 import './mods/08-style.js'
 import './mods/10-script.js'
 
-self.yozo = {
+globalThis.yozo = {
 	monitor, until,
 	Flow,
 	live,
@@ -26,4 +26,4 @@ self.yozo = {
 	frame, interval, paint, timeout,
 }
 
-Object.defineProperty(self.yozo, 'register', {value: register})
+Object.defineProperty(globalThis.yozo, 'register', {value: register})

@@ -1,4 +1,4 @@
-const { Flow, timeout } = self.yozo;
+const { Flow, timeout } = globalThis.yozo;
 const flow = new Flow();
 let total = 0;
 let endReached = 0;

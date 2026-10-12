@@ -1,4 +1,4 @@
-await self.yozo.register('./bo-defined.yz');
+await globalThis.yozo.register('./bo-defined.yz');
 const element = document.createElement('reset-counter-defined');
 document.body.append(element);
 

@@ -1,4 +1,4 @@
-const { monitor, Flow } = self.yozo;
+const { monitor, Flow } = globalThis.yozo;
 
 let clean = false;
 const call = monitor(['undo'], () => {

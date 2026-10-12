@@ -1,4 +1,4 @@
-await self.yozo.register('./bo-readonly.yz');
+await globalThis.yozo.register('./bo-readonly.yz');
 const element = document.createElement('reverser-readonly');
 document.body.append(element);
 element.textContent = 'hello world';
