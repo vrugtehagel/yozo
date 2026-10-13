@@ -1,16 +1,16 @@
 {
-	"name": "yozo",
-	"version": "0.6.4-alpha.1",
+	"name": "@vrugtehagel/yozo",
+	"version": "0.6.5-alpha.2",
 	"licence": "GPL-3.0-or-later",
 	"author": "vrugtehagel (https://vrugtehagel.nl/)",
 	"description": "A tiny drop-in stress-free solution for web components.",
 	"type": "module",
 	"exports": {
-		".": "./latest/lib.js",
-		"./dev": "./latest/dev.js",
-		"./dev.js": "./latest/dev.js"
+		".": "./latest/node.js",
+		"./lib": "./latest/lib.js",
+		"./dev": "./latest/dev.js"
 	},
-	"files": ["latest/dev.js", "latest/lib.js"],
+	"files": ["latest/*"],
 	"homepage": "https://yozo.ooo/",
 	"repository": {
 		"type": "git",
