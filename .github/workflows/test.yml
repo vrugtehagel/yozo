@@ -20,4 +20,4 @@ jobs:
         node-version: 26
     - run: npm run test
     - if: github.ref == 'refs/heads/main'
-      run: npm run build -- --verify
+      run: npm ci && npm run build -- --verify
