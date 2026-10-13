@@ -1,4 +1,4 @@
-await self.yozo.register('./bo-in-template.yz');
+await globalThis.yozo.register('./bo-in-template.yz');
 
 const element = document.createElement('animal-sound-in-template');
 document.body.append(element);

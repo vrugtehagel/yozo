@@ -1,4 +1,4 @@
-const { when } = self.yozo;
+const { when } = globalThis.yozo;
 
 let amount;
 const target = new EventTarget();

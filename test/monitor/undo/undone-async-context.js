@@ -1,4 +1,4 @@
-const { monitor, until, timeout } = self.yozo;
+const { monitor, until, timeout } = globalThis.yozo;
 
 let triggers = 0;
 let reached = false;

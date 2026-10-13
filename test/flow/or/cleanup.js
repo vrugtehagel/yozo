@@ -1,4 +1,4 @@
-const { Flow } = self.yozo;
+const { Flow } = globalThis.yozo;
 let cleanup = 0;
 const flow = new Flow();
 const other = new Flow();

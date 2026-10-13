@@ -1,5 +1,5 @@
-const { monitor } = self.yozo;
-await self.yozo.register('./bo-live-attributes.yz');
+const { monitor } = globalThis.yozo;
+await globalThis.yozo.register('./bo-live-attributes.yz');
 const element = document.createElement('mood-live-attributes');
 document.body.append(element);
 

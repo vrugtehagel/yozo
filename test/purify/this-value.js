@@ -1,4 +1,4 @@
-const { purify } = self.yozo;
+const { purify } = globalThis.yozo;
 
 const purified = purify(function () {
 	return this;

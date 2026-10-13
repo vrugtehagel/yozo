@@ -1,4 +1,4 @@
-const { when, timeout } = self.yozo;
+const { when, timeout } = globalThis.yozo;
 
 const target = new EventTarget();
 const trigger = async () => {

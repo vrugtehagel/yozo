@@ -1,9 +1,9 @@
-const { when } = self.yozo;
+const { when } = globalThis.yozo;
 
 let trigger;
 let args = [];
 let triggers = 0;
-self.FooObserver = class FooObserver {
+globalThis.FooObserver = class FooObserver {
 	constructor(callback) {
 		trigger = callback;
 	}
@@ -11,7 +11,7 @@ self.FooObserver = class FooObserver {
 	disconnect() {}
 };
 
-const flow = when(self).observes('foo').then((...things) => {
+const flow = when(globalThis).observes('foo').then((...things) => {
 	args = things;
 	triggers++;
 });
@@ -26,4 +26,4 @@ trigger();
 assert(triggers == 3);
 
 flow.stop();
-delete self.FooObserver;
+delete globalThis.FooObserver;

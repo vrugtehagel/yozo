@@ -1,4 +1,4 @@
-const { monitor, Flow } = self.yozo;
+const { monitor, Flow } = globalThis.yozo;
 
 let inner;
 let clean = false;

@@ -1,4 +1,4 @@
-await self.yozo.register('./bo-exists.yz');
+await globalThis.yozo.register('./bo-exists.yz');
 const element = document.createElement('internals-exists');
 
 assert(element.internals != null);

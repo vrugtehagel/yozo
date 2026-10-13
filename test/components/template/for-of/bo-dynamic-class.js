@@ -1,4 +1,4 @@
-await self.yozo.register('./bo-dynamic-class.yz');
+await globalThis.yozo.register('./bo-dynamic-class.yz');
 const element = document.createElement('drinks-dynamic-class');
 document.body.append(element);
 await 'microtask';

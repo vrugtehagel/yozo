@@ -1,4 +1,4 @@
-const { live } = self.yozo;
+const { live } = globalThis.yozo;
 
 const element = document.createElement('fake-input');
 element.value = 'foo';

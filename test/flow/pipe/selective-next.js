@@ -1,4 +1,4 @@
-const { Flow } = self.yozo;
+const { Flow } = globalThis.yozo;
 const flow = new Flow();
 
 const nexts = [];

@@ -1,4 +1,4 @@
-const { Flow } = self.yozo;
+const { Flow } = globalThis.yozo;
 let triggers = 0;
 let trigger;
 const flow = new Flow((triggerer) => {

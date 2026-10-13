@@ -1,4 +1,4 @@
-const { Flow, timeout } = self.yozo;
+const { Flow, timeout } = globalThis.yozo;
 let trigger;
 const flow = new Flow();
 flow.throttle(10).then((...args) => {

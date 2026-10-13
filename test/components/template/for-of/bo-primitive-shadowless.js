@@ -1,4 +1,4 @@
-await self.yozo.register('./bo-primitive-shadowless.yz');
+await globalThis.yozo.register('./bo-primitive-shadowless.yz');
 const element = document.createElement('drinks-primitive-shadowless');
 document.body.append(element);
 await 'microtask';

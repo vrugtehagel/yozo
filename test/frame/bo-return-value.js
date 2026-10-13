@@ -1,4 +1,4 @@
-const { frame, Flow } = self.yozo;
+const { frame, Flow } = globalThis.yozo;
 const flow = frame();
 
 assert(flow instanceof Flow);

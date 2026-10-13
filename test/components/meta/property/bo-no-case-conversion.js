@@ -1,4 +1,4 @@
-await self.yozo.register('./bo-no-case-conversion.yz');
+await globalThis.yozo.register('./bo-no-case-conversion.yz');
 const element = document.createElement('secret-no-case-conversion');
 document.body.append(element);
 

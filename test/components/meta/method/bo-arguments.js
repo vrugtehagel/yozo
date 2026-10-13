@@ -1,4 +1,4 @@
-await self.yozo.register('./bo-arguments.yz');
+await globalThis.yozo.register('./bo-arguments.yz');
 const element = document.createElement('reverser-arguments');
 document.body.append(element);
 

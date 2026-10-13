@@ -1,5 +1,5 @@
-const { paint } = self.yozo;
-await self.yozo.register('./bo-shadowless-in-shadow.yz');
+const { paint } = globalThis.yozo;
+await globalThis.yozo.register('./bo-shadowless-in-shadow.yz');
 const element = document.createElement('italic-shadowless-in-shadow');
 const p = document.createElement('p');
 const div = document.createElement('div');

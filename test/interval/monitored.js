@@ -1,4 +1,4 @@
-const { interval, monitor } = self.yozo;
+const { interval, monitor } = globalThis.yozo;
 
 let triggers = 0;
 let flow;

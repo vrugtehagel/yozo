@@ -1,4 +1,4 @@
-const { monitor, effect, live } = self.yozo;
+const { monitor, effect, live } = globalThis.yozo;
 
 const $ = live({ foo: 23, bar: 7 });
 let sum;

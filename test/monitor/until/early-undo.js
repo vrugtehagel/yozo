@@ -1,4 +1,4 @@
-const { monitor, until } = self.yozo;
+const { monitor, until } = globalThis.yozo;
 
 let ranFull = false;
 const call = monitor(['undo'], async () => {

@@ -10,12 +10,11 @@ This is the main repository for Yozo, the tiniest no-build developer-first Web C
 
 ## Getting started
 
-To do any development on Yozo, first make sure you have [Deno](https://deno.com/) installed. Then, there are three tasks available:
-- `deno task build` builds both Yozo's lib and dev builds, and outputs them in `latest/lib.js` and `latest/dev.js`. The former is minified and tiny, the latter includes better errors and warnings, and is not minified. There's an optional `--verify` flag which verifies the hash against the latest version; this is mostly useful for automated processes, not so much for local development.
-- `deno task watch` runs the build process for Yozo whenever a file in `src/` has changed.
-- `deno task archive` creates a new version. It asks a few questions, archives the versioned builds, and updates `versions.json` with the relevant data for the new version. When creating a new version, both the new versions in `archive/` and `latest/` _and_ the updated `versions.json` must be pushed (usually to the `canary` branch).
-- `deno task test` runs the test suite. It is equivalent to `deno test --allow-read`, but I always forget the flag when using `deno test` so there's a task for it too.
-- `deno fmt` formats `test/` to a consistent format, since they are to be displayed on the site and are supposed to be readable. The source is not formatted because it would become an unreadable mess if it was (more than it already is).
+To do any development on Yozo, first make sure you have [Node](https://nodejs.org/) installed. Then, there are three tasks available:
+- `npm run build` builds both Yozo's lib and dev builds, and outputs them in `latest/lib.js` and `latest/dev.js`. The former is minified and tiny, the latter includes better errors and warnings, and is not minified. There's an optional flag for verifying the hash against the latest version (`npm run build -- --verify`); this is mostly useful for automated processes, not so much for local development.
+- `npm run watch` runs the build process for Yozo whenever a file in `src/` has changed.
+- `npm run archive` creates a new version. It asks a few questions, archives the versioned builds, and updates `versions.json` with the relevant data for the new version. When creating a new version, both the new versions in `archive/` and `latest/` _and_ the updated `versions.json` must be pushed (usually to the `canary` branch).
+- `npm run test` runs the test suite; at least, the tests that aren't browser-specific (tests prefixed `bo-` are browser-only).
 
 ## About the codebase
 
@@ -30,9 +29,9 @@ Some practical notes:
 
 ## Tests
 
-Tests are run using `deno task test` (or, if you prefer, `deno test --allow-read`).
+Tests are run using `npm run test`.
 
-Tests are written in a bit of an unconventional way, because we want to be able to run them in the browser. Essentially, we've got one test per file, all under `test/`, in the same structure as the documentation pages. Inside tests, there's a global function `assert` available that just throws when it receives a falsey argument (which then fails the test). We also have browser-only tests here, which Deno can't run, but they are included in test suites on the website regardless (where they are run). They may include `.yz` files; all these tests are to be uploaded to the documentation site, so the tests can register them like normal. They do need to follow their respective test's filename; this is done so the documentation site can see whether a test has a component or not by simply scanning the file system rather than having to analyse the test's code.
+Tests are written in a bit of an unconventional way, because we want to be able to run them in the browser. Essentially, we've got one test per file, all under `test/`, in the same structure as the documentation pages. Inside tests, there's a global function `assert` available that just throws when it receives a falsey argument (which then fails the test). We also have browser-only tests here, which Node can't run, but they are included in test suites on the website (where they are run). They may include `.yz` files; all these tests are to be uploaded to the documentation site, so the tests can register them like normal. They do need to follow their respective test's filename; this is done so the documentation site can see whether a test has a component or not by simply scanning the file system rather than having to analyse the test's code.
 
 ## How things go around here
 

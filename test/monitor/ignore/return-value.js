@@ -1,3 +1,3 @@
-const { monitor } = self.yozo;
+const { monitor } = globalThis.yozo;
 
 assert(monitor.ignore(() => 23) == 23);

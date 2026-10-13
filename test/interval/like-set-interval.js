@@ -1,4 +1,4 @@
-const { interval } = self.yozo;
+const { interval } = globalThis.yozo;
 
 let triggers = 0;
 const flow = interval(100).then(() => {

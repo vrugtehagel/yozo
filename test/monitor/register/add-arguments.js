@@ -1,4 +1,4 @@
-const { monitor } = self.yozo;
+const { monitor } = globalThis.yozo;
 
 monitor.register(
 	'customAddArguments',

@@ -1,4 +1,4 @@
-const { Flow } = self.yozo;
+const { Flow } = globalThis.yozo;
 const flow = new Flow();
 let resolve;
 const promise = new Promise((...args) => resolve = args[0]);

@@ -1,4 +1,4 @@
-await self.yozo.register('./bo-monitored.yz');
+await globalThis.yozo.register('./bo-monitored.yz');
 
 const element = document.createElement('connect-monitored');
 document.body.append(element);

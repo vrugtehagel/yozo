@@ -1,4 +1,4 @@
-await self.yozo.register('./bo-nested.yz');
+await globalThis.yozo.register('./bo-nested.yz');
 const element = document.createElement('colored-text-nested');
 document.body.append(element);
 const span = element.shadowRoot.querySelector('span');

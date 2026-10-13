@@ -1,4 +1,4 @@
-await self.yozo.register('./bo-conditional.yz');
+await globalThis.yozo.register('./bo-conditional.yz');
 
 const element = document.createElement('spoiler-conditional');
 document.body.append(element);

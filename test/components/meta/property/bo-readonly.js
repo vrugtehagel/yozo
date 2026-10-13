@@ -1,4 +1,4 @@
-await self.yozo.register('./bo-readonly.yz');
+await globalThis.yozo.register('./bo-readonly.yz');
 const element = document.createElement('secret-readonly');
 document.body.append(element);
 

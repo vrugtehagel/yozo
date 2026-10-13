@@ -1,4 +1,4 @@
-await self.yozo.register('./bo-nested-rendered-contexts.yz');
+await globalThis.yozo.register('./bo-nested-rendered-contexts.yz');
 const element = document.createElement('nested-rendered-contexts');
 element.level = 2;
 document.body.append(element);

@@ -1,4 +1,4 @@
-const { live } = self.yozo;
+const { live } = globalThis.yozo;
 const $ = live({ foo: 23 });
 const $number = live(24);
 

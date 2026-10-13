@@ -32,16 +32,16 @@ export const when = (...targets) => new Proxy({
 			// We convert the type to PascalCase and look it up in the global scope
 			// e.g. 'mutation' -> window.MutationObserver
 			const name = camelCase(`-${type}-observer`) //
-			if(typeof self[name] != 'function') //
+			if(typeof globalThis[name] != 'function') //
 				error`when-cannot-observe-${type}-no-${name}` //
-			observer = new self[camelCase(`-${type}-observer`)](trigger, options)
+			observer = new globalThis[camelCase(`-${type}-observer`)](trigger, options)
 			targets.map(target => observer.observe(target, options))
 		}).cleanup(() => observer.disconnect())
 	}
 }, {get: (source, property) => {
 	// Cut off a trailing "s" if there is one, then pass it to .does()
 	const type = property.replace(/s$/, '') //
-	if(!source[property] && type != property && 'on' + property in self) //
+	if(!source[property] && type != property && 'on' + property in globalThis) //
 		warn`when-${property}-instead-of-${type}-mistake` //
 	return source[property] ?? source.does.bind(null, property.replace(/s$/, ''))
 }})

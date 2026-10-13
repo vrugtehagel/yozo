@@ -1,4 +1,4 @@
-await self.yozo.register('./bo-undo-context.yz');
+await globalThis.yozo.register('./bo-undo-context.yz');
 const element = document.createElement('reset-counter-undo-context');
 const form = document.createElement('form');
 form.append(element);

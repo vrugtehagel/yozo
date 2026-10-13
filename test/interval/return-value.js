@@ -1,4 +1,4 @@
-const { interval, Flow } = self.yozo;
+const { interval, Flow } = globalThis.yozo;
 const flow = interval(100);
 
 assert(flow instanceof Flow);

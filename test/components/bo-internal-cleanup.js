@@ -1,4 +1,4 @@
-await self.yozo.register('./bo-internal-cleanup.yz');
+await globalThis.yozo.register('./bo-internal-cleanup.yz');
 
 const element = document.createElement('click-counter-internal-cleanup');
 document.body.append(element);

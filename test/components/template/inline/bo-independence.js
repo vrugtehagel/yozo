@@ -1,4 +1,4 @@
-await self.yozo.register('./bo-independence.yz');
+await globalThis.yozo.register('./bo-independence.yz');
 const element = document.createElement('greeter-independence');
 
 element.greeting = 'hello';

@@ -1,4 +1,4 @@
-const { live } = self.yozo;
+const { live } = globalThis.yozo;
 const symbol = Symbol();
 const $ = live({ [symbol]: 7 });
 

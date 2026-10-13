@@ -1,4 +1,4 @@
-await self.yozo.register('./bo-unhook.yz');
+await globalThis.yozo.register('./bo-unhook.yz');
 const element = document.createElement('reset-counter-unhook');
 const form1 = document.createElement('form');
 const form2 = document.createElement('form');

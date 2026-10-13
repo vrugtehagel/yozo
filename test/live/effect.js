@@ -1,4 +1,4 @@
-const { live, effect } = self.yozo;
+const { live, effect } = globalThis.yozo;
 const $ = live({ foo: 23 });
 let count = 0;
 effect(() => {

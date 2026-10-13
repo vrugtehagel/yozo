@@ -9,7 +9,7 @@ define.register(10, 'script', (context, [args]) => {
 	// which are registered in context.x (and looked up in meta.x)
 	// Also we make the yozo helpers available.
 	const callback = new Function(`{${[...context.x]}}`,
-		`const{${Object.keys(self.yozo)}}=self.yozo;` +
+		`const{${Object.keys(globalThis.yozo)}}=globalThis.yozo;` +
 		`\n\n\n// The <${context.__title}> component: the <script> section\n` + //
 		`${args[1]}`
 	)

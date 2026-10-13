@@ -1,4 +1,4 @@
-await self.yozo.register('./bo-spreads-yozo.yz');
+await globalThis.yozo.register('./bo-spreads-yozo.yz');
 
 const element = document.createElement('construct-spreads-yozo');
 assert(element.liveDefined);

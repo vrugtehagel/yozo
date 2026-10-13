@@ -1,4 +1,4 @@
-await self.yozo.register('./bo-not-when-disconnected.yz');
+await globalThis.yozo.register('./bo-not-when-disconnected.yz');
 const element = document.createElement('greeter-not-when-disconnected');
 
 element.greeting = 'hello';

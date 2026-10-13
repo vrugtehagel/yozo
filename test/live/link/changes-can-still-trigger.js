@@ -1,4 +1,4 @@
-const { live, when } = self.yozo;
+const { live, when } = globalThis.yozo;
 
 const $ = live({ number: 23 });
 const changes = when($.$number).changes();

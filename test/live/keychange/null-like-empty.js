@@ -1,4 +1,4 @@
-const { live } = self.yozo;
+const { live } = globalThis.yozo;
 
 const $ = live({ foo: 23, bar: -5 });
 let detail;

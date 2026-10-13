@@ -1,5 +1,5 @@
-const { paint } = self.yozo;
-await self.yozo.register('./bo-scoped-styles.yz');
+const { paint } = globalThis.yozo;
+await globalThis.yozo.register('./bo-scoped-styles.yz');
 const element = document.createElement('italic-scoped-styles');
 const innerP = element.shadowRoot.querySelector('p');
 const p = document.createElement('p');

@@ -1,4 +1,4 @@
-await self.yozo.register('./bo-every-connect.yz');
+await globalThis.yozo.register('./bo-every-connect.yz');
 
 const element = document.createElement('connect-every-connect');
 

@@ -1,4 +1,4 @@
-const { frame, monitor } = self.yozo;
+const { frame, monitor } = globalThis.yozo;
 
 let triggers = 0;
 let flow;

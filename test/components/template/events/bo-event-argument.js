@@ -1,4 +1,4 @@
-await self.yozo.register('./bo-event-argument.yz');
+await globalThis.yozo.register('./bo-event-argument.yz');
 
 const element = document.createElement('spoiler-event-argument');
 document.body.append(element);

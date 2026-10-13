@@ -1,7 +1,7 @@
-const { when } = self.yozo;
+const { when } = globalThis.yozo;
 
 let constructed = 0;
-self.FooBarObserver = class FooBarObserver {
+globalThis.FooBarObserver = class FooBarObserver {
 	constructor(callback) {
 		constructed++;
 	}
@@ -9,9 +9,9 @@ self.FooBarObserver = class FooBarObserver {
 	disconnect() {}
 };
 
-const flow = when(self).observes('foo-bar');
+const flow = when(globalThis).observes('foo-bar');
 
 assert(constructed == 1);
 
 flow.stop();
-delete self.FooBarObserver;
+delete globalThis.FooBarObserver;

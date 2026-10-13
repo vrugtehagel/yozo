@@ -1,4 +1,4 @@
-await self.yozo.register('./bo-accepts-block.yz');
+await globalThis.yozo.register('./bo-accepts-block.yz');
 
 const element = document.createElement('spoiler-accepts-block');
 const span = element.shadowRoot.querySelector('span');
