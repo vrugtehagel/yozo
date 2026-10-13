@@ -1,5 +1,23 @@
 [
     {
+        "number": "0.6.5",
+        "hash": "v3NRaeHJN8swjayQ50jWUA==",
+        "timestamp": 1791897451409,
+        "size": {
+            "gzip": 4449,
+            "brotli": 4121
+        },
+        "changelog": {
+            "breaking": [],
+            "improvements": [
+                "Use globalThis instead of self for better Node compatibility",
+                "Allow `flow.then()` without arguments for improved Node compatibility",
+                "Reduced bundle size significantly (~250B)"
+            ],
+            "bugs": []
+        }
+    },
+    {
         "number": "0.6.4",
         "hash": "V/qbMvaUBqXac5zfQYLBWg==",
         "timestamp": 1789325563611,
