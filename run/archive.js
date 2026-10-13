@@ -106,7 +106,6 @@ await (async () => {
 	await writeFile(`archive/dev-${version.number}.js`, devSource)
 	versions.unshift(version)
 	const stringified = JSON.stringify(versions, null, 4)
-	console.log(version)
 	await writeFile('versions.json', stringified)
 	const packageJson = await readFile('package.json', 'utf8')
 	const updatedPackageJson = packageJson
