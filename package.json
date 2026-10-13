@@ -1,6 +1,6 @@
 {
 	"name": "@vrugtehagel/yozo",
-	"version": "0.6.5-alpha.2",
+	"version": "0.6.5",
 	"licence": "GPL-3.0-or-later",
 	"author": "vrugtehagel (https://vrugtehagel.nl/)",
 	"description": "A tiny drop-in stress-free solution for web components.",
