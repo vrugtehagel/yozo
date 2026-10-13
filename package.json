@@ -1,0 +1,28 @@
+{
+	"name": "yozo",
+	"version": "0.6.4-alpha.1",
+	"licence": "GPL-3.0-or-later",
+	"author": "vrugtehagel (https://vrugtehagel.nl/)",
+	"description": "A tiny drop-in stress-free solution for web components.",
+	"type": "module",
+	"exports": {
+		".": "./latest/lib.js",
+		"./dev": "./latest/dev.js",
+		"./dev.js": "./latest/dev.js"
+	},
+	"files": ["latest/dev.js", "latest/lib.js"],
+	"homepage": "https://yozo.ooo/",
+	"repository": {
+		"type": "git",
+		"url": "https://codeberg.org/vrugtehagel/yozo"
+	},
+	"scripts": {
+		"watch": "node --watch run/build.js",
+		"build": "node run/build.js",
+		"archive": "node run/archive.js",
+		"test": "node run/test.js"
+	},
+	"devDependencies": {
+		"esbuild-wasm": "0.28.2"
+	}
+}

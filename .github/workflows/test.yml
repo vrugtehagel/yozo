@@ -15,9 +15,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    - uses: denoland/setup-deno@v2
+    - uses: actions/setup-node@v7
       with:
-        deno-version: v2.x
-    - run: deno task test
+        node-version: 26
+    - run: npm run test
     - if: github.ref == 'refs/heads/main'
-      run: deno task build --verify
+      run: npm run build -- --verify

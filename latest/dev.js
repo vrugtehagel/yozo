@@ -163,10 +163,10 @@ Similar warnings after this one will be suppressed`);
      * {@link https://yozo.ooo/docs/flow/then/}
      */
     then(callback) {
-      const isAwaited = callback.toString().includes("[native code]");
+      const isAwaited = callback?.toString().includes("[native code]");
       return this.pipe((next, ...args) => {
         if (!this.#stopping && isAwaited) warn`flow-awaited-without-once`;
-        callback(...args);
+        callback?.(...args);
         next();
       });
     }
@@ -315,15 +315,15 @@ Similar warnings after this one will be suppressed`);
       let observer;
       return new Flow((trigger) => {
         const name = camelCase(`-${type}-observer`);
-        if (typeof self[name] != "function")
+        if (typeof globalThis[name] != "function")
           error`when-cannot-observe-${type}-no-${name}`;
-        observer = new self[camelCase(`-${type}-observer`)](trigger, options);
+        observer = new globalThis[camelCase(`-${type}-observer`)](trigger, options);
         targets.map((target) => observer.observe(target, options));
       }).cleanup(() => observer.disconnect());
     }
   }, { get: (source, property) => {
     const type = property.replace(/s$/, "");
-    if (!source[property] && type != property && "on" + property in self)
+    if (!source[property] && type != property && "on" + property in globalThis)
       warn`when-${property}-instead-of-${type}-mistake`;
     return source[property] ?? source.does.bind(null, property.replace(/s$/, ""));
   } });
@@ -463,7 +463,7 @@ Similar warnings after this one will be suppressed`);
       else error`live-link-target-not-live`;
     let cache;
     let options = thing;
-    if (self.HTMLElement && thing instanceof HTMLElement) {
+    if (globalThis.HTMLElement && thing instanceof HTMLElement) {
       options = {
         get: () => thing.value,
         set: (value) => thing.value = value,
@@ -675,7 +675,7 @@ Similar warnings after this one will be suppressed`);
       if (!url) return;
       register(url);
     };
-    define.register(6, Symbol(), (context2) => {
+    define.register(6, /* @__PURE__ */ Symbol(), (context2) => {
       if (context2.__template) from(context2.__template);
       return {};
     });
@@ -751,7 +751,7 @@ Similar warnings after this one will be suppressed`);
             changes: when(meta.x.$.$attributes[`$${name}`]).change()
           });
         } else if (options.type) {
-          const type = self[camelCase(`-${options.type}`)];
+          const type = globalThis[camelCase(`-${options.type}`)];
           if (options.type == "bigint")
             warn`define-attribute-${options.attribute}-is-type-bigint-instead-of-big-int`;
           else if (!["boolean", "string", "number", "big-int"].includes(options.type))
@@ -788,8 +788,8 @@ Similar warnings after this one will be suppressed`);
     ].map((args) => {
       const { hook, unhook } = args[0];
       if (!hook) return {};
-      const items = Symbol();
-      const queuedArgs = Symbol();
+      const items = /* @__PURE__ */ Symbol();
+      const queuedArgs = /* @__PURE__ */ Symbol();
       context2.x.add(hook);
       const constructor = function(meta) {
         meta.x[hook] = (callback) => {
@@ -829,7 +829,7 @@ Similar warnings after this one will be suppressed`);
   });
 
   // src/mods/03-transforms.js
-  define.register(3, Symbol(), (context2) => {
+  define.register(3, /* @__PURE__ */ Symbol(), (context2) => {
     const transformsMap = /* @__PURE__ */ new Map();
     const getTransforms = (root, ...scopeNames) => {
       if (transformsMap.get(root)) return transformsMap.get(root);
@@ -1107,7 +1107,7 @@ Similar warnings after this one will be suppressed`);
   });
 
   // src/mods/07-query.js
-  define.register(7, Symbol(), (context2) => {
+  define.register(7, /* @__PURE__ */ Symbol(), (context2) => {
     return {
       constructor: function(meta) {
         meta.x.query = (selector) => meta.root.querySelector(selector);
@@ -1138,7 +1138,7 @@ Similar warnings after this one will be suppressed`);
     if (!args) return {};
     const callback = new Function(
       `{${[...context2.x]}}`,
-      `const{${Object.keys(self.yozo)}}=self.yozo;
+      `const{${Object.keys(globalThis.yozo)}}=globalThis.yozo;
 
 
 // The <${context2.__title}> component: the <script> section
@@ -1156,7 +1156,7 @@ ${args[1]}`
   });
 
   // src/index.js
-  self.yozo = {
+  globalThis.yozo = {
     monitor,
     until,
     Flow,
@@ -1169,5 +1169,5 @@ ${args[1]}`
     paint,
     timeout
   };
-  Object.defineProperty(self.yozo, "register", { value: register });
+  Object.defineProperty(globalThis.yozo, "register", { value: register });
 })();

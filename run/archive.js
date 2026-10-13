@@ -1,13 +1,21 @@
-import { red, green, gray } from '@std/fmt/colors'
-import { crypto } from '@std/crypto'
-import { encodeBase64 } from '@std/encoding'
-import { build } from './build.js'
+import {readFile, writeFile, cp} from 'node:fs/promises'
+import {stdin, stdout, exit} from 'node:process'
+import {createInterface} from 'node:readline/promises'
+import {exec} from 'node:child_process'
+import {promisify} from 'node:util'
+import {createHash} from 'node:crypto'
+import {build} from './build.js'
 
+
+// Colors!
+const green = text => `\x1b[32m${text}\x1b[0m`
+const red = text => `\x1b[31m${text}\x1b[0m`
+const gray = text => `\x1b[90m${text}\x1b[0m`
 
 // This script needs to be called from the CLI.
 // It asks the user a few questions, and then builds & archives a new version.
 if(!import.meta.main)
-	throw Error('The archive script should be run as "deno task archive"')
+	throw Error('The archive script should be run as "npm run archive"')
 
 // Must match with what the build script does
 const lib = 'latest/lib.js'
@@ -17,8 +25,17 @@ const printOk = message => console.log(`${green('✓')} ${message}`)
 const printInfo = message => console.log(`${gray('?')} ${message}`)
 const printFail = message => console.log(`${red('✘')} ${message}`)
 
-await build({noVerify: true})
-const json = await Deno.readTextFile('versions.json')
+const readline = createInterface({input: stdin, output: stdout})
+const ask = message => readline.question(message + ' ').catch(() => exit())
+const confirm = async message => {
+	let answer
+	do answer = (await ask(message + ' [y/N]')).toLowerCase()
+	while(answer != 'y' && answer != 'n')
+	return answer == 'y'
+}
+
+await build()
+const json = await readFile('versions.json', 'utf8')
 const versions = JSON.parse(json)
 
 const version = {
@@ -35,16 +52,15 @@ printInfo('Leave empty to move on.')
 await (async () => {
 	const {breaking, improvements, bugs} = version.changelog
 	let change
-	while(change = prompt('  Breaking change:')) breaking.push(change)
-	while(change = prompt('  Improvement:')) improvements.push(change)
-	while(change = prompt('  Bug fixed:')) bugs.push(change)
+	while(change = await ask('  Breaking change:')) breaking.push(change)
+	while(change = await ask('  Improvement:')) improvements.push(change)
+	while(change = await ask('  Bug fixed:')) bugs.push(change)
 })()
 
 await (async () => {
-	const args = ['--stdout', lib]
-	const gzip = await new Deno.Command('gzip', {args}).output()
+	const gzip = await promisify(exec)(`gzip --stdout ${lib}`)
 		.then(({stdout}) => stdout.length)
-	const brotli = await new Deno.Command('brotli', {args}).output()
+	const brotli = await promisify(exec)(`brotli --stdout ${lib}`)
 		.then(({stdout}) => stdout.length)
 	Object.assign(version.size, {gzip, brotli})
 	const print = gzip < 5000 ? printOk : printFail
@@ -53,8 +69,8 @@ await (async () => {
 })()
 
 await (async () => {
-	const bytes = await Deno.readFile(lib)
-	const hash = encodeBase64(await crypto.subtle.digest('MD5', bytes))
+	const bytes = await readFile(lib)
+	const hash = createHash('MD5').update(bytes).digest('base64')
 	version.hash = hash
 	const isUnique = !versions.some(version => version.hash == hash)
 	if(isUnique) printOk(`Hash: ${gray(hash)}`)
@@ -68,27 +84,35 @@ await (async () => {
 		? [main, major + 1, 0].join('.')
 		: [main, major, minor + 1].join('.')
 	printInfo(`Guessing version ${gray(guess)}`)
-	const correct = confirm('  Continue?')
+	const correct = await confirm('  Continue?')
 	if(correct) return version.number = guess
 	let number
 	while(true){
-		number = prompt('  Enter version number:')
+		number = await ask('  Enter version number:')
 		const exists = versions.some(version => version.number == number)
 		if(number && !exists) break
-		printFail(`Version "${versionNumber}" already exists.`)
+		printFail(`Version "${number}" already exists.`)
 	}
 	version.number = number
 })()
 
 await (async () => {
-	const sure = confirm('  Are you sure you want to archive a new version?')
+	const message = '  Are you sure you want to archive a new version?'
+	const sure = await confirm(message)
 	if(!sure) return printFail('Operation cancelled. Exiting…')
-	await Deno.copyFile(lib, `archive/lib-${version.number}.js`)
+	await cp(lib, `archive/lib-${version.number}.js`)
 	const devSource = `// Yozo version: ${version.number}\n`
-		+ (await Deno.readTextFile(dev))
-	await Deno.writeTextFile(`archive/dev-${version.number}.js`, devSource)
+		+ (await readFile(dev, 'utf8'))
+	await writeFile(`archive/dev-${version.number}.js`, devSource)
 	versions.unshift(version)
 	const stringified = JSON.stringify(versions, null, 4)
-	await Deno.writeTextFile('versions.json', stringified)
+	console.log(version)
+	await writeFile('versions.json', stringified)
+	const packageJson = await readFile('package.json', 'utf8')
+	const updatedPackageJson = packageJson
+		.replace(/"version": "[^"]*"/, `"version": "${version.number}"`)
+	await writeFile('package.json', updatedPackageJson)
 	printOk(`Version ${version.number} archived successfully.`)
 })()
+
+readline.close()
